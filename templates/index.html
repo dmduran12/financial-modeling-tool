@@ -11,291 +11,281 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}"> <!-- Added responsive CSS -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.min.js"></script>
+    <!-- Chart.js will be loaded via import map from local vendor file -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
-<body>
-    <header class="app-header">
-      <div class="container flex items-center"><h1 class="app-title">Financial Dashboard</h1></div>
-    </header>
+<body class="bg-pearl">
+  <header class="app-header px-8 py-4"><h1 class="app-title">Financial Dashboard</h1></header>
 
-    <!--── GRID 12 ──-->
-    <main class="container grid-12">
+  <main class="grid grid-cols-12 gap-6 px-8 pt-8">
 
-      <!-- KPI ROW full-width -->
-      <section class="card grid-col-span-12 mb-lg" id="kpiRow">
-        <h2 class="card-title mb-md">Key Financial Metrics</h2>
-        <div class="grid-12" id="keyMetrics">
-          <!-- each metric occupies 2/12 on ≥1024px, 6/12 on tablet, full on mobile -->
-          <!-- example card – JS continues to update same IDs -->
-          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
-            <span class="metric-label flex justify-between items-center">
-              Total MRR <span id="trend_total_mrr"></span>
-            </span>
-            <span id="metric_total_mrr" class="metric-value">$0</span>
-            <canvas id="sparkline_total_mrr" height="30"></canvas>
-            <p class="metric-tooltip">Monthly Recurring Revenue across all tiers</p>
-          </div>
-          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
-            <span class="metric-label flex justify-between items-center">Active Customers <span id="trend_active_customers"></span></span>
-            <span id="metric_active_customers" class="metric-value">0</span>
-            <canvas id="sparkline_active_customers" height="30"></canvas>
-            <p class="metric-tooltip">Total number of active paying customers</p>
-          </div>
-          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
-            <span class="metric-label flex justify-between items-center">Annual Revenue <span id="trend_annual_revenue"></span></span>
-            <span id="metric_annual_revenue" class="metric-value">$0</span>
-            <canvas id="sparkline_annual_revenue" height="30"></canvas>
-            <p class="metric-tooltip">Projected annual revenue based on current MRR</p>
-          </div>
-          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
-            <span class="metric-label flex justify-between items-center">Customer LTV <span id="trend_ltv_smb"></span></span>
-            <span id="metric_ltv_smb" class="metric-value">$0</span>
-            <canvas id="sparkline_ltv_smb" height="30"></canvas>
-            <p class="metric-tooltip">Lifetime Value of an average customer</p>
-          </div>
-          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
-            <span class="metric-label flex justify-between items-center">New Customers/Month <span id="trend_new_smb_customers_monthly"></span></span>
-            <span id="metric_new_smb_customers_monthly" class="metric-value">0</span>
-            <canvas id="sparkline_new_smb_customers_monthly" height="30"></canvas>
-            <p class="metric-tooltip">Average number of new customers acquired monthly</p>
-          </div>
-        </div>
-      </section>
+    <!-- KPI ROW -->
+    <section id="kpiRow" class="col-span-12 grid lg:grid-cols-5 gap-4">
+      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1"> 
+        <span class="metric-label flex justify-between items-center">
+          Total MRR <span id="trend_total_mrr"></span>
+        </span>
+        <span id="metric_total_mrr" class="metric-value" data-prev="0">$0</span>
+        <p class="metric-tooltip">Monthly Recurring Revenue across all tiers</p>
+      </div>
+      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
+        <span class="metric-label flex justify-between items-center">Active Customers <span id="trend_active_customers"></span></span>
+        <span id="metric_active_customers" class="metric-value" data-prev="0">0</span>
+        <p class="metric-tooltip">Total number of active paying customers</p>
+      </div>
+      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
+        <span class="metric-label flex justify-between items-center">Annual Revenue <span id="trend_annual_revenue"></span></span>
+        <span id="metric_annual_revenue" class="metric-value" data-prev="0">$0</span>
+        <p class="metric-tooltip">Projected annual revenue based on current MRR</p>
+      </div>
+      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
+        <span class="metric-label flex justify-between items-center">Customer LTV <span id="trend_ltv"></span></span>
+        <span id="metric_ltv" class="metric-value" data-prev="0">$0</span>
+        <p class="metric-tooltip">Lifetime Value of an average customer</p>
+      </div>
+      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
+        <span class="metric-label flex justify-between items-center">New Customers/Month <span id="trend_new_cust_month"></span></span>
+        <span id="metric_new_cust_month" class="metric-value" data-prev="0">0</span>
+        <p class="metric-tooltip">Average number of new customers acquired monthly</p>
+      </div>
+    </section>
 
-      <!-- ASSUMPTIONS (scroll column) -->
-      <aside class="grid-col-span-12 lg:grid-col-span-4 sticky top-[96px] overflow-y-auto h-[calc(100vh-128px)] pr-lg"
-             id="assumptionsCol">
-          <form id="assumptionsForm">
-                    <!-- Revenue & Tiers Card -->
-                    <div class="card mb-md interactive-card" id="revenue-card">
-                        <button type="button" class="card-header btn-reset flex justify-between items-center">
-                            <h3 class="card-title">Revenue & Tiers</h3>
-                            <span class="card-toggle-icon">▼</span>
-                        </button>
-                        <div class="card-content">
-                            <div class="input-group">
-                                <label for="tier1_revenue">
-                                    Tier 1 Monthly Revenue ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Monthly revenue for basic tier subscription</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier1_revenue" data-step="100">-</button>
-                                    <input type="number" id="tier1_revenue" name="tier1_revenue" value="1000" step="100">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier1_revenue" data-step="100">+</button>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="tier2_revenue">
-                                    Tier 2 Monthly Revenue ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Monthly revenue for standard tier subscription</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier2_revenue" data-step="100">-</button>
-                                    <input type="number" id="tier2_revenue" name="tier2_revenue" value="2500" step="100">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier2_revenue" data-step="100">+</button>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="tier3_revenue">
-                                    Tier 3 Monthly Revenue ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Monthly revenue for premium tier subscription</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier3_revenue" data-step="100">-</button>
-                                    <input type="number" id="tier3_revenue" name="tier3_revenue" value="5000" step="100">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier3_revenue" data-step="100">+</button>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="tier4_revenue">
-                                    Tier 4 Monthly Revenue ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Monthly revenue for enterprise tier subscription</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier4_revenue" data-step="100">-</button>
-                                    <input type="number" id="tier4_revenue" name="tier4_revenue" value="10000" step="100">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier4_revenue" data-step="100">+</button>
-                                </div>
+    <!-- ASSUMPTIONS -->
+    <aside id="assumptionsCol" class="col-span-12 lg:col-span-4 max-h-[calc(100vh-140px)] overflow-y-auto pr-4">
+      <form id="assumptionsForm">
+            <!-- Revenue & Tiers Card -->
+            <div class="card mb-md interactive-card" id="revenue-card">
+                <button type="button" class="card-header btn-reset flex justify-between items-center">
+                    <h3 class="card-title">Revenue & Tiers</h3>
+                    <span class="card-toggle-icon">▼</span>
+                </button>
+                <div class="card-content">
+                    <div class="input-group">
+                        <label for="tier1_revenue">
+                            Tier 1 Monthly Revenue ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Monthly revenue for basic tier subscription</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="tier1_revenue" data-step="100">-</button>
+                            <input type="number" id="tier1_revenue" name="tier1_revenue" value="1000" step="100">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="tier1_revenue" data-step="100">+</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="tier2_revenue">
+                            Tier 2 Monthly Revenue ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Monthly revenue for standard tier subscription</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="tier2_revenue" data-step="100">-</button>
+                            <input type="number" id="tier2_revenue" name="tier2_revenue" value="2500" step="100">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="tier2_revenue" data-step="100">+</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="tier3_revenue">
+                            Tier 3 Monthly Revenue ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Monthly revenue for premium tier subscription</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="tier3_revenue" data-step="100">-</button>
+                            <input type="number" id="tier3_revenue" name="tier3_revenue" value="5000" step="100">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="tier3_revenue" data-step="100">+</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="tier4_revenue">
+                            Tier 4 Monthly Revenue ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Monthly revenue for enterprise tier subscription</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="tier4_revenue" data-step="100">-</button>
+                            <input type="number" id="tier4_revenue" name="tier4_revenue" value="10000" step="100">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="tier4_revenue" data-step="100">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Customer Acquisition Card -->
+            <div class="card mb-md interactive-card" id="acquisition-card">
+                <button type="button" class="card-header btn-reset flex justify-between items-center">
+                    <h3 class="card-title">Customer Acquisition</h3>
+                    <span class="card-toggle-icon">▼</span>
+                </button>
+                <div class="card-content">
+                    <div class="input-group">
+                        <label for="marketing_budget">
+                            Monthly Marketing Budget ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Total monthly budget allocated to marketing activities</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="marketing_budget" data-step="100">-</button>
+                            <input type="number" id="marketing_budget" name="marketing_budget" value="5000" step="100">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="marketing_budget" data-step="100">+</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="cpl">
+                            Average Cost Per Lead (CPL) ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Average cost to acquire one qualified lead</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="cpl" data-step="5">-</button>
+                            <input type="number" id="cpl" name="cpl" value="50" step="5">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="cpl" data-step="5">+</button>
+                        </div>
+                    </div>
+                    <div class="input-group with-slider">
+                        <label for="conversion_rate">
+                            Lead-to-Customer Conversion (%)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Percentage of leads that convert to paying customers</span>
+                            </span>
+                        </label>
+                        <input type="number" id="conversion_rate" name="conversion_rate" value="10" step="0.1" min="0.1" max="50">
+                        <div class="slider-container">
+                            <input type="range" class="slider-input" id="conversion_rate_slider" min="0.1" max="50" value="10" step="0.1">
+                            <div class="slider-value">
+                                <span class="min">0.1%</span>
+                                <span class="current" id="conversion_rate_display">10%</span>
+                                <span class="max">50%</span>
                             </div>
                         </div>
                     </div>
-                    <!-- Customer Acquisition Card -->
-                    <div class="card mb-md interactive-card" id="acquisition-card">
-                        <button type="button" class="card-header btn-reset flex justify-between items-center">
-                            <h3 class="card-title">Customer Acquisition</h3>
-                            <span class="card-toggle-icon">▼</span>
-                        </button>
-                        <div class="card-content">
-                            <div class="input-group">
-                                <label for="marketing_budget">
-                                    Monthly Marketing Budget ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Total monthly budget allocated to marketing activities</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="marketing_budget" data-step="100">-</button>
-                                    <input type="number" id="marketing_budget" name="marketing_budget" value="5000" step="100">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="marketing_budget" data-step="100">+</button>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="cpl">
-                                    Average Cost Per Lead (CPL) ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Average cost to acquire one qualified lead</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="cpl" data-step="5">-</button>
-                                    <input type="number" id="cpl" name="cpl" value="50" step="5">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="cpl" data-step="5">+</button>
-                                </div>
-                            </div>
-                            <div class="input-group with-slider">
-                                <label for="conversion_rate">
-                                    Lead-to-Customer Conversion (%)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Percentage of leads that convert to paying customers</span>
-                                    </span>
-                                </label>
-                                <input type="number" id="conversion_rate" name="conversion_rate" value="10" step="0.1" min="0.1" max="50">
-                                <div class="slider-container">
-                                    <input type="range" class="slider-input" id="conversion_rate_slider" min="0.1" max="50" value="10" step="0.1">
-                                    <div class="slider-value">
-                                        <span class="min">0.1%</span>
-                                        <span class="current" id="conversion_rate_display">10%</span>
-                                        <span class="max">50%</span>
-                                    </div>
-                                </div>
+                </div>
+            </div>
+            <!-- Customer Retention Card -->
+            <div class="card mb-md interactive-card" id="retention-card">
+                <button type="button" class="card-header btn-reset flex justify-between items-center">
+                    <h3 class="card-title">Customer Retention</h3>
+                    <span class="card-toggle-icon">▼</span>
+                </button>
+                <div class="card-content">
+                    <div class="input-group with-slider">
+                        <label for="churn_rate_smb">
+                            Monthly Churn Rate (%)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Percentage of customers that cancel their subscription each month</span>
+                            </span>
+                        </label>
+                        <input type="number" id="churn_rate_smb" name="churn_rate_smb" value="5" step="0.1" min="0.1" max="20">
+                        <div class="slider-container">
+                            <input type="range" class="slider-input" id="churn_rate_smb_slider" min="0.1" max="20" value="5" step="0.1">
+                            <div class="slider-value">
+                                <span class="min">0.1%</span>
+                                <span class="current" id="churn_rate_smb_display">5%</span>
+                                <span class="max">20%</span>
                             </div>
                         </div>
                     </div>
-                    <!-- Customer Retention Card -->
-                    <div class="card mb-md interactive-card" id="retention-card">
-                        <button type="button" class="card-header btn-reset flex justify-between items-center">
-                            <h3 class="card-title">Customer Retention</h3>
-                            <span class="card-toggle-icon">▼</span>
-                        </button>
-                        <div class="card-content">
-                            <div class="input-group with-slider">
-                                <label for="churn_rate_smb">
-                                    Monthly Churn Rate (%)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Percentage of customers that cancel their subscription each month</span>
-                                    </span>
-                                </label>
-                                <input type="number" id="churn_rate_smb" name="churn_rate_smb" value="5" step="0.1" min="0.1" max="20">
-                                <div class="slider-container">
-                                    <input type="range" class="slider-input" id="churn_rate_smb_slider" min="0.1" max="20" value="5" step="0.1">
-                                    <div class="slider-value">
-                                        <span class="min">0.1%</span>
-                                        <span class="current" id="churn_rate_smb_display">5%</span>
-                                        <span class="max">20%</span>
-                                    </div>
-                                </div>
+                </div>
+            </div>
+            <!-- Financial Assumptions Card -->
+            <div class="card mb-md interactive-card" id="financial-card">
+                <button type="button" class="card-header btn-reset flex justify-between items-center">
+                    <h3 class="card-title">Financial Assumptions</h3>
+                    <span class="card-toggle-icon">▼</span>
+                </button>
+                <div class="card-content">
+                    <div class="input-group with-slider">
+                        <label for="wacc">
+                            WACC (%)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Weighted Average Cost of Capital - discount rate used for NPV calculations</span>
+                            </span>
+                        </label>
+                        <input type="number" id="wacc" name="wacc" value="15" step="0.1" min="1" max="30">
+                        <div class="slider-container">
+                            <input type="range" class="slider-input" id="wacc_slider" min="1" max="30" value="15" step="0.1">
+                            <div class="slider-value">
+                                <span class="min">1%</span>
+                                <span class="current" id="wacc_display">15%</span>
+                                <span class="max">30%</span>
                             </div>
                         </div>
                     </div>
-                    <!-- Financial Assumptions Card -->
-                    <div class="card mb-md interactive-card" id="financial-card">
-                        <button type="button" class="card-header btn-reset flex justify-between items-center">
-                            <h3 class="card-title">Financial Assumptions</h3>
-                            <span class="card-toggle-icon">▼</span>
-                        </button>
-                        <div class="card-content">
-                            <div class="input-group with-slider">
-                                <label for="wacc">
-                                    WACC (%)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Weighted Average Cost of Capital - discount rate used for NPV calculations</span>
-                                    </span>
-                                </label>
-                                <input type="number" id="wacc" name="wacc" value="15" step="0.1" min="1" max="30">
-                                <div class="slider-container">
-                                    <input type="range" class="slider-input" id="wacc_slider" min="1" max="30" value="15" step="0.1">
-                                    <div class="slider-value">
-                                        <span class="min">1%</span>
-                                        <span class="current" id="wacc_display">15%</span>
-                                        <span class="max">30%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="initial_cac_smb">
-                                    Baseline CAC per Customer ($)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Initial Customer Acquisition Cost used as baseline for calculations</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="initial_cac_smb" data-step="10">-</button>
-                                    <input type="number" id="initial_cac_smb" name="initial_cac_smb" value="239" step="10">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="initial_cac_smb" data-step="10">+</button>
-                                </div>
-                            </div>
+                    <div class="input-group">
+                        <label for="initial_cac_smb">
+                            Baseline CAC per Customer ($)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Initial Customer Acquisition Cost used as baseline for calculations</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="initial_cac_smb" data-step="10">-</button>
+                            <input type="number" id="initial_cac_smb" name="initial_cac_smb" value="239" step="10">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="initial_cac_smb" data-step="10">+</button>
                         </div>
                     </div>
-                    <!-- Projection Settings Card -->
-                    <div class="card mb-md interactive-card" id="projection-card">
-                        <button type="button" class="card-header btn-reset flex justify-between items-center">
-                            <h3 class="card-title">Projection Settings</h3>
-                            <span class="card-toggle-icon">▼</span>
-                        </button>
-                        <div class="card-content">
-                            <div class="input-group">
-                                <label for="projection_months">
-                                    Projection Length (Months)
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-content">Number of months to project financial metrics</span>
-                                    </span>
-                                </label>
-                                <div class="input-stepper">
-                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="projection_months" data-step="1">-</button>
-                                    <input type="number" id="projection_months" name="projection_months" value="24" min="1" max="60">
-                                    <button type="button" class="stepper-btn" data-action="increment" data-target="projection_months" data-step="1">+</button>
-                                </div>
-                            </div>
+                </div>
+            </div>
+            <!-- Projection Settings Card -->
+            <div class="card mb-md interactive-card" id="projection-card">
+                <button type="button" class="card-header btn-reset flex justify-between items-center">
+                    <h3 class="card-title">Projection Settings</h3>
+                    <span class="card-toggle-icon">▼</span>
+                </button>
+                <div class="card-content">
+                    <div class="input-group">
+                        <label for="projection_months">
+                            Projection Length (Months)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-content">Number of months to project financial metrics</span>
+                            </span>
+                        </label>
+                        <div class="input-stepper">
+                            <button type="button" class="stepper-btn" data-action="decrement" data-target="projection_months" data-step="1">-</button>
+                            <input type="number" id="projection_months" name="projection_months" value="24" min="1" max="60">
+                            <button type="button" class="stepper-btn" data-action="increment" data-target="projection_months" data-step="1">+</button>
                         </div>
                     </div>
-                </form>
-      </aside>
+                </div>
+            </div>
+        </form>
+    </aside>
 
-      <!-- VISUALS -->
-      <section class="grid-col-span-12 lg:grid-col-span-8" id="visualCol">
-        <div class="card">
-          <h2 class="card-title">Projections & Visualizations</h2>
-          <div class="chart-container mb-lg"><div id="mrrChartContainer" class="chart-placeholder"></div></div>
-          <div class="grid-12">
-            <div class="chart-container grid-col-span-12 md:grid-col-span-6"><div id="customersChartContainer" class="chart-placeholder"></div></div>
-            <div class="chart-container grid-col-span-12 md:grid-col-span-6"><div id="tierRevenueChartContainer" class="chart-placeholder"></div></div>
-          </div>
-        </div>
-      </section>
+    <!-- VISUALS -->
+    <section id="visualCol" class="col-span-12 lg:col-span-8 space-y-6">
+      <div class="card p-6">
+        <h3 class="mb-4">MRR Projection</h3><canvas id="mrrChart"></canvas>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-4">
+        <div class="card p-6"><h3 class="mb-4">Customer Growth</h3><canvas id="customersChart"></canvas></div>
+        <div class="card p-6"><h3 class="mb-4">Revenue by Tier</h3><canvas id="tierRevenueChart"></canvas></div>
+      </div>
+    </section>
 
-    </main>
+  </main>
 
-    <script type="module" src="{{ url_for('static', filename='js/chart-manager.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <!-- IMPORT MAP + MODULES -->
+  <script type="importmap">
+    { "imports": { "chart.js/auto": "{{ url_for('static', filename='js/vendor/chart.umd.js') }}" } }
+  </script>
+  <script type="module" src="{{ url_for('static', filename='js/chart-manager.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
 

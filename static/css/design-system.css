@@ -1,3 +1,5 @@
+@import "brand-tokens.css";
+
 /* DESIGN SYSTEM CSS */
 /* Mobile-first design system for SMB Financial Modeling application */
 /* Based on modern design principles and color palettes from top companies */
@@ -269,17 +271,10 @@
   --radius-pill:9999px;
 }
 /* global backgrounds */
-body{background:var(--clr-pearl);}
-/* .card rule below will conflict with existing .card if not managed. Assuming this takes precedence or is merged. */
-/* For this diff, we append then review. Original .card may need removal or merging. */
-.card{background:var(--clr-neutral-50);border:1px solid var(--clr-driftwood);}
-input,select,textarea{
-  border:1px solid var(--clr-driftwood);
-  border-radius:var(--radius-pill);
-}
-button,.btn{
-  border-radius:var(--radius-pill);
-}
+/* body rule removed, will be replaced by appended rule */
+/* .card rule removed, will be replaced by appended rule */
+/* input,select,textarea rule removed, will be replaced by appended rule */
+/* button,.btn rule removed, will be replaced by appended rule */
 /* tooltip fix */
 .tooltip-container{position:relative}
 .tooltip-content{ /* Base for tooltip, specific styling in components.css */
@@ -304,3 +299,32 @@ button,.btn{
 
 /* Added from User Request E */
 .card:not(.metric-card){margin-bottom:32px;}
+
+/* --- Appended from Playbook --- */
+/* universal bg + card + form (Playbook Section 1) */
+body          { background:var(--cat-pearl); }
+.card         { background:var(--cat-neutral-50); border:1px solid var(--cat-driftwood); border-radius:12px; box-shadow:0 2px 6px #0001; }
+.btn          { border-radius:9999px; } /* Targets .btn elements for pill shape */
+input,select  { border:1px solid var(--cat-driftwood); border-radius:9999px; padding:.5rem 1rem; }
+
+.metric-card  { border:1px solid var(--cat-driftwood); border-radius:12px; } /* Playbook Section 1 */
+
+/* Interactive card styles (Playbook Section 1 & D.1) */
+.interactive-card > .card-content { /* Base styles for closed state */
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 1rem; /* Consistent horizontal padding; vertical padding added when open */
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+.interactive-card.open > .card-content {
+    max-height: 9999px !important; /* Playbook uses .open > .card-content, make sure class 'open' is added to .interactive-card */
+    padding: 1rem;
+}
+.interactive-card.open .card-toggle-icon { /* Rotates icon when .interactive-card has .open class */
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-out; /* Smooth rotation */
+}
+.interactive-card .card-toggle-icon { /* Base transition for the icon */
+    transition: transform 0.3s ease-out;
+}
+/* --- End of Appended from Playbook --- */
