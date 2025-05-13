@@ -20,26 +20,26 @@
 
     <!-- KPI ROW -->
     <section id="kpiRow" class="col-span-12">
-          <div class="metric-card">
-            <span class="metric-label">Total MRR</span>
-            <span class="metric-value" id="metric_total_mrr" data-prev="0">$0</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-label">Active Customers</span>
-            <span class="metric-value" id="metric_active_customers" data-prev="0">0</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-label">Annual Revenue</span>
-            <span class="metric-value" id="metric_annual_revenue" data-prev="0">$0</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-label">Customer LTV (SMB)</span>
-            <span class="metric-value" id="metric_ltv_smb" data-prev="0">$0</span>
-          </div>
-          <div class="metric-card">
-            <span class="metric-label">New Customers/Month (SMB)</span>
-            <span class="metric-value" id="metric_new_smb_customers_monthly" data-prev="0">0</span>
-          </div>
+            <div class="metric-card" id="metric_total_mrr_card">
+              <span class="metric-label">Total MRR</span>
+              <span class="metric-value" id="metric_total_mrr" data-prev="0">$0</span>
+            </div>
+            <div class="metric-card" id="metric_active_customers_card">
+              <span class="metric-label">Active Customers</span>
+              <span class="metric-value" id="metric_active_customers" data-prev="0">0</span>
+            </div>
+            <div class="metric-card" id="metric_annual_revenue_card">
+              <span class="metric-label">Annual Revenue</span>
+              <span class="metric-value" id="metric_annual_revenue" data-prev="0">$0</span>
+            </div>
+            <div class="metric-card" id="metric_ltv_smb_card">
+              <span class="metric-label">Customer LTV (SMB)</span>
+              <span class="metric-value" id="metric_ltv_smb" data-prev="0">$0</span>
+            </div>
+            <div class="metric-card" id="metric_new_smb_customers_monthly_card">
+              <span class="metric-label">New Customers/Month (SMB)</span>
+              <span class="metric-value" id="metric_new_smb_customers_monthly" data-prev="0">0</span>
+            </div>
     </section>
 
     <!-- ASSUMPTIONS FORM -->
@@ -273,7 +273,7 @@
 
   <!-- import-map so ES-modules resolve -->
   <script type="importmap">
-    { "imports": { "chart.js": "{{ url_for('static',filename='js/vendor/chart.esm.js') }}" } }
+    { "imports": { "chart.js": "{{ url_for('static',filename='js/vendor/chart.umd.js') }}" } }
   </script>
 
   <script type="module" src="{{ url_for('static',filename='js/chart-manager.js') }}"></script>

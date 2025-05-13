@@ -79,3 +79,12 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 .lg\:col-span-8 { grid-column: span 8 / span 8; } /* From HTML shell */
 .max-h-\[calc\(100vh-140px\)\] { max-height: calc(100vh - 140px); } /* From HTML shell */
 .overflow-y-auto { overflow-y: auto; } /* From HTML shell */
+
+/* KPI horizontal scroll on narrow screens */
+#kpiRow{
+  display:flex;
+  gap:var(--space-md);
+  overflow-x:auto;
+  padding-bottom:var(--space-sm);
+}
+#kpiRow .metric-card{flex:0 0 220px;}

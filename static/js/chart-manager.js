@@ -1,4 +1,4 @@
-import Chart from "chart.js/auto";
+import { Chart } from "chart.js";
 
 // Attempt to get palette colors. If DOM is not ready or vars are not defined, will fall back.
 let computedPalette = ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A']; // Default fallback from playbook CSS vars
