@@ -1,19 +1,18 @@
 :root{
-  /* BRAND PRIMITIVES */
-  --cat-pearl:#F5F3F0;          /* major page BG   */
-  --cat-neutral-50:#FDFCFB;     /* card fill       */
-  --cat-driftwood:#CAC8C5;      /* strokes/borders */
-  --cat-black:#000;             --cat-white:#fff;
+  /* canvas */
+  --cat-pearl:#F5F3F0;        /* page bg  */
+  --cat-neutral-50:#FDFCFB;   /* card bg  */
+  --cat-driftwood:#CAC8C5;    /* borders  */
 
-  /* Brand gradients / accents (chart + UI) */
-  --cat-gradient-a:#486BFE;
-  --cat-gradient-b:#8262FF;
-  --cat-gradient-c:#D19BEA;
-  --cat-accent-green:#6EE26A;
-  --cat-accent-blue:#4DBBFF;
+  /* gradients / accents for charts + UI */
+  --cat-grad-a:#486BFE;
+  --cat-grad-b:#8262FF;
+  --cat-grad-c:#D19BEA;
+  --cat-green :#6EE26A;
+  --cat-blue  :#4DBBFF;
 
-  /* SEMANTIC */
+  /* semantic */
   --cat-success:#39B54A;
-  --cat-error:#E3342F;
+  --cat-error  :#E3342F;
 }
 

@@ -8,50 +8,43 @@
     
     <!-- External CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}"> <!-- Added responsive CSS -->
-    <!-- Chart.js will be loaded via import map from local vendor file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}"> <!-- Keep if still used for other components -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Keep if still used for other styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}"> <!-- Keep if still used -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
-<body class="bg-pearl">
+<body>
   <header class="app-header px-8 py-4"><h1 class="app-title">Financial Dashboard</h1></header>
 
   <main class="grid grid-cols-12 gap-6 px-8 pt-8">
 
     <!-- KPI ROW -->
-    <section id="kpiRow" class="col-span-12 grid lg:grid-cols-5 gap-4">
-      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1"> 
-        <span class="metric-label flex justify-between items-center">
-          Total MRR <span id="trend_total_mrr"></span>
-        </span>
-        <span id="metric_total_mrr" class="metric-value" data-prev="0">$0</span>
-        <p class="metric-tooltip">Monthly Recurring Revenue across all tiers</p>
-      </div>
-      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
-        <span class="metric-label flex justify-between items-center">Active Customers <span id="trend_active_customers"></span></span>
-        <span id="metric_active_customers" class="metric-value" data-prev="0">0</span>
-        <p class="metric-tooltip">Total number of active paying customers</p>
-      </div>
-      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
-        <span class="metric-label flex justify-between items-center">Annual Revenue <span id="trend_annual_revenue"></span></span>
-        <span id="metric_annual_revenue" class="metric-value" data-prev="0">$0</span>
-        <p class="metric-tooltip">Projected annual revenue based on current MRR</p>
-      </div>
-      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
-        <span class="metric-label flex justify-between items-center">Customer LTV <span id="trend_ltv"></span></span>
-        <span id="metric_ltv" class="metric-value" data-prev="0">$0</span>
-        <p class="metric-tooltip">Lifetime Value of an average customer</p>
-      </div>
-      <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-1">
-        <span class="metric-label flex justify-between items-center">New Customers/Month <span id="trend_new_cust_month"></span></span>
-        <span id="metric_new_cust_month" class="metric-value" data-prev="0">0</span>
-        <p class="metric-tooltip">Average number of new customers acquired monthly</p>
-      </div>
+    <section id="kpiRow" class="col-span-12">
+          <div class="metric-card">
+            <span class="metric-label">Total MRR</span>
+            <span class="metric-value" id="metric_total_mrr" data-prev="0">$0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Active Customers</span>
+            <span class="metric-value" id="metric_active_customers" data-prev="0">0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Annual Revenue</span>
+            <span class="metric-value" id="metric_annual_revenue" data-prev="0">$0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Customer LTV (SMB)</span>
+            <span class="metric-value" id="metric_ltv_smb" data-prev="0">$0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">New Customers/Month (SMB)</span>
+            <span class="metric-value" id="metric_new_smb_customers_monthly" data-prev="0">0</span>
+          </div>
     </section>
 
-    <!-- ASSUMPTIONS -->
-    <aside id="assumptionsCol" class="col-span-12 lg:col-span-4 max-h-[calc(100vh-140px)] overflow-y-auto pr-4">
+    <!-- ASSUMPTIONS FORM -->
+    <aside id="assumptionsCol"
+           class="col-span-12 lg:col-span-4 max-h-[calc(100vh-140px)] overflow-y-auto pr-4">
       <form id="assumptionsForm">
             <!-- Revenue & Tiers Card -->
             <div class="card mb-md interactive-card" id="revenue-card">
@@ -267,11 +260,9 @@
         </form>
     </aside>
 
-    <!-- VISUALS -->
+    <!-- CHARTS -->
     <section id="visualCol" class="col-span-12 lg:col-span-8 space-y-6">
-      <div class="card p-6">
-        <h3 class="mb-4">MRR Projection</h3><canvas id="mrrChart"></canvas>
-      </div>
+      <div class="card p-6"><h3 class="mb-4">MRR Projection</h3><canvas id="mrrChart"></canvas></div>
       <div class="grid lg:grid-cols-2 gap-4">
         <div class="card p-6"><h3 class="mb-4">Customer Growth</h3><canvas id="customersChart"></canvas></div>
         <div class="card p-6"><h3 class="mb-4">Revenue by Tier</h3><canvas id="tierRevenueChart"></canvas></div>
@@ -280,12 +271,12 @@
 
   </main>
 
-  <!-- IMPORT MAP + MODULES -->
+  <!-- import-map so ES-modules resolve -->
   <script type="importmap">
-    { "imports": { "chart.js/auto": "{{ url_for('static', filename='js/vendor/chart.umd.js') }}" } }
+    { "imports": { "chart.js": "{{ url_for('static',filename='js/vendor/chart.esm.js') }}" } }
   </script>
-  <script type="module" src="{{ url_for('static', filename='js/chart-manager.js') }}"></script>
-  <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <script type="module" src="{{ url_for('static',filename='js/chart-manager.js') }}"></script>
+  <script type="module" src="{{ url_for('static',filename='js/main.js') }}"></script>
 </body>
 </html>
-
