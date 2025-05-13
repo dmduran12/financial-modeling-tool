@@ -4,393 +4,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Financial Model | Catona</title>
+    <title>Interactive SMB Model | Catona</title>
     
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/brand-system.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/inputs.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/filter-chip.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/kpi-card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/collapsible-table.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/scenarios.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- General styles -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}"> <!-- Added responsive CSS -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.min.js"></script>
 </head>
-<body class="dashboard-wrapper">
-    <!-- Sticky Header -->
-    <header class="app-header sticky-top">
-        <div class="container">
-            <div class="d-flex justify-between items-center">
-                <h1 class="app-title">Climate SaaS Financial Projections</h1>
-                <div class="header-actions">
-                    <div class="scenario-manager">
-                        <button class="btn btn-outline btn-sm" id="scenario-dropdown-btn">
-                            <span class="icon">📂</span> Scenarios
-                        </button>
-                        <div class="dropdown-menu" id="scenario-dropdown-menu">
-                            <div class="dropdown-header">
-                                <h4>Manage Scenarios</h4>
-                            </div>
-                            <div class="dropdown-body">
-                                <div class="scenario-list" id="scenario-list">
-                                    <!-- Scenarios will be dynamically added here -->
-                                </div>
-                                <div class="scenario-actions mt-3">
-                                    <input type="text" id="new-scenario-name" placeholder="New scenario name" class="form-control">
-                                    <button class="btn btn-sm btn-primary mt-2 w-full" id="save-scenario-btn">Save Current Scenario</button>
-                                </div>
-                                <div class="scenario-comparison mt-3">
-                                    <h5>Compare Scenarios</h5>
-                                    <div class="d-flex gap-2 mt-2">
-                                        <select id="compare-scenario-1" class="form-control">
-                                            <option value="">Select first scenario</option>
-                                        </select>
-                                        <select id="compare-scenario-2" class="form-control">
-                                            <option value="">Select second scenario</option>
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline mt-2 w-full" id="compare-btn">Compare</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="export-dropdown">
-                        <button class="btn btn-outline btn-sm">
-                            <span class="icon">📊</span> Export
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="#" class="dropdown-item" id="export-png">Export as PNG</a>
-                            <a href="#" class="dropdown-item" id="export-pdf">Export as PDF</a>
-                            <a href="#" class="dropdown-item" id="export-csv">Export as CSV</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body>
+    <header class="app-header">
+      <div class="container flex items-center"><h1 class="app-title">Financial Dashboard</h1></div>
     </header>
-    
-    <!-- Context Bar with Filter Chips -->
-    <div class="context-bar sticky-top">
-        <div class="container">
-            <div class="filter-chip-container" id="filter-chips-container">
-                <!-- Time period filter -->
-                <div class="filter-chip active" data-filter="date-range">
-                    <span class="filter-chip-label">Period:</span>
-                    <span class="filter-chip-value">36 Months</span>
-                    <span class="filter-chip-icon">▼</span>
-                    <div class="filter-chip-dropdown">
-                        <div class="filter-chip-dropdown-item selected" data-value="36">36 Months</div>
-                        <div class="filter-chip-dropdown-item" data-value="12">12 Months</div>
-                        <div class="filter-chip-dropdown-item" data-value="24">24 Months</div>
-                        <div class="filter-chip-dropdown-item" data-value="60">60 Months</div>
-                    </div>
-                </div>
-                
-                <!-- Customer segment filter -->
-                <div class="filter-chip" data-filter="customer-segment">
-                    <span class="filter-chip-label">Segment:</span>
-                    <span class="filter-chip-value">All</span>
-                    <span class="filter-chip-icon">▼</span>
-                    <div class="filter-chip-dropdown">
-                        <div class="filter-chip-dropdown-item selected" data-value="all">All</div>
-                        <div class="filter-chip-dropdown-item" data-value="individual">Individual</div>
-                        <div class="filter-chip-dropdown-item" data-value="smb">SMB</div>
-                    </div>
-                </div>
-                
-                <!-- Product tier filter -->
-                <div class="filter-chip" data-filter="product-tier">
-                    <span class="filter-chip-label">Tier:</span>
-                    <span class="filter-chip-value">All Tiers</span>
-                    <span class="filter-chip-icon">▼</span>
-                    <div class="filter-chip-dropdown">
-                        <div class="filter-chip-dropdown-item selected" data-value="all">All Tiers</div>
-                        <div class="filter-chip-dropdown-item" data-value="seed">Seed</div>
-                        <div class="filter-chip-dropdown-item" data-value="sprout">Sprout</div>
-                        <div class="filter-chip-dropdown-item" data-value="grove">Grove</div>
-                        <div class="filter-chip-dropdown-item" data-value="frontier">Frontier</div>
-                         <div class="filter-chip-dropdown-item" data-value="tier1">Tier 1 (SMB)</div>
-                        <div class="filter-chip-dropdown-item" data-value="tier2">Tier 2 (SMB)</div>
-                        <div class="filter-chip-dropdown-item" data-value="tier3">Tier 3 (SMB)</div>
-                        <div class="filter-chip-dropdown-item" data-value="tier4">Tier 4 (SMB)</div>
-                    </div>
-                </div>
-                
-                <!-- Add filter button -->
-                <div class="filter-chip-add">
-                    <span class="icon">+</span> Add Filter
-                </div>
-            </div>
+
+    <!--── GRID 12 ──-->
+    <main class="container grid-12">
+
+      <!-- KPI ROW full-width -->
+      <section class="card grid-col-span-12 mb-lg" id="kpiRow">
+        <h2 class="card-title mb-md">Key Financial Metrics</h2>
+        <div class="grid-12" id="keyMetrics">
+          <!-- each metric occupies 2/12 on ≥1024px, 6/12 on tablet, full on mobile -->
+          <!-- example card – JS continues to update same IDs -->
+          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
+            <span class="metric-label flex justify-between items-center">
+              Total MRR <span id="trend_total_mrr"></span>
+            </span>
+            <span id="metric_total_mrr" class="metric-value">$0</span>
+            <canvas id="sparkline_total_mrr" height="30"></canvas>
+            <p class="metric-tooltip">Monthly Recurring Revenue across all tiers</p>
+          </div>
+          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
+            <span class="metric-label flex justify-between items-center">Active Customers <span id="trend_active_customers"></span></span>
+            <span id="metric_active_customers" class="metric-value">0</span>
+            <canvas id="sparkline_active_customers" height="30"></canvas>
+            <p class="metric-tooltip">Total number of active paying customers</p>
+          </div>
+          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
+            <span class="metric-label flex justify-between items-center">Annual Revenue <span id="trend_annual_revenue"></span></span>
+            <span id="metric_annual_revenue" class="metric-value">$0</span>
+            <canvas id="sparkline_annual_revenue" height="30"></canvas>
+            <p class="metric-tooltip">Projected annual revenue based on current MRR</p>
+          </div>
+          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
+            <span class="metric-label flex justify-between items-center">Customer LTV <span id="trend_ltv_smb"></span></span>
+            <span id="metric_ltv_smb" class="metric-value">$0</span>
+            <canvas id="sparkline_ltv_smb" height="30"></canvas>
+            <p class="metric-tooltip">Lifetime Value of an average customer</p>
+          </div>
+          <div class="metric-card grid-col-span-12 md:grid-col-span-6 lg:grid-col-span-2">
+            <span class="metric-label flex justify-between items-center">New Customers/Month <span id="trend_new_smb_customers_monthly"></span></span>
+            <span id="metric_new_smb_customers_monthly" class="metric-value">0</span>
+            <canvas id="sparkline_new_smb_customers_monthly" height="30"></canvas>
+            <p class="metric-tooltip">Average number of new customers acquired monthly</p>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <!-- Main Content Area (Grid) -->
-    <div class="main-layout-grid container">
-        <!-- Main Content Column -->
-        <main class="main-content-column">
-            <!-- KPI Cards Section -->
-            <section class="kpi-section">
-                <div class="kpi-grid">
-                    <div class="kpi-card revenue" id="kpi-total-revenue">
-                        <div class="kpi-content">
-                            <h3 class="kpi-title">Total Revenue</h3>
-                            <div class="kpi-value">$<span id="total-revenue-value">0</span></div>
-                            <div class="kpi-trend positive" id="revenue-trend-indicator">↑ <span id="revenue-trend-value">0</span>%</div>
-                        </div>
-                        <div class="kpi-sparkline" id="revenue-sparkline"><canvas></canvas></div>
-                    </div>
-                    <div class="kpi-card customers" id="kpi-customer-count">
-                        <div class="kpi-content">
-                            <h3 class="kpi-title">Active Customers</h3>
-                            <div class="kpi-value"><span id="customer-count-value">0</span></div>
-                            <div class="kpi-trend positive" id="customer-trend-indicator">↑ <span id="customer-trend-value">0</span>%</div>
-                        </div>
-                        <div class="kpi-sparkline" id="customers-sparkline"><canvas></canvas></div>
-                    </div>
-                    <div class="kpi-card cac" id="kpi-churn-rate">
-                        <div class="kpi-content">
-                            <h3 class="kpi-title">Avg. Churn Rate</h3>
-                            <div class="kpi-value"><span id="churn-rate-value">0</span>%</div>
-                            <div class="kpi-trend neutral" id="churn-trend-indicator">→ <span id="churn-trend-value">0</span>%</div>
-                        </div>
-                        <div class="kpi-sparkline" id="churn-sparkline"><canvas></canvas></div>
-                    </div>
-                    <div class="kpi-card ltv" id="kpi-ltv-cac">
-                        <div class="kpi-content">
-                            <h3 class="kpi-title">LTV:CAC Ratio</h3>
-                            <div class="kpi-value"><span id="ltv-cac-value">0</span>:1</div>
-                            <div class="kpi-trend positive" id="ltv-cac-trend-indicator">↑ <span id="ltv-cac-trend-value">0</span>%</div>
-                        </div>
-                        <div class="kpi-sparkline" id="ltv-cac-sparkline"><canvas></canvas></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Charts Section -->
-            <section class="charts-section">
-                <div class="chart-card mb-4">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Monthly Recurring Revenue (MRR)</h3>
-                    </div>
-                    <div class="chart-body">
-                        <canvas id="mrr-chart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-grid">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Customer Growth</h3>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="customer-growth-chart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Revenue by Tier</h3>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="revenue-by-tier-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Collapsible Tables Section -->
-            <section class="tables-section">
-                <!-- Revenue Projection Table -->
-                <div class="collapsible-table-container" id="revenue-table-container">
-                    <div class="table-header">
-                        <h3>Revenue Projections</h3>
-                        <button class="collapse-toggle"><span class="icon">▼</span></button>
-                    </div>
-                    <div class="table-content">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th class="toggle-col"></th>
-                                    <th>Period</th>
-                                    <th>Revenue</th>
-                                    <th>Customers</th>
-                                    <th>ARPU</th>
-                                    <th>Cumulative Revenue</th>
-                                    <th>Growth Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody id="revenue-table-body">
-                                <!-- Data will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Expenses & Profitability Table -->
-                <div class="collapsible-table-container mt-4" id="expenses-table-container">
-                    <div class="table-header">
-                        <h3>Expenses & Profitability</h3>
-                        <button class="collapse-toggle"><span class="icon">▼</span></button>
-                    </div>
-                    <div class="table-content">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th class="toggle-col"></th>
-                                    <th>Period</th>
-                                    <th>Operating Expenses</th>
-                                    <th>COGS</th>
-                                    <th>Net Profit</th>
-                                    <th>Profit Margin</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expenses-table-body">
-                                <!-- Data will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Sidebar for Assumptions -->
-        <aside class="sidebar-column">
-            <div class="sidebar-sticky-content">
-                <div class="sidebar-header">
-                    <h2>Model Assumptions</h2>
-                </div>
-                <div class="sidebar-content">
-                    <div class="accordion" id="assumptions-accordion">
-                        <div class="accordion-item open">
-                            <button class="accordion-header">General Parameters <span class="accordion-icon">▼</span></button>
-                            <div class="accordion-content">
-                                <div class="input-group">
-                                    <label for="starting-month">Starting Month:</label>
-                                    <input type="month" id="starting-month" value="2025-06" class="form-control">
+      <!-- ASSUMPTIONS (scroll column) -->
+      <aside class="grid-col-span-12 lg:grid-col-span-4 sticky top-[96px] overflow-y-auto h-[calc(100vh-128px)] pr-lg"
+             id="assumptionsCol">
+          <form id="assumptionsForm">
+                    <!-- Revenue & Tiers Card -->
+                    <div class="card mb-md interactive-card" id="revenue-card">
+                        <button type="button" class="card-header btn-reset flex justify-between items-center">
+                            <h3 class="card-title">Revenue & Tiers</h3>
+                            <span class="card-toggle-icon">▼</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="input-group">
+                                <label for="tier1_revenue">
+                                    Tier 1 Monthly Revenue ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Monthly revenue for basic tier subscription</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier1_revenue" data-step="100">-</button>
+                                    <input type="number" id="tier1_revenue" name="tier1_revenue" value="1000" step="100">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier1_revenue" data-step="100">+</button>
                                 </div>
-                                <div class="input-group">
-                                    <label for="projection-months-slider">Projection Length (Months): <span id="projection-months-value">36</span></label>
-                                    <input type="range" id="projection-months-slider" min="12" max="60" value="36" class="range-slider">
+                            </div>
+                            <div class="input-group">
+                                <label for="tier2_revenue">
+                                    Tier 2 Monthly Revenue ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Monthly revenue for standard tier subscription</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier2_revenue" data-step="100">-</button>
+                                    <input type="number" id="tier2_revenue" name="tier2_revenue" value="2500" step="100">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier2_revenue" data-step="100">+</button>
                                 </div>
-                                <div class="input-group">
-                                    <label for="monthly-churn-slider">Monthly Churn Rate (%): <span id="monthly-churn-value">10.0</span></label>
-                                    <input type="range" id="monthly-churn-slider" min="0" max="20" step="0.1" value="10" class="range-slider">
+                            </div>
+                            <div class="input-group">
+                                <label for="tier3_revenue">
+                                    Tier 3 Monthly Revenue ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Monthly revenue for premium tier subscription</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier3_revenue" data-step="100">-</button>
+                                    <input type="number" id="tier3_revenue" name="tier3_revenue" value="5000" step="100">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier3_revenue" data-step="100">+</button>
                                 </div>
-                                <div class="input-group">
-                                    <label for="wacc-slider">WACC (%): <span id="wacc-value">15.0</span></label>
-                                    <input type="range" id="wacc-slider" min="5" max="25" step="0.1" value="15" class="range-slider">
+                            </div>
+                            <div class="input-group">
+                                <label for="tier4_revenue">
+                                    Tier 4 Monthly Revenue ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Monthly revenue for enterprise tier subscription</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="tier4_revenue" data-step="100">-</button>
+                                    <input type="number" id="tier4_revenue" name="tier4_revenue" value="10000" step="100">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="tier4_revenue" data-step="100">+</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <button class="accordion-header">Customer Acquisition <span class="accordion-icon">▶</span></button>
-                            <div class="accordion-content" style="display:none;">
-                                <div class="input-group">
-                                    <label for="cac-ind-slider">CAC - Individual ($): <span id="cac-ind-value">70</span></label>
-                                    <input type="range" id="cac-ind-slider" min="10" max="200" step="1" value="70" class="range-slider">
-                                </div>
-                                <div class="input-group">
-                                    <label for="cac-smb-slider">CAC - SMB ($): <span id="cac-smb-value">239</span></label>
-                                    <input type="range" id="cac-smb-slider" min="50" max="500" step="1" value="239" class="range-slider">
-                                </div>
-                                <div class="input-group">
-                                    <label for="marketing-budget-slider">Monthly Marketing Budget ($): <span id="marketing-budget-value">10000</span></label>
-                                    <input type="range" id="marketing-budget-slider" min="1000" max="50000" step="500" value="10000" class="range-slider">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <button class="accordion-header">Individual Tiers <span class="accordion-icon">▶</span></button>
-                            <div class="accordion-content" style="display:none;">
-                                <div class="tier-group" data-tier-type="individual">
-                                    <div class="tier-item" data-tier-name="seed">
-                                        <label>Seed Price: $<span id="seed-price-value">75</span></label>
-                                        <input type="range" class="range-slider tier-price" id="seed-price-slider" min="10" max="150" value="75">
-                                        <label>Monthly Acquired: <span id="seed-acquisition-value">10</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="seed-acquisition-slider" min="0" max="50" value="10">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="sprout">
-                                        <label>Sprout Price: $<span id="sprout-price-value">100</span></label>
-                                        <input type="range" class="range-slider tier-price" id="sprout-price-slider" min="20" max="200" value="100">
-                                        <label>Monthly Acquired: <span id="sprout-acquisition-value">5</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="sprout-acquisition-slider" min="0" max="30" value="5">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="grove">
-                                        <label>Grove Price: $<span id="grove-price-value">250</span></label>
-                                        <input type="range" class="range-slider tier-price" id="grove-price-slider" min="50" max="400" value="250">
-                                        <label>Monthly Acquired: <span id="grove-acquisition-value">2</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="grove-acquisition-slider" min="0" max="20" value="2">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="frontier">
-                                        <label>Frontier Price: $<span id="frontier-price-value">500</span></label>
-                                        <input type="range" class="range-slider tier-price" id="frontier-price-slider" min="100" max="800" value="500">
-                                        <label>Monthly Acquired: <span id="frontier-acquisition-value">1</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="frontier-acquisition-slider" min="0" max="10" value="1">
-                                    </div>
+                    </div>
+                    <!-- Customer Acquisition Card -->
+                    <div class="card mb-md interactive-card" id="acquisition-card">
+                        <button type="button" class="card-header btn-reset flex justify-between items-center">
+                            <h3 class="card-title">Customer Acquisition</h3>
+                            <span class="card-toggle-icon">▼</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="input-group">
+                                <label for="marketing_budget">
+                                    Monthly Marketing Budget ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Total monthly budget allocated to marketing activities</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="marketing_budget" data-step="100">-</button>
+                                    <input type="number" id="marketing_budget" name="marketing_budget" value="5000" step="100">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="marketing_budget" data-step="100">+</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="accordion-item">
-                            <button class="accordion-header">SMB Tiers <span class="accordion-icon">▶</span></button>
-                            <div class="accordion-content" style="display:none;">
-                                 <div class="tier-group" data-tier-type="smb">
-                                    <div class="tier-item" data-tier-name="tier1">
-                                        <label>Tier 1 Price: $<span id="tier1-price-value">1000</span></label>
-                                        <input type="range" class="range-slider tier-price" id="tier1-price-slider" min="200" max="2000" value="1000">
-                                        <label>Monthly Acquired: <span id="tier1-acquisition-value">3</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="tier1-acquisition-slider" min="0" max="10" value="3">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="tier2">
-                                        <label>Tier 2 Price: $<span id="tier2-price-value">2500</span></label>
-                                        <input type="range" class="range-slider tier-price" id="tier2-price-slider" min="500" max="5000" value="2500">
-                                        <label>Monthly Acquired: <span id="tier2-acquisition-value">2</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="tier2-acquisition-slider" min="0" max="8" value="2">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="tier3">
-                                        <label>Tier 3 Price: $<span id="tier3-price-value">5000</span></label>
-                                        <input type="range" class="range-slider tier-price" id="tier3-price-slider" min="1000" max="10000" value="5000">
-                                        <label>Monthly Acquired: <span id="tier3-acquisition-value">1</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="tier3-acquisition-slider" min="0" max="5" value="1">
-                                    </div>
-                                    <div class="tier-item" data-tier-name="tier4">
-                                        <label>Tier 4 Price: $<span id="tier4-price-value">10000</span></label>
-                                        <input type="range" class="range-slider tier-price" id="tier4-price-slider" min="2000" max="20000" value="10000">
-                                        <label>Monthly Acquired: <span id="tier4-acquisition-value">0.5</span></label>
-                                        <input type="range" class="range-slider tier-acquisition" id="tier4-acquisition-slider" min="0" max="3" step="0.1" value="0.5">
+                            <div class="input-group">
+                                <label for="cpl">
+                                    Average Cost Per Lead (CPL) ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Average cost to acquire one qualified lead</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="cpl" data-step="5">-</button>
+                                    <input type="number" id="cpl" name="cpl" value="50" step="5">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="cpl" data-step="5">+</button>
+                                </div>
+                            </div>
+                            <div class="input-group with-slider">
+                                <label for="conversion_rate">
+                                    Lead-to-Customer Conversion (%)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Percentage of leads that convert to paying customers</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="conversion_rate" name="conversion_rate" value="10" step="0.1" min="0.1" max="50">
+                                <div class="slider-container">
+                                    <input type="range" class="slider-input" id="conversion_rate_slider" min="0.1" max="50" value="10" step="0.1">
+                                    <div class="slider-value">
+                                        <span class="min">0.1%</span>
+                                        <span class="current" id="conversion_rate_display">10%</span>
+                                        <span class="max">50%</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </aside>
-    </div> <!-- End main-layout-grid -->
+                    <!-- Customer Retention Card -->
+                    <div class="card mb-md interactive-card" id="retention-card">
+                        <button type="button" class="card-header btn-reset flex justify-between items-center">
+                            <h3 class="card-title">Customer Retention</h3>
+                            <span class="card-toggle-icon">▼</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="input-group with-slider">
+                                <label for="churn_rate_smb">
+                                    Monthly Churn Rate (%)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Percentage of customers that cancel their subscription each month</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="churn_rate_smb" name="churn_rate_smb" value="5" step="0.1" min="0.1" max="20">
+                                <div class="slider-container">
+                                    <input type="range" class="slider-input" id="churn_rate_smb_slider" min="0.1" max="20" value="5" step="0.1">
+                                    <div class="slider-value">
+                                        <span class="min">0.1%</span>
+                                        <span class="current" id="churn_rate_smb_display">5%</span>
+                                        <span class="max">20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Financial Assumptions Card -->
+                    <div class="card mb-md interactive-card" id="financial-card">
+                        <button type="button" class="card-header btn-reset flex justify-between items-center">
+                            <h3 class="card-title">Financial Assumptions</h3>
+                            <span class="card-toggle-icon">▼</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="input-group with-slider">
+                                <label for="wacc">
+                                    WACC (%)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Weighted Average Cost of Capital - discount rate used for NPV calculations</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="wacc" name="wacc" value="15" step="0.1" min="1" max="30">
+                                <div class="slider-container">
+                                    <input type="range" class="slider-input" id="wacc_slider" min="1" max="30" value="15" step="0.1">
+                                    <div class="slider-value">
+                                        <span class="min">1%</span>
+                                        <span class="current" id="wacc_display">15%</span>
+                                        <span class="max">30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="initial_cac_smb">
+                                    Baseline CAC per Customer ($)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Initial Customer Acquisition Cost used as baseline for calculations</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="initial_cac_smb" data-step="10">-</button>
+                                    <input type="number" id="initial_cac_smb" name="initial_cac_smb" value="239" step="10">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="initial_cac_smb" data-step="10">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Projection Settings Card -->
+                    <div class="card mb-md interactive-card" id="projection-card">
+                        <button type="button" class="card-header btn-reset flex justify-between items-center">
+                            <h3 class="card-title">Projection Settings</h3>
+                            <span class="card-toggle-icon">▼</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="input-group">
+                                <label for="projection_months">
+                                    Projection Length (Months)
+                                    <span class="tooltip-container">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-content">Number of months to project financial metrics</span>
+                                    </span>
+                                </label>
+                                <div class="input-stepper">
+                                    <button type="button" class="stepper-btn" data-action="decrement" data-target="projection_months" data-step="1">-</button>
+                                    <input type="number" id="projection_months" name="projection_months" value="24" min="1" max="60">
+                                    <button type="button" class="stepper-btn" data-action="increment" data-target="projection_months" data-step="1">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+      </aside>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <p>Recalculating model...</p>
-    </div>
+      <!-- VISUALS -->
+      <section class="grid-col-span-12 lg:grid-col-span-8" id="visualCol">
+        <div class="card">
+          <h2 class="card-title">Projections & Visualizations</h2>
+          <div class="chart-container mb-lg"><div id="mrrChartContainer" class="chart-placeholder"></div></div>
+          <div class="grid-12">
+            <div class="chart-container grid-col-span-12 md:grid-col-span-6"><div id="customersChartContainer" class="chart-placeholder"></div></div>
+            <div class="chart-container grid-col-span-12 md:grid-col-span-6"><div id="tierRevenueChartContainer" class="chart-placeholder"></div></div>
+          </div>
+        </div>
+      </section>
 
-    <!-- Toast Container for Notifications -->
-    <div id="toast-container" class="toast-container"></div>
+    </main>
 
-    <!-- JavaScript Imports -->
-    <script type="module" src="{{ url_for('static', filename='js/export-utils.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/components/ui/filter-chip-manager.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/components/ui/kpi-card.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/components/outputs/chart-manager.js') }}"></script>
-    <!-- table-manager.js disabled -->
-    <!-- collap-table.js disabled -->
-    <script type="module" src="{{ url_for('static', filename='js/components/inputs/accordion-manager.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/components/inputs/slider-manager.js') }}"></script>
-    <!-- scenario-manager.js disabled -->
+    <script type="module" src="{{ url_for('static', filename='js/chart-manager.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
