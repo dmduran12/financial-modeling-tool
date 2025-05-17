@@ -7,11 +7,9 @@
     <title>Interactive SMB Model | Catona</title>
     
     <!-- External CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}"> <!-- Keep if still used for other components -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Keep if still used for other styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}"> <!-- Keep if still used -->
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/design-system.css">
+    <link rel="stylesheet" href="../static/css/components.css">
+    <link rel="icon" href="../static/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <header class="app-header px-8 py-4"><h1 class="app-title">Financial Dashboard</h1></header>
@@ -273,10 +271,10 @@
 
   <!-- import-map so ES-modules resolve -->
   <script type="importmap">
-    { "imports": { "chart.js": "{{ url_for('static',filename='js/vendor/chart.umd.js') }}" } }
+    { "imports": { "chart.js": "../static/js/vendor/chart.umd.js" } }
   </script>
 
-  <script type="module" src="{{ url_for('static',filename='js/chart-manager.js') }}"></script>
-  <script type="module" src="{{ url_for('static',filename='js/main.js') }}"></script>
+  <script type="module" src="../static/js/chart-manager.js"></script>
+  <script type="module" src="../static/js/main.js"></script>
 </body>
 </html>
