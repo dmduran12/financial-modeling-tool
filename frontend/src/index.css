@@ -1,0 +1,10 @@
+@import "./styles/brand-tokens.css";
+@import "./styles/design-system.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --Pearl: #F5F3F0;
+}
+body { background-color: var(--Pearl); }
