@@ -24,10 +24,11 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-frontend_dist = Path("frontend/dist")
-if frontend_dist.exists():
-    app.mount("/assets", StaticFiles(directory=frontend_dist / "assets"), name="assets")
-    templates = Jinja2Templates(directory=str(frontend_dist))
+
+dist_dir = Path("frontend/dist")
+if dist_dir.exists():
+    app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
+    templates = Jinja2Templates(directory=str(dist_dir))
 else:
     templates = Jinja2Templates(directory="frontend")
 
@@ -76,6 +77,9 @@ async def get_kpis():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    dist_index = Path("frontend/dist/index.html")
+    if dist_index.exists():
+        return FileResponse(dist_index)
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/api/calculate", response_model=CalculationResponse)

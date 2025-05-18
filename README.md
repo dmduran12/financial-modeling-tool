@@ -35,6 +35,24 @@ If you only need a static preview without API functionality you can still run
 `python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
 will fail in that mode.
 
+## Deployment
+
+For a production setup build the frontend assets first:
+
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+Starting the server normally will then use the bundled files in `frontend/dist`:
+
+```bash
+uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+```
+
+
 ### Environment Variables
 
 The CORS middleware reads three optional variables to control allowed origins,
