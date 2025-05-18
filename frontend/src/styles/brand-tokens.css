@@ -10,6 +10,11 @@
   --cat-grad-c:#D19BEA;
   --cat-green :#6EE26A;
   --cat-blue  :#4DBBFF;
+  --nightfall-gradient:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);
+
+  /* spacing */
+  --space-sm:0.5rem;
+  --space-md:1rem;
 
   /* semantic */
   --cat-success:#39B54A;
