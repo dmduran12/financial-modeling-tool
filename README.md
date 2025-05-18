@@ -33,6 +33,22 @@ If you only need a static preview without API functionality you can still run
 `python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
 will fail in that mode.
 
+## Running Tests
+
+### Backend
+
+```bash
+pytest
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm test
+```
+
 ## Notes
 
 - The `static/js/model` directory contains minimal placeholder business logic to demonstrate calculations.
