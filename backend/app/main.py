@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pathlib import Path
 from pydantic import BaseModel
 from typing import List
 
@@ -17,7 +18,12 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="frontend")
+dist_dir = Path("frontend/dist")
+if dist_dir.exists():
+    app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
+    templates = Jinja2Templates(directory=str(dist_dir))
+else:
+    templates = Jinja2Templates(directory="frontend")
 
 class KPI(BaseModel):
     name: str
@@ -63,6 +69,9 @@ async def get_kpis():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    dist_index = Path("frontend/dist/index.html")
+    if dist_index.exists():
+        return FileResponse(dist_index)
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/api/calculate", response_model=CalculationResponse)
