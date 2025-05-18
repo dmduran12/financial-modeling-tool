@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -7,9 +8,20 @@ from typing import List
 
 app = FastAPI(title="Catona Dashboard")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="frontend")
+
+class KPI(BaseModel):
+    name: str
+    value: float
 
 class KPIRequest(BaseModel):
     mrr: float
@@ -37,6 +49,17 @@ class CalculationResponse(BaseModel):
     annual_revenue: float
     ltv: float
     cac: float
+
+
+@app.get("/api/kpis", response_model=List[KPI])
+async def get_kpis():
+    data = [
+        KPI(name="Total MRR", value=256000),
+        KPI(name="Annual Revenue", value=998000),
+        KPI(name="Customer LTV", value=2000),
+        KPI(name="Active Users", value=35)
+    ]
+    return data
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):

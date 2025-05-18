@@ -27,7 +27,7 @@ This repository contains a simple prototype dashboard for modeling subscription 
 5. **Open the app**
    Visit [http://localhost:8000/](http://localhost:8000/)
 
-The backend serves `frontend/index.html` and exposes the `/api` endpoints used by the dashboard.
+The backend serves `frontend/index.html` and exposes both `/api/kpis` and `/api/calculate` for the dashboard.
 
 If you only need a static preview without API functionality you can still run
 `python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
