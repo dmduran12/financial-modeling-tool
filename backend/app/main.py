@@ -1,15 +1,12 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List
 
 app = FastAPI(title="Catona Dashboard")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-templates = Jinja2Templates(directory="frontend")
 
 class KPIRequest(BaseModel):
     mrr: float
@@ -39,8 +36,8 @@ class CalculationResponse(BaseModel):
     cac: float
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+async def index():
+    return FileResponse("frontend/index.html")
 
 @app.post("/api/calculate", response_model=CalculationResponse)
 async def calculate(data: CalculationRequest):
