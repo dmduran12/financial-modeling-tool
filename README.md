@@ -2,16 +2,20 @@
 
 This repository contains a simple prototype dashboard for modeling subscription revenue. The project now includes a small FastAPI backend that powers the calculation API used by the frontend.
 
+These instructions assume **macOS** with Python 3 available. Always invoke
+`python3` to ensure you use the interpreter where dependencies like FastAPI are
+installed.
+
 ## Running Locally
 
 1. **Clone the repository**
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/dmduran12/financial-modeling-tool.git
    cd financial-modeling-tool
    ```
 2. **Create and activate a virtual environment**
    ```bash
-   python -m venv .venv && source .venv/bin/activate
+   python3 -m venv .venv && source .venv/bin/activate
    ```
 3. **Install Python dependencies**
    ```bash
@@ -32,13 +36,13 @@ This repository contains a simple prototype dashboard for modeling subscription 
    uvicorn backend.app.main:app --reload
    ```
    If you launch the server from another directory, set `PYTHONPATH=.` or use
-   the `python -m` form:
+   the `python3 -m` form:
    ```bash
    PYTHONPATH=. uvicorn backend.app.main:app --reload
    # or
-   python -m uvicorn backend.app.main:app --reload
+   python3 -m uvicorn backend.app.main:app --reload
    ```
-   When encountering module import errors, run `python tools/debug_report.py`
+   When encountering module import errors, run `python3 tools/debug_report.py`
    for diagnostic information.
 7. **Open the app**
    Visit [http://localhost:8000/](http://localhost:8000/)
@@ -68,7 +72,7 @@ Starting the server normally will then use the bundled files in `frontend/dist`:
 uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
 # or if started from another directory
 # PYTHONPATH=. uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
-# python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+# python3 -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
 ```
 
 
@@ -125,12 +129,12 @@ Start the API without reload:
 uvicorn backend.app.main:app
 # or if started from another directory
 # PYTHONPATH=. uvicorn backend.app.main:app
-# python -m uvicorn backend.app.main:app
+# python3 -m uvicorn backend.app.main:app
 ```
 
 When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
 
 ## Debug Report
 
-Run `python tools/debug_report.py` to print helpful environment information. The script reports the Python version, installed packages, Node and npm versions, and values of key environment variables such as `CORS_ALLOW_ORIGINS`. The output is plain text so it can be easily copied into bug reports.
+Run `python3 tools/debug_report.py` to print helpful environment information. The script reports the Python version, installed packages, Node and npm versions, and values of key environment variables such as `CORS_ALLOW_ORIGINS`. The output is plain text so it can be easily copied into bug reports.
 
