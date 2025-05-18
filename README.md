@@ -33,12 +33,13 @@ installed.
    ```
 6. **Start the FastAPI server from the project root**
    ```bash
-   uvicorn backend.app.main:app --reload
+   .venv/bin/uvicorn backend.app.main:app --reload
    ```
+   Using the venv's `uvicorn` avoids accidentally launching a globally installed one.
    If you launch the server from another directory, set `PYTHONPATH=.` or use
    the `python3 -m` form:
    ```bash
-   PYTHONPATH=. uvicorn backend.app.main:app --reload
+   PYTHONPATH=. .venv/bin/uvicorn backend.app.main:app --reload
    # or
    python3 -m uvicorn backend.app.main:app --reload
    ```
