@@ -1,55 +1,32 @@
-# Catona Climate Dashboard
+# Financial Modeling Tool
 
-This is a minimal full-stack demo implementing a basic dashboard with FastAPI and Preact + Tailwind CSS.
+This repository contains a small prototype for a financial dashboard. The goal is to demonstrate a simple static front end while leaving room for a future backend and build pipeline.
 
-## Running Locally
+## Project Structure
 
-1. **Install Python dependencies**
-   ```bash
-   pip install fastapi uvicorn jinja2
-   ```
+- **frontend/** – Contains `index.html` and a React+Vite project (`src/`, `package.json`).
+- **static/** – Stand‑alone JavaScript used by the static demo.
+- **backend/** – Example FastAPI code for future APIs.
+- **docs/** – Project documentation.
+- **requirements.txt** – Python dependencies for the backend.
 
-2. **Start the server**
-   ```bash
-   uvicorn backend.app.main:app --reload
-   ```
+## Serving the Static Files
 
-3. **Open the app**
-   Visit [http://localhost:8000](http://localhost:8000) in your browser.
+The current dashboard can be viewed without any build step. From the repository root run:
 
-The front-end uses CDN hosted libraries, so no Node.js setup is required.
-
-This repository contains a minimal prototype of the Catona Climate customer dashboard.
-It demonstrates a FastAPI backend and a React + Tailwind frontend.
-
-## Requirements
-- Python 3.10+
-- Node.js 18+
-
-## Setup
-
-1. **Install backend dependencies**
-   ```bash
-   pip install fastapi uvicorn[standard]
-   ```
-2. **Install frontend dependencies**
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-## Running locally
-
-Start the backend API:
 ```bash
-uvicorn backend.main:app --reload
+python3 -m http.server
 ```
 
-In another terminal, start the frontend dev server:
-```bash
-cd frontend
-npm run dev
-```
+Then open `http://localhost:8000/frontend/index.html` in your browser. The page loads scripts from the `static/` folder and functions entirely as a static site.
 
-Visit `http://localhost:5173` to view the dashboard. The frontend proxies API requests to the backend running on port 8000.
+## Future Development
 
+The repo already contains scaffolding for a more complete application. Possible next steps include:
+
+1. **Backend API** – Expand the FastAPI app in `backend/` and connect it to a database.
+2. **Frontend Build** – Use the Vite build process (`npm run build` inside `frontend/`) to produce optimized assets.
+3. **Integration** – Serve the built frontend through the backend or a static hosting service.
+4. **Testing & CI** – Add automated tests and continuous integration workflows.
+
+This layout should make it straightforward to evolve from a simple static prototype into a full-stack financial modeling tool.
