@@ -29,6 +29,8 @@ This repository contains a simple prototype dashboard for modeling subscription 
 
 The backend serves `frontend/index.html` and exposes the `/api` endpoints used by the dashboard.
 
+The old static prototype located at `templates/index.html` has been removed so the project only has one entry point.
+
 If you only need a static preview without API functionality you can still run
 `python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
 will fail in that mode.
