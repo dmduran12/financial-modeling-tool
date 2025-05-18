@@ -27,10 +27,19 @@ This repository contains a simple prototype dashboard for modeling subscription 
    npm run build      # or `npm run dev` for hot reloading
    cd ..              # return to project root if you built the assets
    ```
-6. **Start the FastAPI server**
+6. **Start the FastAPI server from the project root**
    ```bash
    uvicorn backend.app.main:app --reload
    ```
+   If you launch the server from another directory, set `PYTHONPATH=.` or use
+   the `python -m` form:
+   ```bash
+   PYTHONPATH=. uvicorn backend.app.main:app --reload
+   # or
+   python -m uvicorn backend.app.main:app --reload
+   ```
+   When encountering module import errors, run `python tools/debug_report.py`
+   for diagnostic information.
 7. **Open the app**
    Visit [http://localhost:8000/](http://localhost:8000/)
 
@@ -57,6 +66,9 @@ Starting the server normally will then use the bundled files in `frontend/dist`:
 
 ```bash
 uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+# or if started from another directory
+# PYTHONPATH=. uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+# python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
 ```
 
 
@@ -111,6 +123,9 @@ Start the API without reload:
 
 ```bash
 uvicorn backend.app.main:app
+# or if started from another directory
+# PYTHONPATH=. uvicorn backend.app.main:app
+# python -m uvicorn backend.app.main:app
 ```
 
 When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
