@@ -35,6 +35,20 @@ If you only need a static preview without API functionality you can still run
 `python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
 will fail in that mode.
 
+### Environment Variables
+
+The CORS middleware reads three optional variables to control allowed origins,
+methods and headers:
+
+```
+CORS_ALLOW_ORIGINS  # e.g. "http://localhost:3000" (default)
+CORS_ALLOW_METHODS  # comma separated, default "GET,POST"
+CORS_ALLOW_HEADERS  # comma separated, default "Content-Type"
+```
+
+The provided defaults work well for development. In production set these
+variables to match your deployed frontend host and any additional requirements.
+
 ## Running Tests
 
 ### Backend
