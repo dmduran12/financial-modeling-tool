@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pathlib import Path
 from pydantic import BaseModel
 from typing import List
 
@@ -16,6 +17,13 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    """Serve the site's favicon."""
+    icon_path = Path(__file__).resolve().parents[2] / "favicon.ico"
+    return FileResponse(icon_path)
 
 templates = Jinja2Templates(directory="frontend")
 
