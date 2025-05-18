@@ -121,7 +121,15 @@ export default function Dashboard() {
               labels,
               datasets: [{ data: mrrArr, borderColor: '#486BFE', backgroundColor: '#486BFE20', fill: true, tension: 0.3 }],
             },
-            options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false },
+            options: {
+              plugins: { legend: { display: false } },
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { ticks: { font: { size: 10 } } },
+                y: { ticks: { font: { size: 10 } } },
+              },
+            },
           });
         } else {
           const ch = chartInstances.current.mrr;
@@ -142,7 +150,15 @@ export default function Dashboard() {
               labels,
               datasets: [{ data: custArr, borderColor: '#8262FF', backgroundColor: '#8262FF20', fill: true, tension: 0.3 }],
             },
-            options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false },
+            options: {
+              plugins: { legend: { display: false } },
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { ticks: { font: { size: 10 } } },
+                y: { ticks: { font: { size: 10 } } },
+              },
+            },
           });
         } else {
           const ch = chartInstances.current.cust;
@@ -163,7 +179,11 @@ export default function Dashboard() {
               labels: ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'],
               datasets: [{ data: tierArr, backgroundColor: ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A'] }],
             },
-            options: { responsive: true, maintainAspectRatio: false },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { labels: { font: { size: 10 } } } },
+            },
           });
         } else {
           const ch = chartInstances.current.tier;
@@ -179,28 +199,52 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: parseFloat(value) }));
   };
 
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">SMB Program Modeling</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
+return (
+  <div className="space-y-6">
+    <div>
+      <h1 className="main-header">SMB Program Modeling</h1>
+      <h2 className="sub-header">Carbon Removal Subscription Service</h2>
+    </div>
+    {metrics && (
+      <div id="kpiRow" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="metric-card text-center">
+          <div className="metric-label">Total MRR</div>
+          <div className="metric-value">${metrics.total_mrr.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Active Customers</div>
+          <div className="metric-value">{metrics.active_customers}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Annual Revenue</div>
+          <div className="metric-value">${metrics.annual_revenue.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Customer LTV</div>
+          <div className="metric-value">${metrics.ltv.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">New Customers (Month 1)</div>
+          <div className="metric-value">{metrics.new_cust_month}</div>
+        </div>
+      </div>
+    )}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="space-y-6 lg:col-span-3">
+        <div>
+          <h3 className="content-header">Revenue Tiers</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Revenue Tiers</h2>
-            {[1, 2, 3, 4].map((n) => (
+            {[1,2,3,4].map((n) => (
               <div key={n} className="mb-2">
                 <label className="block text-sm">Tier {n} Revenue</label>
-                <input
-                  type="number"
-                  name={`tier${n}_revenue`}
-                  value={form[`tier${n}_revenue` as keyof FormState] as number}
-                  onChange={handleChange}
-                  className="w-full border px-2 py-1 rounded"
-                />
+                <input type="number" name={`tier${n}_revenue`} value={form[`tier${n}_revenue` as keyof FormState] as number} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
               </div>
             ))}
           </div>
+        </div>
+        <div>
+          <h3 className="content-header">Marketing</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Marketing</h2>
             <div className="mb-2">
               <label className="block text-sm">Marketing Budget</label>
               <input type="number" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
@@ -214,8 +258,10 @@ export default function Dashboard() {
               <input type="number" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
             </div>
           </div>
+        </div>
+        <div>
+          <h3 className="content-header">Financial</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Financial</h2>
             <div className="mb-2">
               <label className="block text-sm">Churn Rate (%)</label>
               <input type="number" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
@@ -242,48 +288,28 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            {metrics && (
-              <>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Total MRR</div>
-                  <div className="text-xl font-medium">${metrics.total_mrr.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Active Customers</div>
-                  <div className="text-xl font-medium">{metrics.active_customers}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Annual Revenue</div>
-                  <div className="text-xl font-medium">${metrics.annual_revenue.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Customer LTV</div>
-                  <div className="text-xl font-medium">${metrics.ltv.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">New Customers (Month 1)</div>
-                  <div className="text-xl font-medium">{metrics.new_cust_month}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">NPV</div>
-                  <div className="text-xl font-medium">${metrics.npv.toFixed(0)}</div>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+      </div>
+      <div className="space-y-6 lg:col-span-9">
+        <div>
+          <h3 className="content-header">Monthly Recurring Revenue</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
             <canvas ref={mrrRef}></canvas>
           </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+        </div>
+        <div>
+          <h3 className="content-header">Active Customers</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
             <canvas ref={custRef}></canvas>
           </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+        </div>
+        <div>
+          <h3 className="content-header">Revenue by Tier</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
             <canvas ref={tierRef}></canvas>
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
