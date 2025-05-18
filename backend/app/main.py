@@ -31,6 +31,12 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+@app.get("/api/health")
+async def health():
+    """Simple health check endpoint."""
+    return {"status": "ok"}
+
+
 dist_dir = Path("frontend/dist")
 if dist_dir.exists():
     app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")

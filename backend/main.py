@@ -6,6 +6,7 @@ from backend.app.main import (
     KPI,
     CalculationRequest,
     CalculationResponse,
+    health,
     get_kpis,
     calculate,
 )
@@ -26,3 +27,5 @@ app.add_api_route(
     methods=["POST"],
     response_model=CalculationResponse,
 )
+
+app.add_api_route("/api/health", health, methods=["GET"])
