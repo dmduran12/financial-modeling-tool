@@ -51,14 +51,14 @@ installed.
    the project resides in a protected location; moving the repository to a
    regular folder such as `~/financial-modeling-tool` resolves this.
 7. **Open the app**
-   Visit [http://localhost:8000/](http://localhost:8000/)
+   Visit [http://localhost:8001/](http://localhost:8001/)
 
-The command above starts the API and serves the frontend at `http://localhost:8000/`. It also exposes `/api/kpis` and `/api/calculate` for the dashboard.
+The command above starts the API and serves the frontend at `http://localhost:8001/`. It also exposes `/api/kpis` and `/api/calculate` for the dashboard.
 
 The old static prototype located at `templates/index.html` has been removed so the project only has one entry point.
 
 If you only need a static preview without API functionality you can still run
-`python3 -m http.server 8000` and open `frontend/index.html`, but the API calls
+`python3 -m http.server 8001` and open `frontend/index.html`, but the API calls
 will fail in that mode.
 
 ## Deployment
@@ -75,10 +75,10 @@ cd ..
 Starting the server normally will then use the bundled files in `frontend/dist`:
 
 ```bash
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
 # or if started from another directory
-# PYTHONPATH=. uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
-# python3 -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+# PYTHONPATH=. uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
+# python3 -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
 ```
 
 

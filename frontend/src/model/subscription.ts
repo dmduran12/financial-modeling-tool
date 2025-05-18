@@ -3,6 +3,9 @@ export interface SubscriptionInput {
   churn_rate_smb: number;
   tier_revenues: number[];
   initial_customers?: number;
+  marketing_budget?: number;
+  cpl?: number;
+  conversion_rate?: number;
 }
 
 export interface SubscriptionResult {
@@ -24,17 +27,24 @@ export interface SubscriptionResult {
 export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResult {
   const months = input.projection_months || 12;
   const churn = input.churn_rate_smb / 100;
-  const growth = 0.05;
+
+  const monthlyAcquisition = input.marketing_budget && input.cpl && input.conversion_rate
+    ? (input.marketing_budget / Math.max(input.cpl, 1)) * (input.conversion_rate / 100)
+    : 0;
 
   const monthLabels = Array.from({ length: months }, (_, i) => `M${i + 1}`);
   let customers = input.initial_customers || 10;
   const customers_by_month: number[] = [];
   const mrr_by_month: number[] = [];
 
+  const avgRevPerCustomer =
+    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
+    (input.tier_revenues.length || 1);
+
   for (let i = 0; i < months; i++) {
-    customers = Math.max(0, customers * (1 + growth - churn));
+    customers = Math.max(0, customers * (1 - churn) + monthlyAcquisition);
     customers_by_month.push(Math.round(customers));
-    const mrr = input.tier_revenues.reduce((sum, rev) => sum + rev, 0);
+    const mrr = customers * avgRevPerCustomer;
     mrr_by_month.push(mrr);
   }
 
@@ -49,7 +59,7 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
       total_mrr: mrr_by_month[mrr_by_month.length - 1],
       total_customers: customers_by_month[customers_by_month.length - 1],
       annual_revenue: mrr_by_month[mrr_by_month.length - 1] * 12,
-      customer_ltv: mrr_by_month[mrr_by_month.length - 1] / (churn || 1),
+      customer_ltv: avgRevPerCustomer / (churn || 1),
       new_customers_monthly:
         customers_by_month[1] - (input.initial_customers || 10),
     },
