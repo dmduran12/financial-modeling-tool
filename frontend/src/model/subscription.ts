@@ -46,6 +46,10 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
     (input.tier_revenues.length || 1);
 
+  const avgRevenuePerCustomer =
+    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
+    (input.tier_revenues.length || 1);
+
   for (let i = 0; i < months; i++) {
     customers = Math.max(0, customers * (1 - churn) + monthlyAcquisition);
     customers_by_month.push(Math.round(customers));

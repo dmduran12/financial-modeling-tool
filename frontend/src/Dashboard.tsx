@@ -305,6 +305,47 @@ return (
         <div>
           <h3 className="content-header">Revenue by Tier</h3>
           <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {metrics && (
+              <>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">Total MRR</div>
+                  <div className="text-xl font-medium">${metrics.total_mrr.toLocaleString()}</div>
+                </div>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">Active Customers</div>
+                  <div className="text-xl font-medium">{metrics.active_customers}</div>
+                </div>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">Annual Revenue</div>
+                  <div className="text-xl font-medium">${metrics.annual_revenue.toLocaleString()}</div>
+                </div>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">Customer LTV</div>
+                  <div className="text-xl font-medium">${metrics.ltv.toLocaleString()}</div>
+                </div>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">New Customers (Month 1)</div>
+                  <div className="text-xl font-medium">{metrics.new_cust_month}</div>
+                </div>
+                <div className="p-4 bg-white rounded shadow text-center">
+                  <div className="text-sm text-gray-500">NPV</div>
+                  <div className="text-xl font-medium">${metrics.npv.toFixed(0)}</div>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Monthly Recurring Revenue</h3>
+            <canvas ref={mrrRef}></canvas>
+          </div>
+          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Active Customers</h3>
+            <canvas ref={custRef}></canvas>
+          </div>
+          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Revenue by Tier</h3>
             <canvas ref={tierRef}></canvas>
           </div>
         </div>
