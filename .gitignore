@@ -4,6 +4,7 @@ __pycache__/
 
 # Node
 node_modules/
+frontend/node_modules/
 
 # Environments
 .env
@@ -12,4 +13,9 @@ venv/
 
 # Build artifacts
 frontend/dist/
+dist/
+build/
 
+# Logs and OS files
+*.log
+.DS_Store
