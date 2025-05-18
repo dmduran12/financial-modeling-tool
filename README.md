@@ -1,32 +1,26 @@
-# Financial Modeling Tool
+# Catona Climate Customer Dashboard (Prototype)
 
-This repository contains a small prototype for a financial dashboard. The goal is to demonstrate a simple static front end while leaving room for a future backend and build pipeline.
+This repository contains a simple prototype dashboard for modeling subscription revenue. It is a pure static build (HTML/CSS/JS) that can be served with any HTTP server. No backend is required.
 
-## Project Structure
+## Running Locally
 
-- **frontend/** – Contains `index.html` and a React+Vite project (`src/`, `package.json`).
-- **static/** – Stand‑alone JavaScript used by the static demo.
-- **backend/** – Example FastAPI code for future APIs.
-- **docs/** – Project documentation.
-- **requirements.txt** – Python dependencies for the backend.
+1. **Clone the repository**
+   ```bash
+   git clone <repo-url>
+   cd financial-modeling-tool
+   ```
+2. **Start a local server**
+   Using Python 3:
+   ```bash
+   python3 -m http.server 8000
+   ```
+3. **Open the app**
+   Visit [http://localhost:8000/templates/index.html](http://localhost:8000/templates/index.html)
 
-## Serving the Static Files
+The page will load the CSS from `static/css` and JavaScript from `static/js`.
 
-The current dashboard can be viewed without any build step. From the repository root run:
+## Notes
 
-```bash
-python3 -m http.server
-```
-
-Then open `http://localhost:8000/frontend/index.html` in your browser. The page loads scripts from the `static/` folder and functions entirely as a static site.
-
-## Future Development
-
-The repo already contains scaffolding for a more complete application. Possible next steps include:
-
-1. **Backend API** – Expand the FastAPI app in `backend/` and connect it to a database.
-2. **Frontend Build** – Use the Vite build process (`npm run build` inside `frontend/`) to produce optimized assets.
-3. **Integration** – Serve the built frontend through the backend or a static hosting service.
-4. **Testing & CI** – Add automated tests and continuous integration workflows.
-
-This layout should make it straightforward to evolve from a simple static prototype into a full-stack financial modeling tool.
+- The `static/js/model` directory contains minimal placeholder business logic to demonstrate calculations.
+- Brand tokens are defined in `static/css/brand-tokens.css` and include the full Catona color palette and design variables.
+- This is not a production‑ready build but serves as a foundation for further development.
