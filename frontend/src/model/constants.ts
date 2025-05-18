@@ -1,0 +1,11 @@
+export const DEFAULT_TIER_REVENUES = [1000, 2500, 5000, 10000];
+export const DEFAULT_MARKETING_BUDGET = 5000;
+export const DEFAULT_COST_PER_LEAD = 50;
+export const DEFAULT_CONVERSION_RATE = 10; // percent
+export const DEFAULT_MONTHLY_CHURN_RATE = 5; // percent
+export const DEFAULT_WACC = 15; // percent
+export const DEFAULT_INITIAL_CAC_SMB = 239;
+export const DEFAULT_PROJECTION_MONTHS = 24;
+export const DEFAULT_INITIAL_INVESTMENT = 50000;
+export const DEFAULT_OPERATING_EXPENSE_RATE = 40;
+export const DEFAULT_FIXED_COSTS = 2000;
