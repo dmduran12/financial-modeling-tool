@@ -107,3 +107,8 @@ uvicorn backend.app.main:app
 ```
 
 When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
+
+## Debug Report
+
+Run `python tools/debug_report.py` to print helpful environment information. The script reports the Python version, installed packages, Node and npm versions, and values of key environment variables such as `CORS_ALLOW_ORIGINS`. The output is plain text so it can be easily copied into bug reports.
+
