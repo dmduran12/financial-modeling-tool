@@ -13,8 +13,8 @@ export interface SubscriptionResult {
     monthLabels: string[];
     customers_by_month: number[];
     mrr_by_month: number[];
-    tier_revenues_end: number[];
     tier_revenue_by_month: number[][];
+    tier_revenues_end: number[];
   };
   metrics: {
     total_mrr: number;
@@ -37,32 +37,19 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
   let customers = input.initial_customers || 10;
   const customers_by_month: number[] = [];
   const mrr_by_month: number[] = [];
-  const tier_revenue_by_month: number[][] = Array.from(
-    { length: input.tier_revenues.length || 0 },
-    () => [] as number[]
-  );
+  const tier_revenue_by_month: number[][] = input.tier_revenues.map(() => []);
 
   const avgRevenuePerCustomer =
-    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
-    (input.tier_revenues.length || 1);
-
-  const avgRevenuePerCustomer =
-    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
-    (input.tier_revenues.length || 1);
-
-  const avgRevPerCustomer =
     input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
     (input.tier_revenues.length || 1);
 
   for (let i = 0; i < months; i++) {
     customers = Math.max(0, customers * (1 - churn) + monthlyAcquisition);
     customers_by_month.push(Math.round(customers));
-    const mrr = customers * avgRevPerCustomer;
-
+    const mrr = customers * avgRevenuePerCustomer;
     mrr_by_month.push(mrr);
-    const perTierCustomers = customers / (input.tier_revenues.length || 1);
     input.tier_revenues.forEach((rev, idx) => {
-      tier_revenue_by_month[idx].push(perTierCustomers * rev);
+      tier_revenue_by_month[idx].push(customers * rev);
     });
   }
 
@@ -71,16 +58,15 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
       monthLabels,
       customers_by_month,
       mrr_by_month,
-      tier_revenues_end: input.tier_revenues,
       tier_revenue_by_month,
+      tier_revenues_end: tier_revenue_by_month.map(arr => arr[arr.length - 1]),
     },
     metrics: {
       total_mrr: mrr_by_month[mrr_by_month.length - 1],
       total_customers: customers_by_month[customers_by_month.length - 1],
       annual_revenue: mrr_by_month[mrr_by_month.length - 1] * 12,
-      customer_ltv: avgRevPerCustomer / (churn || 1),
-      new_customers_monthly:
-        customers_by_month[1] - (input.initial_customers || 10),
+      customer_ltv: avgRevenuePerCustomer / (churn || 1),
+      new_customers_monthly: Math.round(monthlyAcquisition),
     },
   };
 }

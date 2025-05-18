@@ -109,7 +109,7 @@ export default function Dashboard() {
     const labels = results.projections.monthLabels;
     const mrrArr = results.projections.mrr_by_month;
     const custArr = results.projections.customers_by_month;
-    const tierArr = results.projections.tier_revenues_end;
+    const tierArr = results.projections.tier_revenue_by_month;
 
     if (mrrRef.current) {
       const ctx = mrrRef.current.getContext('2d');
@@ -172,22 +172,30 @@ export default function Dashboard() {
     if (tierRef.current) {
       const ctx = tierRef.current.getContext('2d');
       if (ctx) {
+        const datasets = tierArr.map((arr: number[], idx: number) => ({
+          label: `Tier ${idx + 1}`,
+          data: arr,
+          backgroundColor: ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A'][idx],
+          borderRadius: 8,
+        }));
         if (!chartInstances.current.tier) {
           chartInstances.current.tier = new Chart(ctx, {
-            type: 'pie',
-            data: {
-              labels: ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'],
-              datasets: [{ data: tierArr, backgroundColor: ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A'] }],
-            },
+            type: 'bar',
+            data: { labels, datasets },
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              scales: {
+                x: { stacked: true, ticks: { font: { size: 10 } } },
+                y: { stacked: true, ticks: { font: { size: 10 } } },
+              },
               plugins: { legend: { labels: { font: { size: 10 } } } },
             },
           });
         } else {
           const ch = chartInstances.current.tier;
-          (ch.data.datasets[0].data as number[]) = tierArr;
+          ch.data.labels = labels;
+          ch.data.datasets = datasets as any;
           ch.update();
         }
       }
@@ -199,158 +207,117 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: parseFloat(value) }));
   };
 
-return (
-  <div className="space-y-6">
-    <div>
-      <h1 className="main-header">SMB Program Modeling</h1>
-      <h2 className="sub-header">Carbon Removal Subscription Service</h2>
-    </div>
-    {metrics && (
-      <div id="kpiRow" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div className="metric-card text-center">
-          <div className="metric-label">Total MRR</div>
-          <div className="metric-value">${metrics.total_mrr.toLocaleString()}</div>
-        </div>
-        <div className="metric-card text-center">
-          <div className="metric-label">Active Customers</div>
-          <div className="metric-value">{metrics.active_customers}</div>
-        </div>
-        <div className="metric-card text-center">
-          <div className="metric-label">Annual Revenue</div>
-          <div className="metric-value">${metrics.annual_revenue.toLocaleString()}</div>
-        </div>
-        <div className="metric-card text-center">
-          <div className="metric-label">Customer LTV</div>
-          <div className="metric-value">${metrics.ltv.toLocaleString()}</div>
-        </div>
-        <div className="metric-card text-center">
-          <div className="metric-label">New Customers (Month 1)</div>
-          <div className="metric-value">{metrics.new_cust_month}</div>
-        </div>
+    return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="main-header">SMB Program Modeling</h1>
+        <h2 className="sub-header">Carbon Removal Subscription Service</h2>
       </div>
-    )}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="space-y-6 lg:col-span-3">
-        <div>
-          <h3 className="content-header">Revenue Tiers</h3>
-          <div className="p-4 bg-white rounded shadow">
-            {[1,2,3,4].map((n) => (
-              <div key={n} className="mb-2">
-                <label className="block text-sm">Tier {n} Revenue</label>
-                <input type="number" name={`tier${n}_revenue`} value={form[`tier${n}_revenue` as keyof FormState] as number} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+      {metrics && (
+        <div id="kpiRow" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="metric-card text-center">
+            <div className="metric-label">Total MRR</div>
+            <div className="metric-value">${metrics.total_mrr.toLocaleString()}</div>
+          </div>
+          <div className="metric-card text-center">
+            <div className="metric-label">Active Customers</div>
+            <div className="metric-value">{metrics.active_customers}</div>
+          </div>
+          <div className="metric-card text-center">
+            <div className="metric-label">Annual Revenue</div>
+            <div className="metric-value">${metrics.annual_revenue.toLocaleString()}</div>
+          </div>
+          <div className="metric-card text-center">
+            <div className="metric-label">Customer LTV</div>
+            <div className="metric-value">${metrics.ltv.toLocaleString()}</div>
+          </div>
+          <div className="metric-card text-center">
+            <div className="metric-label">New Customers (Month 1)</div>
+            <div className="metric-value">{metrics.new_cust_month}</div>
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="space-y-6 lg:col-span-3">
+          <div>
+            <h3 className="content-header">Revenue Tiers</h3>
+            <div className="p-4 bg-white rounded shadow">
+              {[1,2,3,4].map((n) => (
+                <div key={n} className="mb-2">
+                  <label className="block text-sm">Tier {n} Revenue</label>
+                  <input type="number" name={`tier${n}_revenue`} value={form[`tier${n}_revenue` as keyof FormState] as number} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="content-header">Marketing</h3>
+            <div className="p-4 bg-white rounded shadow">
+              <div className="mb-2">
+                <label className="block text-sm">Marketing Budget</label>
+                <input type="number" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
               </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h3 className="content-header">Marketing</h3>
-          <div className="p-4 bg-white rounded shadow">
-            <div className="mb-2">
-              <label className="block text-sm">Marketing Budget</label>
-              <input type="number" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Cost Per Lead</label>
-              <input type="number" name="cpl" value={form.cpl} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Conversion Rate (%)</label>
-              <input type="number" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              <div className="mb-2">
+                <label className="block text-sm">Cost Per Lead</label>
+                <input type="number" name="cpl" value={form.cpl} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">Conversion Rate (%)</label>
+                <input type="number" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <h3 className="content-header">Financial</h3>
-          <div className="p-4 bg-white rounded shadow">
-            <div className="mb-2">
-              <label className="block text-sm">Churn Rate (%)</label>
-              <input type="number" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">WACC (%)</label>
-              <input type="number" name="wacc" value={form.wacc} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Projection Months</label>
-              <input type="number" name="projection_months" value={form.projection_months} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Initial Investment</label>
-              <input type="number" name="initial_investment" value={form.initial_investment} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Operating Expense Rate (%)</label>
-              <input type="number" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-            </div>
-            <div className="mb-2">
-              <label className="block text-sm">Fixed Costs</label>
-              <input type="number" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+          <div>
+            <h3 className="content-header">Financial</h3>
+            <div className="p-4 bg-white rounded shadow">
+              <div className="mb-2">
+                <label className="block text-sm">Churn Rate (%)</label>
+                <input type="number" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">WACC (%)</label>
+                <input type="number" name="wacc" value={form.wacc} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">Projection Months</label>
+                <input type="number" name="projection_months" value={form.projection_months} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">Initial Investment</label>
+                <input type="number" name="initial_investment" value={form.initial_investment} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">Operating Expense Rate (%)</label>
+                <input type="number" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm">Fixed Costs</label>
+                <input type="number" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="space-y-6 lg:col-span-9">
-        <div>
-          <h3 className="content-header">Monthly Recurring Revenue</h3>
-          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
-            <canvas ref={mrrRef}></canvas>
+        <div className="space-y-6 lg:col-span-9">
+          <div>
+            <h3 className="content-header">Monthly Recurring Revenue</h3>
+            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+              <canvas ref={mrrRef}></canvas>
+            </div>
           </div>
-        </div>
-        <div>
-          <h3 className="content-header">Active Customers</h3>
-          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
-            <canvas ref={custRef}></canvas>
+          <div>
+            <h3 className="content-header">Active Customers</h3>
+            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+              <canvas ref={custRef}></canvas>
+            </div>
           </div>
-        </div>
-        <div>
-          <h3 className="content-header">Revenue by Tier</h3>
-          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            {metrics && (
-              <>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Total MRR</div>
-                  <div className="text-xl font-medium">${metrics.total_mrr.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Active Customers</div>
-                  <div className="text-xl font-medium">{metrics.active_customers}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Annual Revenue</div>
-                  <div className="text-xl font-medium">${metrics.annual_revenue.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">Customer LTV</div>
-                  <div className="text-xl font-medium">${metrics.ltv.toLocaleString()}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">New Customers (Month 1)</div>
-                  <div className="text-xl font-medium">{metrics.new_cust_month}</div>
-                </div>
-                <div className="p-4 bg-white rounded shadow text-center">
-                  <div className="text-sm text-gray-500">NPV</div>
-                  <div className="text-xl font-medium">${metrics.npv.toFixed(0)}</div>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-            <h3 className="text-sm mb-2">Monthly Recurring Revenue</h3>
-            <canvas ref={mrrRef}></canvas>
-          </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-            <h3 className="text-sm mb-2">Active Customers</h3>
-            <canvas ref={custRef}></canvas>
-          </div>
-          <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-            <h3 className="text-sm mb-2">Revenue by Tier</h3>
-            <canvas ref={tierRef}></canvas>
+          <div>
+            <h3 className="content-header">Revenue by Tier</h3>
+            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+              <canvas ref={tierRef}></canvas>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
