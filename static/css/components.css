@@ -1,0 +1,437 @@
+/**
+ * Component Styles
+ * Custom styling for UI components using the Catona design system
+ */
+
+/* ============================
+   COMPONENTS
+   ============================ */
+
+/* App Header */
+.app-header {
+    background: var(--nightfall-gradient);
+    color: white;
+    padding: var(--space-md);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+.app-logo {
+    height: 40px;
+    margin-right: var(--space-md);
+}
+
+.app-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Card styles */
+.card {
+    background-color: white; /* This will be overridden by design-system.css .card if loaded after */
+    border-radius: var(--radius-md); /* Will be overridden by design-system.css .card's border-radius: var(--radius-pill) for inputs/buttons, but this applies to card itself */
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); /* User Request A.2 */
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md); /* design-system.css adds .card:not(.metric-card){margin-bottom:32px;} */
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: visible; /* User Request D.2 */
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.card-title {
+    margin: 0;
+    color: var(--squid-ink);
+    font-weight: 600;
+}
+
+.card-content {
+    color: var(--thunder-900);
+}
+
+/* Metrics styling */
+.metrics-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 600px) {
+    .metrics-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .metrics-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.metric-card {
+    background: white; /* Will be overridden by design-system.css .card if it applies due to specificity or load order */
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); /* User Request A.2 */
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.metric-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--neutral-500);
+    margin-bottom: var(--space-xs);
+}
+
+.metric-value {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--cobalt-500);
+}
+
+.metric-value.positive {
+    color: var(--success-500);
+}
+
+.metric-value.negative {
+    color: var(--error-500);
+}
+
+/* Enhanced form elements */
+.input-group {
+    margin-bottom: var(--space-md);
+}
+
+.input-group label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--thunder-900);
+    margin-bottom: var(--space-xs);
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group input[type="email"],
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: var(--space-sm);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-md);
+    color: var(--squid-ink);
+    background-color: white;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--cobalt-500);
+    box-shadow: var(--shadow-focus);
+}
+
+.input-group input[type="radio"],
+.input-group input[type="checkbox"] {
+    margin-right: var(--space-xs);
+}
+
+/* Slider styling specific to components */
+.slider-container {
+    width: 100%;
+    padding-top: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.slider-input {
+    margin-bottom: var(--space-xs);
+}
+
+.slider-value {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    color: var(--neutral-400);
+}
+
+.slider-value .min {
+    color: var(--neutral-500);
+}
+
+.slider-value .max {
+    color: var(--cobalt-500);
+}
+
+.slider-value .current {
+    font-weight: 600;
+    color: var(--squid-ink);
+}
+
+.input-group.with-slider {
+    margin-bottom: var(--space-lg);
+}
+
+/* Button styles */
+.btn {
+    display: inline-block;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--catona-gradient);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+    background-color: var(--neutral-200);
+    color: var(--thunder-900);
+}
+
+.btn-secondary:hover {
+    background-color: var(--neutral-300);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--cobalt-500);
+    border: 1px solid var(--cobalt-500);
+}
+
+.btn-outline:hover {
+    background-color: var(--cobalt-500);
+    color: white;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Chart components */
+.chart-container {
+    background-color: white; /* Will be overridden by design-system.css .card general background */
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); /* User Request A.2 */
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    height: 300px;
+    position: relative;
+}
+
+.chart-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: var(--space-md);
+    color: var(--squid-ink);
+}
+
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--neutral-400);
+    font-style: italic;
+}
+
+/* Enhanced accordions */
+.accordion {
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    background-color: white; /* Will be overridden by design-system.css .card general background */
+    overflow: hidden;
+    border: 1px solid var(--neutral-200); /* Will be overridden by design-system.css .card border */
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); /* User Request A.2 */
+    transition: box-shadow var(--transition-normal);
+}
+
+.accordion:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    cursor: pointer;
+    background-color: white;
+    transition: background-color var(--transition-fast);
+}
+
+.accordion-header:hover {
+    background-color: var(--neutral-100);
+}
+
+.accordion-header h3 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    color: var(--squid-ink);
+}
+
+.accordion-icon {
+    color: var(--cobalt-500);
+    transition: transform var(--transition-normal);
+}
+
+.accordion-content {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height var(--transition-normal), padding var(--transition-normal);
+    padding: 0 var(--space-md);
+}
+
+.accordion.active .accordion-content {
+    max-height: 1000px;
+    padding: var(--space-md);
+    border-top: 1px solid var(--neutral-200);
+}
+
+.accordion.active .accordion-header {
+    border-bottom: none;
+}
+
+.accordion.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+/* Improved tooltips */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* User Request D.1: This rule will combine with/override base styles from design-system.css */
+.tooltip-content {
+  max-width:240px;
+  white-space:normal; /* Overrides nowrap from design-system.css */
+  padding:8px 12px;
+  color:#fff;
+  background:#2E3340;
+  border-radius:4px;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  /* position, transform, bottom, z-index are inherited or set by design-system.css */
+  /* visibility is handled by hover/focus states below */
+  visibility: hidden; /* Keep hidden by default */
+}
+
+/* Ensure .tooltip-container from design-system.css is used for hover/focus logic */
+.tooltip-container:hover .tooltip-content,
+.tooltip-container .tooltip-icon:focus + .tooltip-content { /* From original index.html for accessibility */
+  visibility: visible;
+}
+
+/* Ensure parent column allows overflow for tooltips */
+.assumptions-column { /* This class is on the parent div in index.html */
+  overflow: visible; 
+}
+
+/* Responsive utilities */
+@media (min-width: 768px) {
+    .hide-on-desktop {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .hide-on-mobile {
+        display: none;
+    }
+}
+
+/* Animation utilities */
+.animate-fade-in {
+    animation: fadeIn var(--transition-normal) forwards;
+}
+
+.animate-slide-up {
+    animation: slideInUp var(--transition-normal) forwards;
+}
+
+/* Layout improvements */
+.grid.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+@media(max-width: 1023px) {
+  .grid.two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fill-parent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Button reset for card headers */
+.btn-reset {
+  border: 0;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Remove native spinners from number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Responsive chart grid */
+@media(min-width: 1280px) {
+  .chart-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
