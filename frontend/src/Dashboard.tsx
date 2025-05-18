@@ -199,28 +199,52 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: parseFloat(value) }));
   };
 
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">SMB Program Modeling</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
+return (
+  <div className="space-y-6">
+    <div>
+      <h1 className="main-header">SMB Program Modeling</h1>
+      <h2 className="sub-header">Carbon Removal Subscription Service</h2>
+    </div>
+    {metrics && (
+      <div id="kpiRow" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="metric-card text-center">
+          <div className="metric-label">Total MRR</div>
+          <div className="metric-value">${metrics.total_mrr.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Active Customers</div>
+          <div className="metric-value">{metrics.active_customers}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Annual Revenue</div>
+          <div className="metric-value">${metrics.annual_revenue.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">Customer LTV</div>
+          <div className="metric-value">${metrics.ltv.toLocaleString()}</div>
+        </div>
+        <div className="metric-card text-center">
+          <div className="metric-label">New Customers (Month 1)</div>
+          <div className="metric-value">{metrics.new_cust_month}</div>
+        </div>
+      </div>
+    )}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="space-y-6 lg:col-span-3">
+        <div>
+          <h3 className="content-header">Revenue Tiers</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Revenue Tiers</h2>
-            {[1, 2, 3, 4].map((n) => (
+            {[1,2,3,4].map((n) => (
               <div key={n} className="mb-2">
                 <label className="block text-sm">Tier {n} Revenue</label>
-                <input
-                  type="number"
-                  name={`tier${n}_revenue`}
-                  value={form[`tier${n}_revenue` as keyof FormState] as number}
-                  onChange={handleChange}
-                  className="w-full border px-2 py-1 rounded"
-                />
+                <input type="number" name={`tier${n}_revenue`} value={form[`tier${n}_revenue` as keyof FormState] as number} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
               </div>
             ))}
           </div>
+        </div>
+        <div>
+          <h3 className="content-header">Marketing</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Marketing</h2>
             <div className="mb-2">
               <label className="block text-sm">Marketing Budget</label>
               <input type="number" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
@@ -234,8 +258,10 @@ export default function Dashboard() {
               <input type="number" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
             </div>
           </div>
+        </div>
+        <div>
+          <h3 className="content-header">Financial</h3>
           <div className="p-4 bg-white rounded shadow">
-            <h2 className="font-medium mb-2">Financial</h2>
             <div className="mb-2">
               <label className="block text-sm">Churn Rate (%)</label>
               <input type="number" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
@@ -262,6 +288,23 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="space-y-6 lg:col-span-9">
+        <div>
+          <h3 className="content-header">Monthly Recurring Revenue</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
+            <canvas ref={mrrRef}></canvas>
+          </div>
+        </div>
+        <div>
+          <h3 className="content-header">Active Customers</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
+            <canvas ref={custRef}></canvas>
+          </div>
+        </div>
+        <div>
+          <h3 className="content-header">Revenue by Tier</h3>
+          <div className="p-4 bg-white rounded shadow" style={{height:'200px'}}>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             {metrics && (
@@ -308,5 +351,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
