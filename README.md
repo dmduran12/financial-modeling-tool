@@ -9,25 +9,32 @@ This repository contains a simple prototype dashboard for modeling subscription 
    git clone <repo-url>
    cd financial-modeling-tool
    ```
-2. **Install Python dependencies**
+2. **Create and activate a virtual environment**
+   ```bash
+   python -m venv .venv && source .venv/bin/activate
+   ```
+3. **Install Python dependencies**
    ```bash
    pip install -r requirements.txt
    ```
-3. **(Optional) Build the frontend**
+4. **Install Node packages**
    ```bash
    cd frontend
    npm install
-   npm run build
-   cd ..
    ```
-4. **Start the FastAPI server**
+5. **Build the frontend or run the dev server**
+   ```bash
+   npm run build      # or `npm run dev` for hot reloading
+   cd ..              # return to project root if you built the assets
+   ```
+6. **Start the FastAPI server**
    ```bash
    uvicorn backend.app.main:app --reload
    ```
-5. **Open the app**
+7. **Open the app**
    Visit [http://localhost:8000/](http://localhost:8000/)
 
-The backend serves `frontend/index.html` and exposes both `/api/kpis` and `/api/calculate` for the dashboard.
+The command above starts the API and serves the frontend at `http://localhost:8000/`. It also exposes `/api/kpis` and `/api/calculate` for the dashboard.
 
 The old static prototype located at `templates/index.html` has been removed so the project only has one entry point.
 
