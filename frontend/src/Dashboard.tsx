@@ -121,7 +121,15 @@ export default function Dashboard() {
               labels,
               datasets: [{ data: mrrArr, borderColor: '#486BFE', backgroundColor: '#486BFE20', fill: true, tension: 0.3 }],
             },
-            options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false },
+            options: {
+              plugins: { legend: { display: false } },
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { ticks: { font: { size: 10 } } },
+                y: { ticks: { font: { size: 10 } } },
+              },
+            },
           });
         } else {
           const ch = chartInstances.current.mrr;
@@ -142,7 +150,15 @@ export default function Dashboard() {
               labels,
               datasets: [{ data: custArr, borderColor: '#8262FF', backgroundColor: '#8262FF20', fill: true, tension: 0.3 }],
             },
-            options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false },
+            options: {
+              plugins: { legend: { display: false } },
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { ticks: { font: { size: 10 } } },
+                y: { ticks: { font: { size: 10 } } },
+              },
+            },
           });
         } else {
           const ch = chartInstances.current.cust;
@@ -163,7 +179,11 @@ export default function Dashboard() {
               labels: ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'],
               datasets: [{ data: tierArr, backgroundColor: ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A'] }],
             },
-            options: { responsive: true, maintainAspectRatio: false },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { labels: { font: { size: 10 } } } },
+            },
           });
         } else {
           const ch = chartInstances.current.tier;
@@ -274,12 +294,15 @@ export default function Dashboard() {
             )}
           </div>
           <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Monthly Recurring Revenue</h3>
             <canvas ref={mrrRef}></canvas>
           </div>
           <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Active Customers</h3>
             <canvas ref={custRef}></canvas>
           </div>
           <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
+            <h3 className="text-sm mb-2">Revenue by Tier</h3>
             <canvas ref={tierRef}></canvas>
           </div>
         </div>

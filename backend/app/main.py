@@ -73,11 +73,25 @@ class CalculationResponse(BaseModel):
 
 @app.get("/api/kpis", response_model=List[KPI])
 async def get_kpis():
+    tier_revenues = [1000, 2500, 5000, 10000]
+    marketing_budget = 5000
+    cpl = 50
+    conversion_rate = 0.1
+    churn = 0.05
+    months = 24
+    customers = 10.0
+    monthly_acquisition = (marketing_budget / max(cpl, 1)) * conversion_rate
+    avg_rev = sum(tier_revenues) / len(tier_revenues)
+    for _ in range(months):
+        customers = max(0.0, customers * (1 - churn) + monthly_acquisition)
+    total_mrr = customers * avg_rev
+    annual_revenue = total_mrr * 12
+    ltv = avg_rev / churn if churn else 0
     data = [
-        KPI(name="Total MRR", value=256000),
-        KPI(name="Annual Revenue", value=998000),
-        KPI(name="Customer LTV", value=2000),
-        KPI(name="Active Users", value=35)
+        KPI(name="Total MRR", value=round(total_mrr, 2)),
+        KPI(name="Annual Revenue", value=round(annual_revenue, 2)),
+        KPI(name="Customer LTV", value=round(ltv, 2)),
+        KPI(name="Active Users", value=round(customers, 2)),
     ]
     return data
 
