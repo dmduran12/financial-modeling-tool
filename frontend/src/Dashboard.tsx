@@ -175,7 +175,7 @@ export default function Dashboard() {
         const datasets = tierArr.map((arr: number[], idx: number) => ({
           label: `Tier ${idx + 1}`,
           data: arr,
-          backgroundColor: ['#486BFE', '#8262FF', '#D19BEA', '#6EE26A'][idx],
+          backgroundColor: ['#4A47DC', '#8D8BE9', '#BF7DC4', '#E3C7E6'][idx],
           borderRadius: 8,
         }));
         if (!chartInstances.current.tier) {
@@ -207,7 +207,7 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: parseFloat(value) }));
   };
 
-    return (
+  return (
     <div className="space-y-6">
       <div>
         <h1 className="main-header">SMB Program Modeling</h1>
