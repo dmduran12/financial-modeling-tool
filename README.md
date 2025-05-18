@@ -56,3 +56,22 @@ npm test
 - The `static/js/model` directory contains minimal placeholder business logic to demonstrate calculations.
 - Brand tokens are defined in `static/css/brand-tokens.css` and include the full Catona color palette and design variables.
 - This is not a production‑ready build but serves as a foundation for further development.
+
+## Deployment
+
+To run in production, first build the frontend so the bundled assets are available:
+
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+Start the API without reload:
+
+```bash
+uvicorn backend.app.main:app
+```
+
+When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
