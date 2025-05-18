@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
@@ -6,17 +7,23 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
+from pathlib import Path
 
 app = FastAPI(title="Catona Dashboard")
 
+origins = os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:3000").split(",")
+methods = os.getenv("CORS_ALLOW_METHODS", "GET,POST").split(",")
+headers = os.getenv("CORS_ALLOW_HEADERS", "Content-Type").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_origins=[origin.strip() for origin in origins],
+    allow_methods=[method.strip() for method in methods],
+    allow_headers=[header.strip() for header in headers],
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 dist_dir = Path("frontend/dist")
 if dist_dir.exists():
@@ -24,6 +31,7 @@ if dist_dir.exists():
     templates = Jinja2Templates(directory=str(dist_dir))
 else:
     templates = Jinja2Templates(directory="frontend")
+
 
 class KPI(BaseModel):
     name: str

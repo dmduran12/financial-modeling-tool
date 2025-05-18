@@ -52,6 +52,21 @@ Starting the server normally will then use the bundled files in `frontend/dist`:
 uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
 ```
 
+
+### Environment Variables
+
+The CORS middleware reads three optional variables to control allowed origins,
+methods and headers:
+
+```
+CORS_ALLOW_ORIGINS  # e.g. "http://localhost:3000" (default)
+CORS_ALLOW_METHODS  # comma separated, default "GET,POST"
+CORS_ALLOW_HEADERS  # comma separated, default "Content-Type"
+```
+
+The provided defaults work well for development. In production set these
+variables to match your deployed frontend host and any additional requirements.
+
 ## Running Tests
 
 ### Backend
@@ -73,3 +88,22 @@ npm test
 - The `static/js/model` directory contains minimal placeholder business logic to demonstrate calculations.
 - Brand tokens are defined in `static/css/brand-tokens.css` and include the full Catona color palette and design variables.
 - This is not a production‑ready build but serves as a foundation for further development.
+
+## Deployment
+
+To run in production, first build the frontend so the bundled assets are available:
+
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+Start the API without reload:
+
+```bash
+uvicorn backend.app.main:app
+```
+
+When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
