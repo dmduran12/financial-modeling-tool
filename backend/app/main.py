@@ -3,7 +3,13 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+try:
+    from fastapi.templating import Jinja2Templates
+    import jinja2
+    _templates_available = True
+except Exception:  # Jinja2 may not be installed
+    Jinja2Templates = None
+    _templates_available = False
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
@@ -28,9 +34,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 dist_dir = Path("frontend/dist")
 if dist_dir.exists():
     app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
-    templates = Jinja2Templates(directory=str(dist_dir))
+    templates = Jinja2Templates(directory=str(dist_dir)) if _templates_available else None
 else:
-    templates = Jinja2Templates(directory="frontend")
+    templates = Jinja2Templates(directory="frontend") if _templates_available else None
 
 
 class KPI(BaseModel):
@@ -80,7 +86,9 @@ async def index(request: Request):
     dist_index = Path("frontend/dist/index.html")
     if dist_index.exists():
         return FileResponse(dist_index)
-    return templates.TemplateResponse("index.html", {"request": request})
+    if templates is not None:
+        return templates.TemplateResponse("index.html", {"request": request})
+    return FileResponse(Path("frontend/index.html"))
 
 @app.post("/api/calculate", response_model=CalculationResponse)
 async def calculate(data: CalculationRequest):
