@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -8,11 +9,15 @@ from typing import List
 
 app = FastAPI(title="Catona Dashboard")
 
+origins = os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:3000").split(",")
+methods = os.getenv("CORS_ALLOW_METHODS", "GET,POST").split(",")
+headers = os.getenv("CORS_ALLOW_HEADERS", "Content-Type").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_origins=[origin.strip() for origin in origins],
+    allow_methods=[method.strip() for method in methods],
+    allow_headers=[header.strip() for header in headers],
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
