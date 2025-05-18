@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
+from pathlib import Path
 
 app = FastAPI(title="Catona Dashboard")
 
@@ -23,14 +24,13 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+frontend_dist = Path("frontend/dist")
+if frontend_dist.exists():
+    app.mount("/assets", StaticFiles(directory=frontend_dist / "assets"), name="assets")
+    templates = Jinja2Templates(directory=str(frontend_dist))
+else:
+    templates = Jinja2Templates(directory="frontend")
 
-@app.get("/favicon.ico")
-async def favicon():
-    """Serve the site's favicon."""
-    icon_path = Path(__file__).resolve().parents[2] / "favicon.ico"
-    return FileResponse(icon_path)
-
-templates = Jinja2Templates(directory="frontend")
 
 class KPI(BaseModel):
     name: str
