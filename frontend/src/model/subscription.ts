@@ -50,10 +50,15 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
     (input.tier_revenues.length || 1);
 
+  const avgRevPerCustomer =
+    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
+    (input.tier_revenues.length || 1);
+
   for (let i = 0; i < months; i++) {
     customers = Math.max(0, customers * (1 - churn) + monthlyAcquisition);
     customers_by_month.push(Math.round(customers));
-    const mrr = customers * avgRevenuePerCustomer;
+    const mrr = customers * avgRevPerCustomer;
+
     mrr_by_month.push(mrr);
     const perTierCustomers = customers / (input.tier_revenues.length || 1);
     input.tier_revenues.forEach((rev, idx) => {
@@ -73,7 +78,7 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
       total_mrr: mrr_by_month[mrr_by_month.length - 1],
       total_customers: customers_by_month[customers_by_month.length - 1],
       annual_revenue: mrr_by_month[mrr_by_month.length - 1] * 12,
-      customer_ltv: mrr_by_month[mrr_by_month.length - 1] / (churn || 1),
+      customer_ltv: avgRevPerCustomer / (churn || 1),
       new_customers_monthly:
         customers_by_month[1] - (input.initial_customers || 10),
     },
