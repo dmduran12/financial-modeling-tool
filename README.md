@@ -31,19 +31,24 @@ installed.
    npm run build      # or `npm run dev` for hot reloading
    cd ..              # return to project root if you built the assets
    ```
+   Building creates the `frontend/dist` directory used when the FastAPI server
+   serves the React app. If omitted, the server falls back to `frontend/index.html`.
 6. **Start the FastAPI server from the project root**
    ```bash
-   uvicorn backend.app.main:app --reload
+   .venv/bin/uvicorn backend.app.main:app --reload
    ```
+   *(Adjust the path if your virtual environment lives elsewhere.)* Using the venv's `uvicorn` avoids accidentally launching a globally installed one.
    If you launch the server from another directory, set `PYTHONPATH=.` or use
    the `python3 -m` form:
    ```bash
-   PYTHONPATH=. uvicorn backend.app.main:app --reload
+   PYTHONPATH=. .venv/bin/uvicorn backend.app.main:app --reload
    # or
    python3 -m uvicorn backend.app.main:app --reload
    ```
    When encountering module import errors, run `python3 tools/debug_report.py`
-   for diagnostic information.
+   for diagnostic information. macOS users may see "Operation not permitted" if
+   the project resides in a protected location; moving the repository to a
+   regular folder such as `~/financial-modeling-tool` resolves this.
 7. **Open the app**
    Visit [http://localhost:8000/](http://localhost:8000/)
 
