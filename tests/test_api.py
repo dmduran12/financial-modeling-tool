@@ -52,3 +52,10 @@ async def test_get_kpis():
     data = resp.json()
     assert isinstance(data, list)
     assert data and "name" in data[0]
+
+@pytest.mark.asyncio
+async def test_health_endpoint():
+    async with AsyncClient(app=api_only_app, base_url="http://test") as ac:
+        resp = await ac.get("/api/health")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
