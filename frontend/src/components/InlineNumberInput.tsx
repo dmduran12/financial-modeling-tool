@@ -6,12 +6,16 @@ interface Props {
   value: number;
   unit?: 'currency' | 'percent';
   onChange: (value: number) => void;
+  name?: string;
+  id?: string;
 }
 
-export default function InlineNumberInput({ label, value, unit, onChange }: Props) {
+export default function InlineNumberInput({ label, value, unit, onChange, name, id }: Props) {
   const [editing, setEditing] = useState(false);
   const [temp, setTemp] = useState<number>(value);
   const inputRef = useRef<HTMLInputElement>(null);
+  const safeName = (name || label).replace(/\s+/g, '_').toLowerCase();
+  const inputId = id || safeName;
 
   const display = unit === 'currency' ? formatCurrency(value) :
                   unit === 'percent' ? value.toString() : formatNumberShort(value);
@@ -41,6 +45,8 @@ export default function InlineNumberInput({ label, value, unit, onChange }: Prop
       <input
         ref={inputRef}
         type="number"
+        id={inputId}
+        name={safeName}
         value={temp}
         onFocus={handleFocus}
         onBlur={handleBlur}
