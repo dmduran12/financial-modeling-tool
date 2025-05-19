@@ -161,6 +161,9 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
   content:"%";
   margin-left:0.15rem;
 }
+.chip.editing .value{
+  visibility:hidden;
+}
 .chip.editing .value::before,
 .chip.editing .value::after{content:"";}
 .chip input{
