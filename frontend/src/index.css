@@ -7,4 +7,4 @@
 :root {
   --Pearl: #F5F3F0;
 }
-body { background-color: var(--Pearl); font-family: 'Inter', sans-serif; color: var(--squid-ink); }
+body { background-color: var(--Pearl); font-family: 'Roboto Mono', monospace; color: var(--squid-ink); }

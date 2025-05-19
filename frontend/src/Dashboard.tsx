@@ -7,13 +7,17 @@ import {
   DEFAULT_MONTHLY_CHURN_RATE,
   DEFAULT_WACC,
   DEFAULT_PROJECTION_MONTHS,
-  DEFAULT_INITIAL_INVESTMENT,
   DEFAULT_OPERATING_EXPENSE_RATE,
   DEFAULT_FIXED_COSTS,
 } from './model/constants';
 import { runSubscriptionModel } from './model/subscription';
 import { calculateFinancialMetrics } from './model/finance';
 import { Chart } from 'chart.js/auto';
+import KPIChip from './components/KPIChip';
+import SidePanel from './components/SidePanel';
+import InputRow from './components/InputRow';
+import ChartCard from './components/ChartCard';
+import { formatCurrency, formatNumberShort } from './utils/format';
 
 interface FormState {
   tier1_revenue: number;
@@ -26,7 +30,6 @@ interface FormState {
   churn_rate_smb: number;
   wacc: number;
   projection_months: number;
-  initial_investment: number;
   operating_expense_rate: number;
   fixed_costs: number;
 }
@@ -36,7 +39,6 @@ interface Metrics {
   active_customers: number;
   annual_revenue: number;
   ltv: number;
-  new_cust_month: number;
   npv: number;
   paybackMonths: number | null;
 }
@@ -53,7 +55,6 @@ export default function Dashboard() {
     churn_rate_smb: DEFAULT_MONTHLY_CHURN_RATE,
     wacc: DEFAULT_WACC,
     projection_months: DEFAULT_PROJECTION_MONTHS,
-    initial_investment: DEFAULT_INITIAL_INVESTMENT,
     operating_expense_rate: DEFAULT_OPERATING_EXPENSE_RATE,
     fixed_costs: DEFAULT_FIXED_COSTS,
   });
@@ -89,19 +90,13 @@ export default function Dashboard() {
     };
 
     const results = runSubscriptionModel(modelInput);
-    const financial = calculateFinancialMetrics(
-      results,
-      form.initial_investment,
-      expenses,
-      form.wacc
-    );
+    const financial = calculateFinancialMetrics(results, 0, expenses, form.wacc);
 
     setMetrics({
       total_mrr: results.metrics.total_mrr,
       active_customers: results.metrics.total_customers,
       annual_revenue: results.metrics.annual_revenue,
       ltv: results.metrics.customer_ltv,
-      new_cust_month: results.metrics.new_customers_monthly,
       npv: financial.npv,
       paybackMonths: financial.paybackMonths,
     });
@@ -119,16 +114,12 @@ export default function Dashboard() {
             type: 'line',
             data: {
               labels,
-              datasets: [{ data: mrrArr, borderColor: '#486BFE', backgroundColor: '#486BFE20', fill: true, tension: 0.3 }],
+              datasets: [{ data: mrrArr, borderColor: '#4A47DC' }],
             },
             options: {
-              plugins: { legend: { display: false } },
               responsive: true,
               maintainAspectRatio: false,
-              scales: {
-                x: { ticks: { font: { size: 10 } } },
-                y: { ticks: { font: { size: 10 } } },
-              },
+              scales: { x: {}, y: {} },
             },
           });
         } else {
@@ -148,16 +139,12 @@ export default function Dashboard() {
             type: 'line',
             data: {
               labels,
-              datasets: [{ data: custArr, borderColor: '#8262FF', backgroundColor: '#8262FF20', fill: true, tension: 0.3 }],
+              datasets: [{ data: custArr, borderColor: '#BF7DC4' }],
             },
             options: {
-              plugins: { legend: { display: false } },
               responsive: true,
               maintainAspectRatio: false,
-              scales: {
-                x: { ticks: { font: { size: 10 } } },
-                y: { ticks: { font: { size: 10 } } },
-              },
+              scales: { x: {}, y: {} },
             },
           });
         } else {
@@ -176,7 +163,6 @@ export default function Dashboard() {
           label: `Tier ${idx + 1}`,
           data: arr,
           backgroundColor: ['#4A47DC', '#8D8BE9', '#BF7DC4', '#E3C7E6'][idx],
-          borderRadius: 8,
         }));
         if (!chartInstances.current.tier) {
           chartInstances.current.tier = new Chart(ctx, {
@@ -185,11 +171,7 @@ export default function Dashboard() {
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              scales: {
-                x: { stacked: true, ticks: { font: { size: 10 } } },
-                y: { stacked: true, ticks: { font: { size: 10 } } },
-              },
-              plugins: { legend: { labels: { font: { size: 10 } } } },
+              scales: { x: { stacked: true }, y: { stacked: true } },
             },
           });
         } else {
@@ -209,113 +191,54 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="main-header">SMB Program Modeling</h1>
-        <h2 className="sub-header">Carbon Removal Subscription Service</h2>
-      </div>
       {metrics && (
-        <div id="kpiRow" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="metric-card text-center">
-            <div className="metric-label">Total MRR</div>
-            <div className="metric-value">${metrics.total_mrr.toLocaleString()}</div>
-          </div>
-          <div className="metric-card text-center">
-            <div className="metric-label">Active Customers</div>
-            <div className="metric-value">{metrics.active_customers}</div>
-          </div>
-          <div className="metric-card text-center">
-            <div className="metric-label">Annual Revenue</div>
-            <div className="metric-value">${metrics.annual_revenue.toLocaleString()}</div>
-          </div>
-          <div className="metric-card text-center">
-            <div className="metric-label">Customer LTV</div>
-            <div className="metric-value">${metrics.ltv.toLocaleString()}</div>
-          </div>
-          <div className="metric-card text-center">
-            <div className="metric-label">New Customers (Month 1)</div>
-            <div className="metric-value">{metrics.new_cust_month}</div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <KPIChip label="Total MRR" value={formatCurrency(metrics.total_mrr, 0)} />
+          <KPIChip label="Active Customers" value={formatNumberShort(metrics.active_customers, 0)} />
+          <KPIChip label="Annual Revenue" value={formatCurrency(metrics.annual_revenue, 1)} />
+          <KPIChip label="Customer LTV" value={formatCurrency(metrics.ltv, 1)} />
+          <KPIChip label="Total Customers" value={formatNumberShort(metrics.active_customers, 0)} />
         </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="space-y-6 lg:col-span-3">
-          <div>
-            <h3 className="content-header">Revenue Tiers</h3>
-            <div className="p-4 bg-white rounded shadow">
-              {[1,2,3,4].map((n) => (
-                <div key={n} className="mb-2">
-                  <label className="block text-sm">Tier {n} Revenue</label>
-                  <input type="number" name={`tier${n}_revenue`} value={form[`tier${n}_revenue` as keyof FormState] as number} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="content-header">Marketing</h3>
-            <div className="p-4 bg-white rounded shadow">
-              <div className="mb-2">
-                <label className="block text-sm">Marketing Budget</label>
-                <input type="number" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Cost Per Lead</label>
-                <input type="number" name="cpl" value={form.cpl} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Conversion Rate (%)</label>
-                <input type="number" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <h3 className="content-header">Financial</h3>
-            <div className="p-4 bg-white rounded shadow">
-              <div className="mb-2">
-                <label className="block text-sm">Churn Rate (%)</label>
-                <input type="number" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">WACC (%)</label>
-                <input type="number" name="wacc" value={form.wacc} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Projection Months</label>
-                <input type="number" name="projection_months" value={form.projection_months} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Initial Investment</label>
-                <input type="number" name="initial_investment" value={form.initial_investment} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Operating Expense Rate (%)</label>
-                <input type="number" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm">Fixed Costs</label>
-                <input type="number" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} className="w-full border px-2 py-1 rounded" />
-              </div>
-            </div>
-          </div>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 lg:col-span-3 space-y-4">
+          <SidePanel>
+            <h3 className="text-sm font-semibold">Revenue Tiers</h3>
+            {[1, 2, 3, 4].map((n) => (
+              <InputRow
+                key={n}
+                label={`Tier ${n} Revenue`}
+                name={`tier${n}_revenue`}
+                value={form[`tier${n}_revenue` as keyof FormState] as number}
+                onChange={handleChange}
+              />
+            ))}
+          </SidePanel>
+          <SidePanel>
+            <h3 className="text-sm font-semibold">Marketing</h3>
+            <InputRow label="Marketing Budget" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} />
+            <InputRow label="Cost Per Lead" name="cpl" value={form.cpl} onChange={handleChange} />
+            <InputRow label="Conversion Rate (%)" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} />
+          </SidePanel>
+          <SidePanel>
+            <h3 className="text-sm font-semibold">Financial</h3>
+            <InputRow label="Churn Rate (%)" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} />
+            <InputRow label="WACC (%)" name="wacc" value={form.wacc} onChange={handleChange} />
+            <InputRow label="Projection Months" name="projection_months" value={form.projection_months} onChange={handleChange} />
+            <InputRow label="Operating Expense Rate (%)" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} />
+            <InputRow label="Fixed Costs" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} />
+          </SidePanel>
         </div>
-        <div className="space-y-6 lg:col-span-9">
-          <div>
-            <h3 className="content-header">Monthly Recurring Revenue</h3>
-            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-              <canvas ref={mrrRef}></canvas>
-            </div>
-          </div>
-          <div>
-            <h3 className="content-header">Active Customers</h3>
-            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-              <canvas ref={custRef}></canvas>
-            </div>
-          </div>
-          <div>
-            <h3 className="content-header">Revenue by Tier</h3>
-            <div className="p-4 bg-white rounded shadow" style={{ height: '200px' }}>
-              <canvas ref={tierRef}></canvas>
-            </div>
-          </div>
+        <div className="col-span-12 lg:col-span-9 space-y-4">
+          <ChartCard title="Monthly Recurring Revenue">
+            <canvas ref={mrrRef}></canvas>
+          </ChartCard>
+          <ChartCard title="Active Customers">
+            <canvas ref={custRef}></canvas>
+          </ChartCard>
+          <ChartCard title="Revenue by Tier">
+            <canvas ref={tierRef}></canvas>
+          </ChartCard>
         </div>
       </div>
     </div>
