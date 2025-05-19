@@ -9,10 +9,19 @@ h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
 input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
              padding:.5rem 1rem;background:#fff;}
 
+/* simple color swatch */
+.swatch{display:inline-block;width:16px;height:16px;border-radius:4px;margin-right:8px;}
+
+/* sparkline canvas */
+.spark{position:absolute;inset:0 0 8px 0;z-index:1;height:28px;pointer-events:none;clip-path:inset(0 round 8px);}
+
+.refreshing{opacity:0.4;transition:opacity .3s;}
+
 /* metric cards */
 .metric-card{border:1px solid var(--cat-driftwood);border-radius:12px;
-             padding:1rem;display:flex;flex-direction:column;gap:.5rem;}
-.metric-value{font-size:1.75rem;font-weight:500;line-height:110%;letter-spacing:-0.04em;transition:color .3s;font-family:'Inter',sans-serif;}
+             padding:1rem;display:flex;flex-direction:column;gap:.5rem;
+             overflow:hidden;}
+.metric-value{font-size:1.75rem;font-weight:500;line-height:110%;letter-spacing:-0.04em;transition:color .3s;font-family:'Inter',sans-serif;position:relative;z-index:2;}
 .metric-label{font-size:0.875rem;color:var(--neutral-400);font-family:'Roboto Mono',monospace;}
 
 /* interactive card */
@@ -143,16 +152,17 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
   font-weight:700;
   position:relative;
 }
-.chip .value[data-unit="$"]{padding-left:0.65rem;}
-.chip .value[data-unit="$"]::after{
+.chip .value[data-unit="currency"]{padding-left:0.65rem;}
+.chip .value[data-unit="currency"]::before{
   content:"$";
   position:absolute;
   left:0;
 }
-.chip .value[data-unit="%"]::after{
+.chip .value[data-unit="percent"]::after{
   content:"%";
   margin-left:0.15rem;
 }
+.chip.editing .value::before,
 .chip.editing .value::after{content:"";}
 .chip input{
   position:absolute;

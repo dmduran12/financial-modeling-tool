@@ -44,7 +44,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
               data,
               borderColor: color,
               backgroundColor: gradient,
-              borderWidth: 4,
+              borderWidth: 3,
               tension: 0.4,
               pointRadius: 0,
               fill: 'origin',
@@ -55,7 +55,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 6, bottom: 6, left: 0, right: 0 } },
+          layout: { padding: { top: 12, bottom: 6, left: 0, right: 0 } },
           scales: { x: { display: false }, y: { display: false } },
           plugins: { legend: { display: false }, tooltip: { enabled: false } },
           events: [],
@@ -85,8 +85,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
   return (
     <canvas
       ref={ref}
-      className={`w-full pointer-events-none ${className}`}
-      style={{ height: '28px', clipPath: 'inset(0 round 8px)' }}
+      className={`w-full ${className}`}
     />
   );
 }

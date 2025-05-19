@@ -239,7 +239,7 @@ export default function Dashboard() {
               <InlineNumberInput
                 key={n}
                 label={`Tier ${n}`}
-                unit="$"
+                unit="currency"
                 value={form[`tier${n}_revenue` as keyof FormState] as number}
                 onChange={(v) => handleValueChange(`tier${n}_revenue` as keyof FormState, v)}
               />
@@ -247,17 +247,17 @@ export default function Dashboard() {
           </div>
           <div className="space-y-3 mb-6">
             <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
-            <InlineNumberInput label="Budget" unit="$" value={form.marketing_budget} onChange={(v) => handleValueChange('marketing_budget', v)} />
-            <InlineNumberInput label="CPL" unit="$" value={form.cpl} onChange={(v) => handleValueChange('cpl', v)} />
-            <InlineNumberInput label="CVR" unit="%" value={form.conversion_rate} onChange={(v) => handleValueChange('conversion_rate', v)} />
+            <InlineNumberInput label="Budget" unit="currency" value={form.marketing_budget} onChange={(v) => handleValueChange('marketing_budget', v)} />
+            <InlineNumberInput label="CPL" unit="currency" value={form.cpl} onChange={(v) => handleValueChange('cpl', v)} />
+            <InlineNumberInput label="CVR" unit="percent" value={form.conversion_rate} onChange={(v) => handleValueChange('conversion_rate', v)} />
           </div>
           <div className="space-y-3">
             <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
-            <InlineNumberInput label="Churn %" unit="%" value={form.churn_rate_smb} onChange={(v) => handleValueChange('churn_rate_smb', v)} />
-            <InlineNumberInput label="WACC %" unit="%" value={form.wacc} onChange={(v) => handleValueChange('wacc', v)} />
+            <InlineNumberInput label="Churn %" unit="percent" value={form.churn_rate_smb} onChange={(v) => handleValueChange('churn_rate_smb', v)} />
+            <InlineNumberInput label="WACC %" unit="percent" value={form.wacc} onChange={(v) => handleValueChange('wacc', v)} />
             <InlineNumberInput label="Months" value={form.projection_months} onChange={(v) => handleValueChange('projection_months', v)} />
-            <InlineNumberInput label="Opex %" unit="%" value={form.operating_expense_rate} onChange={(v) => handleValueChange('operating_expense_rate', v)} />
-            <InlineNumberInput label="Fixed Costs" unit="$" value={form.fixed_costs} onChange={(v) => handleValueChange('fixed_costs', v)} />
+            <InlineNumberInput label="Opex %" unit="percent" value={form.operating_expense_rate} onChange={(v) => handleValueChange('operating_expense_rate', v)} />
+            <InlineNumberInput label="Fixed Costs" unit="currency" value={form.fixed_costs} onChange={(v) => handleValueChange('fixed_costs', v)} />
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
