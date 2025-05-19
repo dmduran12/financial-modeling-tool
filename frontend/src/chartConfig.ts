@@ -8,10 +8,11 @@ export function setupChartDefaults() {
   const tooltipText = styles.getPropertyValue('--color-neutral-50') || '#FDFCFA';
 
   Chart.defaults.color = textColor.trim();
-  Chart.defaults.font.family = 'Inter, sans-serif';
+  Chart.defaults.font.family = 'Roboto Mono, monospace';
   Chart.defaults.elements.line.borderWidth = 4;
   Chart.defaults.elements.line.borderCapStyle = 'round';
   Chart.defaults.elements.line.fill = false;
+  Chart.defaults.elements.line.pointRadius = 0;
   Chart.defaults.elements.bar.borderRadius = 8;
   Chart.defaults.datasets.bar.categoryPercentage = 0.8;
   Chart.defaults.plugins.legend.display = false;
@@ -22,7 +23,7 @@ export function setupChartDefaults() {
   Chart.defaults.plugins.tooltip.titleFont = { size: 12 } as any;
   Chart.defaults.plugins.tooltip.bodyFont = { size: 12 } as any;
   Chart.defaults.scales = {
-    x: { grid: { display: false, color: gridColor.trim(), lineWidth: 1 } },
-    y: { grid: { color: gridColor.trim(), lineWidth: 1 }, beginAtZero: true },
+    x: { grid: { color: gridColor.trim(), lineWidth: 1 } },
+    y: { grid: { display: false }, beginAtZero: true },
   } as any;
 }

@@ -31,7 +31,6 @@ interface FormState {
   churn_rate_smb: number;
   wacc: number;
   projection_months: number;
-  initial_investment: number;
   operating_expense_rate: number;
   fixed_costs: number;
 }
@@ -41,7 +40,7 @@ interface Metrics {
   active_customers: number;
   annual_revenue: number;
   ltv: number;
-  new_cust_month: number;
+  total_customers: number;
   npv: number;
   paybackMonths: number | null;
 }
@@ -58,17 +57,15 @@ export default function Dashboard() {
     churn_rate_smb: DEFAULT_MONTHLY_CHURN_RATE,
     wacc: DEFAULT_WACC,
     projection_months: DEFAULT_PROJECTION_MONTHS,
-    initial_investment: DEFAULT_INITIAL_INVESTMENT,
     operating_expense_rate: DEFAULT_OPERATING_EXPENSE_RATE,
     fixed_costs: DEFAULT_FIXED_COSTS,
   });
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [loading, setLoading] = useState(false);
-  const mrrRef = useRef<HTMLCanvasElement>(null);
-  const custRef = useRef<HTMLCanvasElement>(null);
+  const [projections, setProjections] = useState<{ mrr: number[]; customers: number[] }>({ mrr: [], customers: [] });
+  const mrrCustRef = useRef<HTMLCanvasElement>(null);
   const tierRef = useRef<HTMLCanvasElement>(null);
-  const chartInstances = useRef<{ mrr?: Chart; cust?: Chart; tier?: Chart }>({});
+  const chartInstances = useRef<{ combined?: Chart; tier?: Chart }>({});
 
   useEffect(() => {
     setLoading(true);
@@ -98,7 +95,7 @@ export default function Dashboard() {
     const results = runSubscriptionModel(modelInput);
     const financial = calculateFinancialMetrics(
       results,
-      form.initial_investment,
+      DEFAULT_INITIAL_INVESTMENT,
       expenses,
       form.wacc
     );
@@ -108,7 +105,7 @@ export default function Dashboard() {
       active_customers: results.metrics.total_customers,
       annual_revenue: results.metrics.annual_revenue,
       ltv: results.metrics.customer_ltv,
-      new_cust_month: results.metrics.new_customers_monthly,
+      total_customers: results.metrics.total_customers,
       npv: financial.npv,
       paybackMonths: financial.paybackMonths,
     });
@@ -117,52 +114,35 @@ export default function Dashboard() {
     const mrrArr = results.projections.mrr_by_month;
     const custArr = results.projections.customers_by_month;
     const tierArr = results.projections.tier_revenue_by_month;
+    setProjections({ mrr: mrrArr, customers: custArr });
 
-    if (mrrRef.current) {
-      const ctx = mrrRef.current.getContext('2d');
+    if (mrrCustRef.current) {
+      const ctx = mrrCustRef.current.getContext('2d');
       if (ctx) {
-        if (!chartInstances.current.mrr) {
-          chartInstances.current.mrr = new Chart(ctx, {
+        if (!chartInstances.current.combined) {
+          chartInstances.current.combined = new Chart(ctx, {
             type: 'line',
             data: {
               labels,
-              datasets: [{ data: mrrArr, borderColor: '#4A47DC' }],
+              datasets: [
+                { data: mrrArr, borderColor: '#4A47DC', yAxisID: 'y1' },
+                { data: custArr, borderColor: '#BF7DC4', yAxisID: 'y2' },
+              ],
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              scales: { x: {}, y: {} },
+              scales: {
+                y1: { position: 'left' },
+                y2: { position: 'right' },
+              },
             },
           });
         } else {
-          const ch = chartInstances.current.mrr;
+          const ch = chartInstances.current.combined;
           ch.data.labels = labels;
           (ch.data.datasets[0].data as number[]) = mrrArr;
-          ch.update();
-        }
-      }
-    }
-
-    if (custRef.current) {
-      const ctx = custRef.current.getContext('2d');
-      if (ctx) {
-        if (!chartInstances.current.cust) {
-          chartInstances.current.cust = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels,
-              datasets: [{ data: custArr, borderColor: '#BF7DC4' }],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: { x: {}, y: {} },
-            },
-          });
-        } else {
-          const ch = chartInstances.current.cust;
-          ch.data.labels = labels;
-          (ch.data.datasets[0].data as number[]) = custArr;
+          (ch.data.datasets[1].data as number[]) = custArr;
           ch.update();
         }
       }
@@ -194,8 +174,7 @@ export default function Dashboard() {
         }
       }
     }
-    const timer = setTimeout(() => setLoading(false), 400);
-    return () => clearTimeout(timer);
+    return () => {};
   }, [form]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,51 +186,67 @@ export default function Dashboard() {
     <div className="space-y-6">
       {metrics && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <KPIChip label="Total MRR" value={formatCurrency(metrics.total_mrr)} />
-          <KPIChip label="Active Customers" value={formatNumberShort(metrics.active_customers)} />
-          <KPIChip label="Annual Revenue" value={formatCurrency(metrics.annual_revenue)} />
-          <KPIChip label="Customer LTV" value={formatCurrency(metrics.ltv)} />
-          <KPIChip label="New Customers (Month 1)" value={formatNumberShort(metrics.new_cust_month)} />
+          <KPIChip
+            label="Total MRR"
+            value={formatCurrency(metrics.total_mrr, 0)}
+            sparkData={projections.mrr}
+          />
+          <KPIChip
+            label="Active Customers"
+            value={formatNumberShort(metrics.active_customers)}
+            sparkData={projections.customers}
+          />
+          <KPIChip
+            label="Annual Revenue"
+            value={formatCurrency(metrics.annual_revenue, 1)}
+            sparkData={projections.mrr.map((v) => v * 12)}
+          />
+          <KPIChip
+            label="Customer LTV"
+            value={formatCurrency(metrics.ltv, 1)}
+            sparkData={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
+          />
+          <KPIChip
+            label="Total Customers"
+            value={formatNumberShort(metrics.total_customers)}
+            sparkData={projections.customers}
+          />
         </div>
       )}
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-3 space-y-4">
+          <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
           <SidePanel>
-            <h3 className="text-sm font-semibold">Revenue Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
               <InputRow
                 key={n}
-                label={`Tier ${n} Revenue`}
+                label={`Tier ${n}`}
                 name={`tier${n}_revenue`}
                 value={form[`tier${n}_revenue` as keyof FormState] as number}
                 onChange={handleChange}
               />
             ))}
           </SidePanel>
+          <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
           <SidePanel>
-            <h3 className="text-sm font-semibold">Marketing</h3>
             <InputRow label="Marketing Budget" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} />
             <InputRow label="Cost Per Lead" name="cpl" value={form.cpl} onChange={handleChange} />
             <InputRow label="Conversion Rate (%)" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} />
           </SidePanel>
+          <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
           <SidePanel>
-            <h3 className="text-sm font-semibold">Financial</h3>
             <InputRow label="Churn Rate (%)" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} />
             <InputRow label="WACC (%)" name="wacc" value={form.wacc} onChange={handleChange} />
             <InputRow label="Projection Months" name="projection_months" value={form.projection_months} onChange={handleChange} />
-            <InputRow label="Initial Investment" name="initial_investment" value={form.initial_investment} onChange={handleChange} />
             <InputRow label="Operating Expense Rate (%)" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} />
             <InputRow label="Fixed Costs" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} />
           </SidePanel>
         </div>
         <div className="col-span-12 lg:col-span-9 space-y-4">
-          <ChartCard title="Monthly Recurring Revenue" loading={loading}>
-            <canvas ref={mrrRef}></canvas>
+          <ChartCard title="MRR & Customers">
+            <canvas ref={mrrCustRef}></canvas>
           </ChartCard>
-          <ChartCard title="Active Customers" loading={loading}>
-            <canvas ref={custRef}></canvas>
-          </ChartCard>
-          <ChartCard title="Revenue by Tier" loading={loading}>
+          <ChartCard title="Revenue by Tier">
             <canvas ref={tierRef}></canvas>
           </ChartCard>
         </div>
