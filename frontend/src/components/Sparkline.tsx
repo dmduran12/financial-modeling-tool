@@ -103,6 +103,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
     <canvas
       ref={ref}
       className={`w-full ${className}`}
+      height={32}
     />
   );
 }
