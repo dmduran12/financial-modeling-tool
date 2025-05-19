@@ -48,7 +48,7 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
       <Sparkline
         data={sparkData}
         onRendered={handleRendered}
-        className="sparkline left-[4px] right-[4px]"
+        className="sparkline mt-1"
       />
     </div>
   );
