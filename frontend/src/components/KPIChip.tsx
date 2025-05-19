@@ -38,17 +38,19 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
     <div
       className={`kpi-card ${refreshing ? 'refreshing' : ''}`}
     >
-      <div className="label-block">
-        <div className="leading-none">{labelTop}</div>
-        {labelBottom && <div className="leading-none">{labelBottom}</div>}
-      </div>
-      <div className="metric mt-1">
-        <span className="metric-value" data-unit={unit}>{displayValue}</span>
+      <div className="top-row">
+        <div className="label-block">
+          <div className="leading-none">{labelTop}</div>
+          {labelBottom && <div className="leading-none">{labelBottom}</div>}
+        </div>
+        <div className="metric">
+          <span className="metric-value" data-unit={unit}>{displayValue}</span>
+        </div>
       </div>
       <Sparkline
         data={sparkData}
         onRendered={handleRendered}
-        className="sparkline mt-1"
+        className="sparkline"
       />
     </div>
   );
