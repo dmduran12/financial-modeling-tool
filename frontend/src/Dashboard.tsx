@@ -16,7 +16,7 @@ import { calculateFinancialMetrics } from './model/finance';
 import { Chart } from 'chart.js/auto';
 import KPIChip from './components/KPIChip';
 import SidePanel from './components/SidePanel';
-import InputRow from './components/InputRow';
+import InlineNumberInput from './components/InlineNumberInput';
 import ChartCard from './components/ChartCard';
 import { generateLegend } from './utils/chartLegend';
 
@@ -191,6 +191,10 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: parseFloat(value) }));
   };
 
+  const handleValueChange = (name: keyof FormState, value: number) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="space-y-6">
       {metrics && (
@@ -229,31 +233,31 @@ export default function Dashboard() {
       )}
       <div className="lg:flex gap-4">
         <SidePanel className="sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
-          <div className="py-4 border-b border-[var(--color-neutral-200)]">
+          <div className="space-y-3 mb-6">
             <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
-              <InputRow
+              <InlineNumberInput
                 key={n}
                 label={`Tier ${n}`}
-                name={`tier${n}_revenue`}
+                unit="$"
                 value={form[`tier${n}_revenue` as keyof FormState] as number}
-                onChange={handleChange}
+                onChange={(v) => handleValueChange(`tier${n}_revenue` as keyof FormState, v)}
               />
             ))}
           </div>
-          <div className="py-4 border-b border-[var(--color-neutral-200)]">
+          <div className="space-y-3 mb-6">
             <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
-            <InputRow label="Marketing Budget" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} />
-            <InputRow label="Cost Per Lead" name="cpl" value={form.cpl} onChange={handleChange} />
-            <InputRow label="Conversion Rate (%)" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} />
+            <InlineNumberInput label="Budget" unit="$" value={form.marketing_budget} onChange={(v) => handleValueChange('marketing_budget', v)} />
+            <InlineNumberInput label="CPL" unit="$" value={form.cpl} onChange={(v) => handleValueChange('cpl', v)} />
+            <InlineNumberInput label="CVR" unit="%" value={form.conversion_rate} onChange={(v) => handleValueChange('conversion_rate', v)} />
           </div>
-          <div className="py-4">
+          <div className="space-y-3">
             <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
-            <InputRow label="Churn Rate (%)" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} />
-            <InputRow label="WACC (%)" name="wacc" value={form.wacc} onChange={handleChange} />
-            <InputRow label="Projection Months" name="projection_months" value={form.projection_months} onChange={handleChange} />
-            <InputRow label="Operating Expense Rate (%)" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} />
-            <InputRow label="Fixed Costs" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} />
+            <InlineNumberInput label="Churn %" unit="%" value={form.churn_rate_smb} onChange={(v) => handleValueChange('churn_rate_smb', v)} />
+            <InlineNumberInput label="WACC %" unit="%" value={form.wacc} onChange={(v) => handleValueChange('wacc', v)} />
+            <InlineNumberInput label="Months" value={form.projection_months} onChange={(v) => handleValueChange('projection_months', v)} />
+            <InlineNumberInput label="Opex %" unit="%" value={form.operating_expense_rate} onChange={(v) => handleValueChange('operating_expense_rate', v)} />
+            <InlineNumberInput label="Fixed Costs" unit="$" value={form.fixed_costs} onChange={(v) => handleValueChange('fixed_costs', v)} />
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
