@@ -32,31 +32,23 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
         : formatNumberShort(value)
       : value;
 
+  const sparkData = [...dataArray].reverse();
+
   return (
     <div
-      className={`relative border border-[var(--neutral-200)] rounded-lg bg-[var(--neutral-50)] p-4 h-[80px] md:h-[100px] overflow-hidden ${
-        refreshing ? 'refreshing' : ''
-      }`}
+      className={`kpi-card ${refreshing ? 'refreshing' : ''}`}
     >
-      <div className="h-full md:grid md:grid-cols-5 flex flex-col" >
-        <div className="md:col-span-2 flex flex-col text-left">
-          <div className="font-sans font-medium text-[11px] md:text-[12px] text-[var(--neutral-400)] leading-none">
-            {labelTop}
-          </div>
-          {labelBottom && (
-            <div className="font-sans font-semibold text-[11px] md:text-[12px] text-[var(--neutral-600)] leading-none">
-              {labelBottom}
-            </div>
-          )}
-        </div>
-        <div className="md:col-span-3 flex items-center md:justify-end justify-center font-sans font-bold text-[24px] md:text-[32px] text-[var(--neutral-900)] relative z-2">
-          <span className="metric-value" data-unit={unit}>{displayValue}</span>
-        </div>
+      <div className="label-block">
+        <div className="leading-none">{labelTop}</div>
+        {labelBottom && <div className="leading-none">{labelBottom}</div>}
+      </div>
+      <div className="metric mt-1">
+        <span className="metric-value" data-unit={unit}>{displayValue}</span>
       </div>
       <Sparkline
-        data={dataArray}
+        data={sparkData}
         onRendered={handleRendered}
-        className="spark left-[4px] right-[4px]"
+        className="sparkline left-[4px] right-[4px]"
       />
     </div>
   );

@@ -16,6 +16,10 @@ test('custom decimals', () => {
   expect(formatCurrency(1500000, 0)).toBe('2M');
 });
 
+test('clamps to 3 digits', () => {
+  expect(formatNumberShort(550000)).toBe('550K');
+});
+
 test('percentage tolerance', () => {
   const val = 0.1234;
   const pct = parseFloat(formatPercentage(val));
