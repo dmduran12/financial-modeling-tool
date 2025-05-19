@@ -19,6 +19,7 @@ import SidePanel from './components/SidePanel';
 import InputRow from './components/InputRow';
 import ChartCard from './components/ChartCard';
 import { formatCurrency, formatNumberShort } from './utils/format';
+import { generateLegend } from './utils/chartLegend';
 
 interface FormState {
   tier1_revenue: number;
@@ -148,7 +149,7 @@ export default function Dashboard() {
           ch.update();
         }
         if (chartInstances.current.combined) {
-          setCombinedLegend(chartInstances.current.combined.generateLegend());
+          setCombinedLegend(generateLegend(chartInstances.current.combined));
         }
       }
     }
@@ -179,7 +180,7 @@ export default function Dashboard() {
           ch.update();
         }
         if (chartInstances.current.tier) {
-          setTierLegend(chartInstances.current.tier.generateLegend());
+          setTierLegend(generateLegend(chartInstances.current.tier));
         }
       }
     }
