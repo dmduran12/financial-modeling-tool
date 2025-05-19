@@ -41,13 +41,11 @@ interface FormState {
 
 interface Metrics {
   total_mrr: number;
-  active_customers: number;
   annual_revenue: number;
-  ltv: number;
-  total_customers: number;
+  subscriber_ltv: number;
+  total_subscribers: number;
   npv: number;
   paybackMonths: number | null;
-  blended_cpl: number;
   blended_cvr: number;
 }
 
@@ -68,7 +66,7 @@ export default function Dashboard() {
   });
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [projections, setProjections] = useState<{ mrr: number[]; customers: number[] }>({ mrr: [], customers: [] });
+  const [projections, setProjections] = useState<{ mrr: number[]; subscribers: number[] }>({ mrr: [], subscribers: [] });
   const [combinedLegend, setCombinedLegend] = useState<string>('');
   const [tierLegend, setTierLegend] = useState<string>('');
   const mrrCustRef = useRef<HTMLCanvasElement>(null);
@@ -122,7 +120,6 @@ export default function Dashboard() {
       form.conversion_rate,
       form.marketing_budget
     );
-    const blendedCpl = tierMetrics.totalLeads ? form.marketing_budget / tierMetrics.totalLeads : 0;
     const blendedCvr = tierMetrics.totalLeads ? (tierMetrics.totalNewCustomers / tierMetrics.totalLeads) * 100 : 0;
 
     const results = runSubscriptionModel(modelInput);
@@ -135,25 +132,23 @@ export default function Dashboard() {
 
     setMetrics({
       total_mrr: results.metrics.total_mrr,
-      active_customers: results.metrics.total_customers,
       annual_revenue: results.metrics.annual_revenue,
-      ltv: results.metrics.customer_ltv,
-      total_customers: results.metrics.total_customers,
+      subscriber_ltv: results.metrics.subscriber_ltv,
+      total_subscribers: results.metrics.total_subscribers,
       npv: financial.npv,
       paybackMonths: financial.paybackMonths,
-      blended_cpl: blendedCpl,
       blended_cvr: blendedCvr,
     });
 
     const labels = results.projections.monthLabels;
     const mrrArr = results.projections.mrr_by_month;
-    const custArr = results.projections.customers_by_month;
+    const subArr = results.projections.customers_by_month;
     const tierArr = results.projections.tier_revenue_by_month;
     const tierPrices = results.projections.tier_revenues_end;
     const tierCustomers = tierArr.map((arr, idx) =>
       arr.map((val) => val / (tierPrices[idx] || 1))
     );
-    setProjections({ mrr: mrrArr, customers: custArr });
+    setProjections({ mrr: mrrArr, subscribers: subArr });
 
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext('2d');
@@ -273,18 +268,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {metrics && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
           <KPIChip
             labelTop="Total"
             labelBottom="MRR"
             value={metrics.total_mrr}
             dataArray={projections.mrr}
-          />
-          <KPIChip
-            labelTop="Active"
-            labelBottom="Customers"
-            value={metrics.active_customers}
-            dataArray={projections.customers}
           />
           <KPIChip
             labelTop="Annual"
@@ -293,29 +282,22 @@ export default function Dashboard() {
             dataArray={projections.mrr.map((v) => v * 12)}
           />
           <KPIChip
-            labelTop="Customer"
+            labelTop="Subscriber"
             labelBottom="LTV"
-            value={metrics.ltv}
+            value={metrics.subscriber_ltv}
             dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
           />
           <KPIChip
             labelTop="Total"
-            labelBottom="Customers"
-            value={metrics.total_customers}
-            dataArray={projections.customers}
-          />
-          <KPIChip
-            labelTop="Blended"
-            labelBottom="CPL"
-            value={metrics.blended_cpl}
-            dataArray={projections.customers}
-            unit="currency"
+            labelBottom="Subscribers"
+            value={metrics.total_subscribers}
+            dataArray={projections.subscribers}
           />
           <KPIChip
             labelTop="Blended"
             labelBottom="CVR"
             value={metrics.blended_cvr}
-            dataArray={projections.customers}
+            dataArray={projections.subscribers}
             unit="percent"
           />
         </div>
@@ -351,7 +333,7 @@ export default function Dashboard() {
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
-          <ChartCard title="MRR & Customers" legend={combinedLegend}>
+          <ChartCard title="MRR & Subscribers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
           </ChartCard>
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
