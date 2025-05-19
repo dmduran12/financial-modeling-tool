@@ -436,12 +436,3 @@ input[type=number] {
   }
 }
 
-.sparkline-gradient {
-  --wipe-offset: 0;
-  animation: wipe 4s linear infinite;
-}
-
-@keyframes wipe {
-  0% { --wipe-offset: 0; }
-  100% { --wipe-offset: 1; }
-}

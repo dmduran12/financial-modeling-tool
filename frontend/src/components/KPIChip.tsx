@@ -13,7 +13,7 @@ export default function KPIChip({ label, value, sparkData }: Props) {
         <div className="text-sm font-medium leading-[1.4] text-[var(--color-neutral-500)]">{label}</div>
         <div className="text-2xl font-semibold leading-[1.2] text-[var(--color-neutral-900)]">{value}</div>
       </div>
-      <div className="w-2/3 h-10">
+      <div className="w-2/3 h-9 overflow-hidden rounded-lg">
         <Sparkline data={sparkData} />
       </div>
     </div>
