@@ -435,3 +435,18 @@ input[type=number] {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.sparkline-gradient {
+  --wipe-offset: 0;
+  --wipe-opacity: 0;
+}
+
+.sparkline-wipe {
+  animation: wipe 2s linear infinite;
+  --wipe-opacity: 1;
+}
+
+@keyframes wipe {
+  0% { --wipe-offset: 0; }
+  100% { --wipe-offset: 1; }
+}
