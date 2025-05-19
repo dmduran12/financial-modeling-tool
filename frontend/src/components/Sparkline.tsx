@@ -61,7 +61,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
               data,
               borderColor: color,
               backgroundColor: gradient,
-              borderWidth: 3,
+              borderWidth: 2,
               tension: 0.4,
               pointRadius: 0,
               fill: 'origin',
@@ -103,6 +103,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
     <canvas
       ref={ref}
       className={`w-full ${className}`}
+      height={32}
     />
   );
 }
