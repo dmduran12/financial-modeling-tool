@@ -25,7 +25,7 @@ try {
 }
 export const palette = computedPalette;
 
-export function buildArea(ctx, labels, data, col) {
+export function buildArea(ctx, labels, data, col, formatter) {
   return new Chart(ctx, {
     type: "line",
     data: {
@@ -44,9 +44,14 @@ export function buildArea(ctx, labels, data, col) {
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { display: false } },
-        y: { 
+        y: {
           grid: { color: "#ECECEC" }, // Playbook defined
-          ticks: { callback: v => v != null ? ("$" + v.toLocaleString()) : "$0" } // Playbook defined, ensure v is not null/undefined
+          ticks: {
+            callback: v => {
+              const fn = formatter || (val => "$" + val.toLocaleString());
+              return fn(v);
+            }
+          }
         }
       }
     }

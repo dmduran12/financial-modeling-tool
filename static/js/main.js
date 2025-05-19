@@ -117,12 +117,12 @@ function calc(formData) {
       mrrArr: combinedResults.projections?.mrr_by_month || [],
       custArr: combinedResults.projections?.customers_by_month || [],
       tierArr: combinedResults.projections?.tier_revenues_end || [],
-      metrics: { 
+      metrics: {
           total_mrr: combinedResults.metrics?.total_mrr || 0,
-          active_customers: combinedResults.metrics?.total_customers || 0,
+          total_subscribers: combinedResults.metrics?.total_subscribers || 0,
           annual_revenue: combinedResults.metrics?.annual_revenue || 0,
-          ltv: combinedResults.metrics?.customer_ltv || 0, // Mapped from customer_ltv
-          new_cust_month: combinedResults.metrics?.new_customers_monthly || 0 // Mapped from new_customers_monthly
+          subscriber_ltv: combinedResults.metrics?.subscriber_ltv || 0,
+          new_sub_month: combinedResults.metrics?.new_subscribers_monthly || 0
       }
   };
 }
@@ -155,7 +155,7 @@ function render(result) {
 
     const custCtx = document.getElementById("customersChart")?.getContext("2d");
     if (custCtx) {
-        if (!charts.cust) charts.cust = buildArea(custCtx, result.labels, result.custArr, palette[1]);
+        if (!charts.cust) charts.cust = buildArea(custCtx, result.labels, result.custArr, palette[1], v => Number(v).toLocaleString());
         else { charts.cust.data.labels = result.labels; charts.cust.data.datasets[0].data = result.custArr; charts.cust.update(); }
     }
 

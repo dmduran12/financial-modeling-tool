@@ -23,10 +23,10 @@ export interface SubscriptionResult {
   };
   metrics: {
     total_mrr: number;
-    total_customers: number;
+    total_subscribers: number;
     annual_revenue: number;
-    customer_ltv: number;
-    new_customers_monthly: number;
+    subscriber_ltv: number;
+    new_subscribers_monthly: number;
   };
 }
 
@@ -86,13 +86,13 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     },
     metrics: {
       total_mrr: mrr_by_month[mrr_by_month.length - 1],
-      total_customers: customers_by_month[customers_by_month.length - 1],
+      total_subscribers: customers_by_month[customers_by_month.length - 1],
       annual_revenue: mrr_by_month.slice(0, 12).reduce((a, b) => a + b, 0),
-      customer_ltv:
-        ((mrr_by_month.reduce((a, b) => a + b, 0) / months) *
+      subscriber_ltv:
+        (avgRevenuePerCustomer *
           (1 - (input.operating_expense_rate ?? 0) / 100)) /
         (churn || 1),
-      new_customers_monthly:
+      new_subscribers_monthly:
         customers_by_month[1] - (input.initial_customers || 10),
     },
   };
