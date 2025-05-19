@@ -15,7 +15,7 @@ export function setupChartDefaults() {
   Chart.defaults.elements.line.pointRadius = 0;
   Chart.defaults.elements.bar.borderRadius = 8;
   Chart.defaults.datasets.bar.categoryPercentage = 0.8;
-  Chart.defaults.plugins.legend.display = false;
+  Chart.defaults.plugins.legend.display = true;
   Chart.defaults.plugins.tooltip.backgroundColor = tooltipBg.trim();
   Chart.defaults.plugins.tooltip.titleColor = tooltipText.trim();
   Chart.defaults.plugins.tooltip.bodyColor = tooltipText.trim();
