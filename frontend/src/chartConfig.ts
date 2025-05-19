@@ -23,7 +23,7 @@ export function setupChartDefaults() {
   Chart.defaults.plugins.tooltip.titleFont = { size: 12 } as any;
   Chart.defaults.plugins.tooltip.bodyFont = { size: 12 } as any;
   Chart.defaults.scales = {
-    x: { grid: { color: gridColor.trim(), lineWidth: 1 } },
-    y: { grid: { display: false }, beginAtZero: true },
+    x: { grid: { color: gridColor.trim(), lineWidth: 1, display: false } },
+    y: { grid: { color: gridColor.trim(), lineWidth: 1 }, beginAtZero: true },
   } as any;
 }
