@@ -39,7 +39,7 @@ export default function InlineNumberInput({ label, value, unit, onChange, name, 
   };
 
   return (
-    <div className={`chip ${editing ? 'editing' : ''}`}>\
+    <div className={`chip ${editing ? 'editing' : ''}`}>
       <span className="label">{label}</span>
       <span className="value" data-unit={unit}>{display}</span>
       <input
