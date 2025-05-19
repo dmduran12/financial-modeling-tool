@@ -72,7 +72,7 @@ npm run build
 cd ..
 ```
 
-Starting the server normally will then use the bundled files in `frontend/dist`:
+Starting the server normally uses the bundled files in `frontend/dist`. When this folder is present, the backend automatically serves `index.html` and asset files from that directory:
 
 ```bash
 uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
@@ -117,28 +117,6 @@ npm test
 - The `static/js/model` directory contains minimal placeholder business logic to demonstrate calculations.
 - Brand tokens are defined in `static/css/brand-tokens.css` and include the full Catona color palette and design variables.
 - This is not a production‑ready build but serves as a foundation for further development.
-
-## Deployment
-
-To run in production, first build the frontend so the bundled assets are available:
-
-```bash
-cd frontend
-npm install
-npm run build
-cd ..
-```
-
-Start the API without reload:
-
-```bash
-uvicorn backend.app.main:app
-# or if started from another directory
-# PYTHONPATH=. uvicorn backend.app.main:app
-# python3 -m uvicorn backend.app.main:app
-```
-
-When the `frontend/dist` folder is present the backend automatically serves `index.html` and asset files from that directory.
 
 ## Debug Report
 
