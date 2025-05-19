@@ -18,7 +18,6 @@ import KPIChip from './components/KPIChip';
 import SidePanel from './components/SidePanel';
 import InputRow from './components/InputRow';
 import ChartCard from './components/ChartCard';
-import { formatCurrency, formatNumberShort } from './utils/format';
 import { generateLegend } from './utils/chartLegend';
 
 interface FormState {
@@ -197,29 +196,34 @@ export default function Dashboard() {
       {metrics && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <KPIChip
-            label="Total MRR"
-            value={formatCurrency(metrics.total_mrr, 0)}
-            sparkData={projections.mrr}
+            labelTop="Total"
+            labelBottom="MRR"
+            value={metrics.total_mrr}
+            dataArray={projections.mrr}
           />
           <KPIChip
-            label="Active Customers"
-            value={formatNumberShort(metrics.active_customers)}
-            sparkData={projections.customers}
+            labelTop="Active"
+            labelBottom="Customers"
+            value={metrics.active_customers}
+            dataArray={projections.customers}
           />
           <KPIChip
-            label="Annual Revenue"
-            value={formatCurrency(metrics.annual_revenue, 1)}
-            sparkData={projections.mrr.map((v) => v * 12)}
+            labelTop="Annual"
+            labelBottom="Revenue"
+            value={metrics.annual_revenue}
+            dataArray={projections.mrr.map((v) => v * 12)}
           />
           <KPIChip
-            label="Customer LTV"
-            value={formatCurrency(metrics.ltv, 1)}
-            sparkData={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
+            labelTop="Customer"
+            labelBottom="LTV"
+            value={metrics.ltv}
+            dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
           />
           <KPIChip
-            label="Total Customers"
-            value={formatNumberShort(metrics.total_customers)}
-            sparkData={projections.customers}
+            labelTop="Total"
+            labelBottom="Customers"
+            value={metrics.total_customers}
+            dataArray={projections.customers}
           />
         </div>
       )}

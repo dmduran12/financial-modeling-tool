@@ -2,7 +2,13 @@ import { useRef, useEffect } from 'react';
 import { Chart } from 'chart.js/auto';
 import { getCssVar } from '../utils/cssVar';
 
-export default function Sparkline({ data }: { data: number[] }) {
+interface Props {
+  data: number[];
+  className?: string;
+  onRendered?: () => void;
+}
+
+export default function Sparkline({ data, className = '', onRendered }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart>();
   const prevData = useRef<number[]>([]);
@@ -19,8 +25,14 @@ export default function Sparkline({ data }: { data: number[] }) {
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
     const gradient = ctx.createLinearGradient(0, 0, 0, ref.current.height);
-    gradient.addColorStop(0, `rgba(${r},${g},${b},0.18)`);
+    gradient.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
     gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+    const animation = {
+      duration: 200,
+      easing: 'easeInOutQuad',
+      onComplete: () => onRendered && onRendered(),
+    } as any;
 
     if (!chartRef.current) {
       chartRef.current = new Chart(ref.current, {
@@ -47,7 +59,7 @@ export default function Sparkline({ data }: { data: number[] }) {
           scales: { x: { display: false }, y: { display: false } },
           plugins: { legend: { display: false }, tooltip: { enabled: false } },
           events: [],
-          animation: { duration: 300, easing: 'easeOutQuad' },
+          animation,
         },
       });
       prevData.current = [...data];
@@ -56,9 +68,11 @@ export default function Sparkline({ data }: { data: number[] }) {
       c.data.labels = labels;
       (c.data.datasets[0].data as number[]) = data;
       (c.data.datasets[0].backgroundColor as any) = gradient;
-      c.options!.animation = { duration: 200, easing: 'easeInOutQuad' } as any;
+      c.options!.animation = animation;
       c.update();
       prevData.current = [...data];
+    } else if (onRendered) {
+      onRendered();
     }
   }, [data]);
 
@@ -68,5 +82,11 @@ export default function Sparkline({ data }: { data: number[] }) {
     return true;
   }
 
-  return <canvas ref={ref} className="w-full h-9" />;
+  return (
+    <canvas
+      ref={ref}
+      className={`w-full pointer-events-none ${className}`}
+      style={{ height: '28px', clipPath: 'inset(0 round 8px)' }}
+    />
+  );
 }
