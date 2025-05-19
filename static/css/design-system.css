@@ -35,13 +35,13 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 /* #kpiRow styling is now primarily for flex behavior on small screens */
 #kpiRow{
     display:flex; /* Horizontal layout on small screens */
-    gap:1rem; /* Spacing between KPI cards */
+    gap:var(--space-md); /* Spacing between KPI cards */
     overflow-x:auto; /* Enable horizontal scrolling */
-    padding-bottom: 1rem; /* Space for scrollbar if it appears */
+    padding-bottom:var(--space-sm); /* Space for scrollbar if it appears */
     /* Prevent flex items from shrinking too much */
-    & > .metric-card { 
+    & > .metric-card {
         flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
-        width: 200px; /* Example fixed width for scrollable items, adjust as needed */
+        width: 220px; /* Fixed width for scrollable items */
     }
 }
 @media(min-width:1024px){ /* lg breakpoint */
@@ -87,11 +87,4 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 .max-h-\[calc\(100vh-140px\)\] { max-height: calc(100vh - 140px); } /* From HTML shell */
 .overflow-y-auto { overflow-y: auto; } /* From HTML shell */
 
-/* KPI horizontal scroll on narrow screens */
-#kpiRow{
-  display:flex;
-  gap:var(--space-md);
-  overflow-x:auto;
-  padding-bottom:var(--space-sm);
-}
-#kpiRow .metric-card{flex:0 0 220px;}
+
