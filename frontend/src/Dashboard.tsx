@@ -125,36 +125,51 @@ export default function Dashboard() {
     const mrrArr = results.projections.mrr_by_month;
     const custArr = results.projections.customers_by_month;
     const tierArr = results.projections.tier_revenue_by_month;
+    const tierPrices = results.projections.tier_revenues_end;
+    const tierCustomers = tierArr.map((arr, idx) =>
+      arr.map((val) => val / (tierPrices[idx] || 1))
+    );
     setProjections({ mrr: mrrArr, customers: custArr });
 
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext('2d');
       if (ctx) {
+        const datasets = [
+          {
+            label: 'MRR',
+            data: mrrArr,
+            borderColor: '#4A47DC',
+            yAxisID: 'y1',
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          },
+          ...tierCustomers.map((arr, idx) => ({
+            label: `Tier ${idx + 1} Cust`,
+            data: arr,
+            borderColor: ['#4A47DC', '#8D8BE9', '#BF7DC4', '#E3C7E6'][idx],
+            yAxisID: 'y2',
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          })),
+        ];
         if (!chartInstances.current.combined) {
           chartInstances.current.combined = new Chart(ctx, {
             type: 'line',
-            data: {
-              labels,
-              datasets: [
-                { data: mrrArr, borderColor: '#4A47DC', yAxisID: 'y1' },
-                { data: custArr, borderColor: '#BF7DC4', yAxisID: 'y2' },
-              ],
-            },
+            data: { labels, datasets },
             options: {
               responsive: true,
               maintainAspectRatio: false,
               plugins: { legend: { display: false } },
               scales: {
                 y1: { position: 'left' },
-                y2: { position: 'right' },
+                y2: { position: 'right', grid: { drawOnChartArea: false } },
               },
             },
           });
         } else {
           const ch = chartInstances.current.combined;
           ch.data.labels = labels;
-          (ch.data.datasets[0].data as number[]) = mrrArr;
-          (ch.data.datasets[1].data as number[]) = custArr;
+          ch.data.datasets = datasets as any;
           ch.update();
         }
         if (chartInstances.current.combined) {
