@@ -68,6 +68,7 @@ export default function Dashboard() {
   const chartInstances = useRef<{ combined?: Chart; tier?: Chart }>({});
 
   useEffect(() => {
+    setLoading(true);
     const modelInput = {
       tier_revenues: [
         form.tier1_revenue,
