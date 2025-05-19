@@ -2,6 +2,26 @@ import { useRef, useEffect } from 'react';
 import { Chart } from 'chart.js/auto';
 import { getCssVar } from '../utils/cssVar';
 
+function parseColor(color: string): [number, number, number] {
+  const c = color?.trim() || '';
+  const rgbMatch = c.match(/^rgba?\((\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*[\d.]+)?\)$/i);
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1], 10);
+    const g = parseInt(rgbMatch[2], 10);
+    const b = parseInt(rgbMatch[3], 10);
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return [r, g, b];
+  }
+  const hexMatch = c.match(/^#([0-9a-f]{6})$/i);
+  if (hexMatch) {
+    const hex = hexMatch[1];
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return [r, g, b];
+  }
+  return [0, 0, 0];
+}
+
 interface Props {
   data: number[];
   className?: string;
@@ -20,10 +40,7 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
 
     const ctx = ref.current.getContext('2d');
     if (!ctx) return;
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
+    const [r, g, b] = parseColor(color);
     const gradient = ctx.createLinearGradient(0, 0, 0, ref.current.height);
     gradient.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
     gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
