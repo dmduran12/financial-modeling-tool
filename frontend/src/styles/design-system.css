@@ -52,7 +52,7 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 
 
 /* grid helpers (from playbook, ensure these are comprehensive enough or add more as needed) */
-.grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:1.5rem;}
+.grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;}
 .grid-col-span-12{grid-column:span 12 / span 12;}
 /* Responsive span classes - ensure these match Tailwind-like conventions if used in HTML */
 @media(min-width:768px){.md\:grid-col-span-6{grid-column:span 6 / span 6;}}
