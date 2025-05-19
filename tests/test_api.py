@@ -59,3 +59,13 @@ async def test_health_endpoint():
         resp = await ac.get("/api/health")
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
+
+
+@pytest.mark.asyncio
+async def test_audit_export_endpoint():
+    async with AsyncClient(app=api_only_app, base_url="http://test") as ac:
+        resp = await ac.get("/api/audit/export", params={"baseCpl": 150, "baseCvr": 4, "totalBudget": 10000})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 4
+    assert "cpl" in data[0]

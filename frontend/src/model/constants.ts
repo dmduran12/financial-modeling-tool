@@ -12,3 +12,7 @@ export const DEFAULT_FIXED_COSTS = Math.round(50000 / 12);
 // Default customer mix across pricing tiers, approximating a
 // typical distribution weighted toward lower tiers.
 export const DEFAULT_TIER_ADOPTION = [0.45, 0.3, 0.15, 0.1];
+
+export const TIER_CPL_FACTORS = [1, 1.6, 2.5, 4];
+export const TIER_CVR_FACTORS = [1, 0.65, 0.35, 0.15];
+export const TIER_BUDGET_SPLIT = [0.4, 0.3, 0.2, 0.1];

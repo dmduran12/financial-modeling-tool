@@ -13,6 +13,7 @@ except Exception:  # Jinja2 may not be installed
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
+from .marketing import calculate_tier_metrics, export_audit
 
 app = FastAPI(title="Catona Dashboard")
 
@@ -76,6 +77,15 @@ class CalculationResponse(BaseModel):
     cac: float
 
 
+class TierMetricResponse(BaseModel):
+    cpl: List[float]
+    cvr: List[float]
+    leads: List[float]
+    new_customers: List[float]
+    total_leads: float
+    total_new_customers: float
+
+
 @app.get("/api/kpis", response_model=List[KPI])
 async def get_kpis():
     tier_revenues = [1000, 2500, 5000, 10000]
@@ -117,3 +127,13 @@ async def calculate(data: CalculationRequest):
     conversions = (data.marketing.marketing_spend / max(data.marketing.cost_per_lead, 1e-6)) * data.marketing.conversion_rate
     cac = data.marketing.marketing_spend / max(conversions, 1e-6)
     return CalculationResponse(annual_revenue=annual_revenue, ltv=ltv, cac=cac)
+
+
+@app.get("/api/marketing/tiers", response_model=TierMetricResponse)
+async def marketing_tiers(baseCpl: float, baseCvr: float, totalBudget: float):
+    return calculate_tier_metrics(baseCpl, baseCvr, totalBudget)
+
+
+@app.get("/api/audit/export")
+async def audit_export(baseCpl: float, baseCvr: float, totalBudget: float):
+    return export_audit(baseCpl, baseCvr, totalBudget)
