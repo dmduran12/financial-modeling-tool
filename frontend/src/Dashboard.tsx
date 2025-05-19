@@ -14,6 +14,7 @@ import {
 } from './model/constants';
 import { runSubscriptionModel } from './model/subscription';
 import { calculateFinancialMetrics } from './model/finance';
+import { calculateTierMetrics } from './model/marketing';
 import { Chart } from 'chart.js/auto';
 import KPIChip from './components/KPIChip';
 import SidePanel from './components/SidePanel';
@@ -46,6 +47,8 @@ interface Metrics {
   total_customers: number;
   npv: number;
   paybackMonths: number | null;
+  blended_cpl: number;
+  blended_cvr: number;
 }
 
 export default function Dashboard() {
@@ -74,6 +77,13 @@ export default function Dashboard() {
   const warned = useRef(false);
 
   useEffect(() => {
+    if (form.cpl < 50 || form.conversion_rate > 10) {
+      if (!warned.current) {
+        alert('Base CPL must be at least $50 and base CVR at most 10%');
+        warned.current = true;
+      }
+      return;
+    }
     if (form.conversion_rate > 15 || form.churn_rate_smb < 1) {
       if (!warned.current) {
         alert('Inputs look unrealistic');
@@ -107,6 +117,14 @@ export default function Dashboard() {
       marketingSpend: form.marketing_budget,
     };
 
+    const tierMetrics = calculateTierMetrics(
+      form.cpl,
+      form.conversion_rate,
+      form.marketing_budget
+    );
+    const blendedCpl = tierMetrics.totalLeads ? form.marketing_budget / tierMetrics.totalLeads : 0;
+    const blendedCvr = tierMetrics.totalLeads ? (tierMetrics.totalNewCustomers / tierMetrics.totalLeads) * 100 : 0;
+
     const results = runSubscriptionModel(modelInput);
     const financial = calculateFinancialMetrics(
       results,
@@ -123,6 +141,8 @@ export default function Dashboard() {
       total_customers: results.metrics.total_customers,
       npv: financial.npv,
       paybackMonths: financial.paybackMonths,
+      blended_cpl: blendedCpl,
+      blended_cvr: blendedCvr,
     });
 
     const labels = results.projections.monthLabels;
@@ -253,7 +273,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {metrics && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
           <KPIChip
             labelTop="Total"
             labelBottom="MRR"
@@ -284,6 +304,20 @@ export default function Dashboard() {
             value={metrics.total_customers}
             dataArray={projections.customers}
           />
+          <KPIChip
+            labelTop="Blended"
+            labelBottom="CPL"
+            value={metrics.blended_cpl}
+            dataArray={projections.customers}
+            unit="currency"
+          />
+          <KPIChip
+            labelTop="Blended"
+            labelBottom="CVR"
+            value={metrics.blended_cvr}
+            dataArray={projections.customers}
+            unit="percent"
+          />
         </div>
       )}
       <div className="lg:flex gap-4">
@@ -305,6 +339,7 @@ export default function Dashboard() {
             <InlineNumberInput label="Budget" unit="currency" value={form.marketing_budget} onChange={(v) => handleValueChange('marketing_budget', v)} />
             <InlineNumberInput label="CPL" unit="currency" value={form.cpl} onChange={(v) => handleValueChange('cpl', v)} />
             <InlineNumberInput label="CVR" unit="percent" value={form.conversion_rate} onChange={(v) => handleValueChange('conversion_rate', v)} />
+            <p className="text-xs text-gray-500">Upper tiers scale automatically from Tier 1 inputs.</p>
           </div>
           <div className="space-y-3">
             <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>

@@ -1,3 +1,4 @@
+import { calculateTierMetrics } from "./marketing";
 export interface SubscriptionInput {
   projection_months: number;
   churn_rate_smb: number;
@@ -32,10 +33,9 @@ export interface SubscriptionResult {
 export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResult {
   const months = input.projection_months || 12;
   const churn = input.churn_rate_smb / 100;
-  const conversion = (input.conversion_rate ?? 0) / 100;
 
   const monthlyAcquisition = input.marketing_budget && input.cpl && input.conversion_rate
-    ? Math.max(0, (input.marketing_budget / Math.max(input.cpl, 1)) * conversion)
+    ? calculateTierMetrics(input.cpl, input.conversion_rate, input.marketing_budget).totalNewCustomers
     : 0;
 
   const adoption =
