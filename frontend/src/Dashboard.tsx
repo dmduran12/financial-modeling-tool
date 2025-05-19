@@ -68,8 +68,17 @@ export default function Dashboard() {
   const mrrCustRef = useRef<HTMLCanvasElement>(null);
   const tierRef = useRef<HTMLCanvasElement>(null);
   const chartInstances = useRef<{ combined?: Chart; tier?: Chart }>({});
+  const warned = useRef(false);
 
   useEffect(() => {
+    if (form.conversion_rate > 15 || form.churn_rate_smb < 1) {
+      if (!warned.current) {
+        alert('Inputs look unrealistic');
+        warned.current = true;
+      }
+      return;
+    }
+    warned.current = false;
     const modelInput = {
       tier_revenues: [
         form.tier1_revenue,
@@ -91,6 +100,7 @@ export default function Dashboard() {
     const expenses = {
       operatingExpenseRate: form.operating_expense_rate,
       fixedCosts: form.fixed_costs,
+      marketingSpend: form.marketing_budget,
     };
 
     const results = runSubscriptionModel(modelInput);
