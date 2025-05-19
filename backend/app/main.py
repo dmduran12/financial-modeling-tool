@@ -13,7 +13,6 @@ except Exception:  # Jinja2 may not be installed
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
-from pathlib import Path
 
 app = FastAPI(title="Catona Dashboard")
 
