@@ -5,7 +5,7 @@ export default function ApiStatus() {
 
   useEffect(() => {
     fetch('/api/health')
-      .then((res) => res.ok ? res.json() : Promise.reject())
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => {
         if (data.status === 'ok') setStatus('ok');
         else setStatus('error');
@@ -13,8 +13,15 @@ export default function ApiStatus() {
       .catch(() => setStatus('error'));
   }, []);
 
-  const color = status === 'ok' ? 'text-green-600' : status === 'error' ? 'text-red-600' : 'text-gray-500';
-  const label = status === 'ok' ? 'API Online' : status === 'error' ? 'API Offline' : 'Checking API...';
+  const label =
+    status === 'ok' ? 'API Online' : status === 'error' ? 'API Offline' : 'Checking API...';
+  const classes =
+    'px-2 py-1 text-xs font-medium rounded-full ' +
+    (status === 'ok'
+      ? 'bg-[var(--success-500)] text-[var(--color-neutral-900)]'
+      : status === 'error'
+      ? 'bg-[var(--error-500)] text-white'
+      : 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-900)]');
 
-  return <div className={`text-sm font-medium ${color}`}>{label}</div>;
+  return <span className={classes}>{label}</span>;
 }

@@ -1,7 +1,8 @@
 @import "brand-tokens.css";
 
 /* base */
-body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--cat-pearl);color:var(--squid-ink);}
+body{margin:0;font-family:'Roboto Mono',monospace;background:var(--cat-pearl);color:var(--squid-ink);}
+h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
 .card{background:var(--cat-neutral-50);border:1px solid var(--cat-driftwood);
       border-radius:12px;box-shadow:0 2px 6px #0001;}
 .btn,button{border-radius:9999px;padding:.5rem 1.25rem;cursor:pointer; border: 1px solid transparent; /* Added for consistency */}
