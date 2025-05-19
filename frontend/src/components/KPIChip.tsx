@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import Sparkline from './Sparkline';
-import { formatNumberShort } from '../utils/format';
+import { formatNumberShort, formatCurrency } from '../utils/format';
 
 interface Props {
   labelTop: string;
   labelBottom?: string;
   value: number | string;
   dataArray: number[];
+  unit?: 'currency' | 'percent';
 }
 
-export default function KPIChip({ labelTop, labelBottom, value, dataArray }: Props) {
+export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit }: Props) {
   const [refreshing, setRefreshing] = useState(true);
   const prevData = useRef<number[]>([]);
 
@@ -25,12 +26,16 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray }: Pro
   };
 
   const displayValue =
-    typeof value === 'number' ? formatNumberShort(value) : value;
+    typeof value === 'number'
+      ? unit === 'currency'
+        ? formatCurrency(value)
+        : formatNumberShort(value)
+      : value;
 
   return (
     <div
-      className={`relative border border-[var(--neutral-200)] rounded-lg bg-[var(--neutral-50)] p-4 h-[80px] md:h-[100px] transition-opacity duration-500 ${
-        refreshing ? 'opacity-40' : 'opacity-100'
+      className={`relative border border-[var(--neutral-200)] rounded-lg bg-[var(--neutral-50)] p-4 h-[80px] md:h-[100px] overflow-hidden ${
+        refreshing ? 'refreshing' : ''
       }`}
     >
       <div className="h-full md:grid md:grid-cols-5 flex flex-col" >
@@ -45,13 +50,13 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray }: Pro
           )}
         </div>
         <div className="md:col-span-3 flex items-center md:justify-end justify-center font-sans font-bold text-[24px] md:text-[32px] text-[var(--neutral-900)] relative z-2">
-          {displayValue}
+          <span className="metric-value" data-unit={unit}>{displayValue}</span>
         </div>
       </div>
       <Sparkline
         data={dataArray}
         onRendered={handleRendered}
-        className="absolute left-[4px] right-[4px] bottom-0"
+        className="spark left-[4px] right-[4px]"
       />
     </div>
   );

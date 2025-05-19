@@ -4,7 +4,7 @@ import { formatCurrency, formatNumberShort } from '../utils/format';
 interface Props {
   label: string;
   value: number;
-  unit?: '$' | '%';
+  unit?: 'currency' | 'percent';
   onChange: (value: number) => void;
 }
 
@@ -13,8 +13,8 @@ export default function InlineNumberInput({ label, value, unit, onChange }: Prop
   const [temp, setTemp] = useState<number>(value);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const display = unit === '$' ? formatCurrency(value) :
-                  unit === '%' ? `${value}%` : formatNumberShort(value);
+  const display = unit === 'currency' ? formatCurrency(value) :
+                  unit === 'percent' ? value.toString() : formatNumberShort(value);
 
   const handleFocus = () => {
     setEditing(true);
