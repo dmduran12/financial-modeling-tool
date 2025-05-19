@@ -19,6 +19,8 @@ import SidePanel from './components/SidePanel';
 import InlineNumberInput from './components/InlineNumberInput';
 import ChartCard from './components/ChartCard';
 import { generateLegend } from './utils/chartLegend';
+import { formatCurrency } from './utils/format';
+import { getCssVar } from './utils/cssVar';
 
 interface FormState {
   tier1_revenue: number;
@@ -134,19 +136,22 @@ export default function Dashboard() {
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext('2d');
       if (ctx) {
+        const mrrColor = getCssVar('--success-500', mrrCustRef.current!);
         const datasets = [
           {
             label: 'MRR',
             data: mrrArr,
-            borderColor: '#4A47DC',
+            borderColor: mrrColor,
+            borderWidth: 4,
             yAxisID: 'y1',
             pointRadius: 0,
             pointHoverRadius: 4,
           },
           ...tierCustomers.map((arr, idx) => ({
-            label: `Tier ${idx + 1} Cust`,
+            label: `Tier ${idx + 1}`,
             data: arr,
             borderColor: ['#4A47DC', '#8D8BE9', '#BF7DC4', '#E3C7E6'][idx],
+            borderWidth: 2,
             yAxisID: 'y2',
             pointRadius: 0,
             pointHoverRadius: 4,
@@ -161,7 +166,13 @@ export default function Dashboard() {
               maintainAspectRatio: false,
               plugins: { legend: { display: false } },
               scales: {
-                y1: { position: 'left' },
+                x: { grid: { display: false } },
+                y1: {
+                  position: 'left',
+                  ticks: {
+                    callback: (v: any) => '$' + formatCurrency(Number(v)),
+                  },
+                },
                 y2: { position: 'right', grid: { drawOnChartArea: false } },
               },
             },
@@ -194,7 +205,15 @@ export default function Dashboard() {
               responsive: true,
               maintainAspectRatio: false,
               plugins: { legend: { display: false } },
-              scales: { x: { stacked: true }, y: { stacked: true } },
+              scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: {
+                  stacked: true,
+                  ticks: {
+                    callback: (v: any) => '$' + formatCurrency(Number(v)),
+                  },
+                },
+              },
             },
           });
         } else {
