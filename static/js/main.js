@@ -155,7 +155,7 @@ function render(result) {
 
     const custCtx = document.getElementById("customersChart")?.getContext("2d");
     if (custCtx) {
-        if (!charts.cust) charts.cust = buildArea(custCtx, result.labels, result.custArr, palette[1]);
+        if (!charts.cust) charts.cust = buildArea(custCtx, result.labels, result.custArr, palette[1], v => Number(v).toLocaleString());
         else { charts.cust.data.labels = result.labels; charts.cust.data.datasets[0].data = result.custArr; charts.cust.update(); }
     }
 
