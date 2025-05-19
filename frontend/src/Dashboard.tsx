@@ -63,6 +63,8 @@ export default function Dashboard() {
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [projections, setProjections] = useState<{ mrr: number[]; customers: number[] }>({ mrr: [], customers: [] });
+  const [combinedLegend, setCombinedLegend] = useState<string>('');
+  const [tierLegend, setTierLegend] = useState<string>('');
   const mrrCustRef = useRef<HTMLCanvasElement>(null);
   const tierRef = useRef<HTMLCanvasElement>(null);
   const chartInstances = useRef<{ combined?: Chart; tier?: Chart }>({});
@@ -131,6 +133,7 @@ export default function Dashboard() {
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
               scales: {
                 y1: { position: 'left' },
                 y2: { position: 'right' },
@@ -143,6 +146,9 @@ export default function Dashboard() {
           (ch.data.datasets[0].data as number[]) = mrrArr;
           (ch.data.datasets[1].data as number[]) = custArr;
           ch.update();
+        }
+        if (chartInstances.current.combined) {
+          setCombinedLegend(chartInstances.current.combined.generateLegend());
         }
       }
     }
@@ -162,6 +168,7 @@ export default function Dashboard() {
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
               scales: { x: { stacked: true }, y: { stacked: true } },
             },
           });
@@ -170,6 +177,9 @@ export default function Dashboard() {
           ch.data.labels = labels;
           ch.data.datasets = datasets as any;
           ch.update();
+        }
+        if (chartInstances.current.tier) {
+          setTierLegend(chartInstances.current.tier.generateLegend());
         }
       }
     }
@@ -242,10 +252,10 @@ export default function Dashboard() {
           </SidePanel>
         </div>
         <div className="col-span-12 lg:col-span-9 space-y-4">
-          <ChartCard title="MRR & Customers">
+          <ChartCard title="MRR & Customers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
           </ChartCard>
-          <ChartCard title="Revenue by Tier">
+          <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
           </ChartCard>
         </div>
