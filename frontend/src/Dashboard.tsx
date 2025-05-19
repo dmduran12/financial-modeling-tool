@@ -183,7 +183,16 @@ export default function Dashboard() {
         }
       }
     }
-    return () => {};
+    return () => {
+      if (chartInstances.current.combined) {
+        chartInstances.current.combined.destroy();
+        delete chartInstances.current.combined;
+      }
+      if (chartInstances.current.tier) {
+        chartInstances.current.tier.destroy();
+        delete chartInstances.current.tier;
+      }
+    };
   }, [form]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
