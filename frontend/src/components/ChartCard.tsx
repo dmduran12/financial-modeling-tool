@@ -21,7 +21,7 @@ export default function ChartCard({ title, children, legend }: Props) {
           </div>
         )}
       </div>
-      <Card className="relative">
+      <Card className="relative overflow-hidden">
         <div className="h-64 relative">{children}</div>
       </Card>
     </div>
