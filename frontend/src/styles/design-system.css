@@ -25,10 +25,10 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 .metric-label{font-size:0.875rem;color:var(--neutral-400);font-family:'Roboto Mono',monospace;}
 
 /* KPI chips */
-.kpi-card{position:relative;background:var(--neutral-50);border:1px solid var(--neutral-200);border-radius:8px;padding:1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;}
-.kpi-card .label-block div{font-size:0.75rem;font-weight:500;color:var(--color-neutral-500);font-family:'Roboto Mono',monospace;}
+.kpi-card{position:relative;background:var(--neutral-50);border:1px solid var(--neutral-200);border-radius:8px;padding:var(--space-sm) var(--space-md);overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;}
+.kpi-card .label-block div{font-size:0.75rem;font-weight:500;color:var(--color-neutral-500);font-family:'Roboto Mono',monospace;line-height:1;}
 .kpi-card .metric{position:relative;z-index:2;font-family:'Inter',sans-serif;font-weight:700;font-size:2rem;}
-.kpi-card .top-row{display:flex;justify-content:space-between;align-items:flex-end;}
+.kpi-card .top-row{display:flex;justify-content:space-between;align-items:center;}
 
 /* interactive card */
 .interactive-card>.card-header{all:unset;display:flex;justify-content:space-between;
