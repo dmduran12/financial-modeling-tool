@@ -28,11 +28,18 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
   const displayValue =
     typeof value === 'number'
       ? unit === 'currency'
-        ? formatCurrency(value)
+        ? '$' + formatCurrency(value)
+        : unit === 'percent'
+        ? value.toFixed(2) + '%'
         : formatNumberShort(value)
       : value;
 
-  const sparkData = [...dataArray].reverse();
+  const sparkData = [...dataArray];
+
+  const trendUp = sparkData[sparkData.length - 1] >= sparkData[0];
+  const sparkColor = trendUp
+    ? 'var(--success-500)'
+    : 'var(--error-500)';
 
   return (
     <div
@@ -51,6 +58,8 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
         data={sparkData}
         onRendered={handleRendered}
         className="sparkline"
+        color={sparkColor}
+        strokeWidth={3}
       />
     </div>
   );

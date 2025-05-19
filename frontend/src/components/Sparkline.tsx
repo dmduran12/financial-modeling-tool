@@ -26,9 +26,17 @@ interface Props {
   data: number[];
   className?: string;
   onRendered?: () => void;
+  color?: string;
+  strokeWidth?: number;
 }
 
-export default function Sparkline({ data, className = '', onRendered }: Props) {
+export default function Sparkline({
+  data,
+  className = '',
+  onRendered,
+  color,
+  strokeWidth = 2,
+}: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart>();
   const prevData = useRef<number[]>([]);
@@ -36,11 +44,12 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
   useEffect(() => {
     if (!ref.current) return;
     const labels = data.map((_, i) => i.toString());
-    const color = getCssVar('--accent-primary-500', ref.current) || getCssVar('--cobalt-500', ref.current);
+    const resolvedColor =
+      color || getCssVar('--accent-primary-500', ref.current) || getCssVar('--cobalt-500', ref.current);
 
     const ctx = ref.current.getContext('2d');
     if (!ctx) return;
-    const [r, g, b] = parseColor(color);
+    const [r, g, b] = parseColor(resolvedColor);
     const gradient = ctx.createLinearGradient(0, 0, 0, ref.current.height);
     gradient.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
     gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
@@ -59,9 +68,9 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
           datasets: [
             {
               data,
-              borderColor: color,
+              borderColor: resolvedColor,
               backgroundColor: gradient,
-              borderWidth: 2,
+              borderWidth: strokeWidth,
               tension: 0.4,
               pointRadius: 0,
               fill: 'origin',
@@ -85,13 +94,15 @@ export default function Sparkline({ data, className = '', onRendered }: Props) {
       c.data.labels = labels;
       (c.data.datasets[0].data as number[]) = data;
       (c.data.datasets[0].backgroundColor as any) = gradient;
+      (c.data.datasets[0].borderColor as any) = resolvedColor;
+      (c.data.datasets[0].borderWidth as any) = strokeWidth;
       c.options!.animation = animation;
       c.update();
       prevData.current = [...data];
     } else if (onRendered) {
       onRendered();
     }
-  }, [data]);
+  }, [data, color, strokeWidth]);
 
   function arraysEqual(a: number[], b: number[]) {
     if (a.length !== b.length) return false;
