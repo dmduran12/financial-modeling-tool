@@ -1,4 +1,5 @@
 import { Chart } from 'chart.js/auto';
+import { getCssVar } from '../utils/cssVar';
 
 const gradientWipe = {
   id: 'gradientWipe',
@@ -16,8 +17,9 @@ const gradientWipe = {
     const x = chartArea.left + width * offset - gradWidth / 2;
 
     const gradient = ctx.createLinearGradient(x, 0, x + gradWidth, 0);
+    const color = getCssVar('--cobalt-500', chart.canvas);
     gradient.addColorStop(0, 'transparent');
-    gradient.addColorStop(0.5, 'var(--cobalt-500)');
+    gradient.addColorStop(0.5, color);
     gradient.addColorStop(1, 'transparent');
 
     ctx.save();
@@ -27,7 +29,7 @@ const gradientWipe = {
 
     if (flash > 0) {
       ctx.globalAlpha = flash;
-      ctx.fillStyle = 'var(--cobalt-500)';
+      ctx.fillStyle = color;
       ctx.fillRect(chartArea.left, chartArea.top, width, height);
       ctx.globalAlpha = 1;
     }
