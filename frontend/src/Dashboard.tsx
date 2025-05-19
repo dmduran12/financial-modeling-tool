@@ -222,10 +222,10 @@ export default function Dashboard() {
           />
         </div>
       )}
-      <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 lg:col-span-3 space-y-4">
-          <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
-          <SidePanel>
+      <div className="lg:flex gap-4">
+        <SidePanel className="sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
+          <div className="py-4 border-b border-[var(--color-neutral-200)]">
+            <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
               <InputRow
                 key={n}
@@ -235,23 +235,23 @@ export default function Dashboard() {
                 onChange={handleChange}
               />
             ))}
-          </SidePanel>
-          <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
-          <SidePanel>
+          </div>
+          <div className="py-4 border-b border-[var(--color-neutral-200)]">
+            <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
             <InputRow label="Marketing Budget" name="marketing_budget" value={form.marketing_budget} onChange={handleChange} />
             <InputRow label="Cost Per Lead" name="cpl" value={form.cpl} onChange={handleChange} />
             <InputRow label="Conversion Rate (%)" name="conversion_rate" value={form.conversion_rate} onChange={handleChange} />
-          </SidePanel>
-          <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
-          <SidePanel>
+          </div>
+          <div className="py-4">
+            <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
             <InputRow label="Churn Rate (%)" name="churn_rate_smb" value={form.churn_rate_smb} onChange={handleChange} />
             <InputRow label="WACC (%)" name="wacc" value={form.wacc} onChange={handleChange} />
             <InputRow label="Projection Months" name="projection_months" value={form.projection_months} onChange={handleChange} />
             <InputRow label="Operating Expense Rate (%)" name="operating_expense_rate" value={form.operating_expense_rate} onChange={handleChange} />
             <InputRow label="Fixed Costs" name="fixed_costs" value={form.fixed_costs} onChange={handleChange} />
-          </SidePanel>
-        </div>
-        <div className="col-span-12 lg:col-span-9 space-y-4">
+          </div>
+        </SidePanel>
+        <div className="flex-1 space-y-4">
           <ChartCard title="MRR & Customers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
           </ChartCard>
