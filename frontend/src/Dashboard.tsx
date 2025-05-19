@@ -280,18 +280,21 @@ export default function Dashboard() {
             labelBottom="MRR"
             value={metrics.total_mrr}
             dataArray={projections.mrr}
+            unit="currency"
           />
           <KPIChip
             labelTop="Annual"
             labelBottom="Revenue"
             value={metrics.annual_revenue}
             dataArray={projections.mrr.map((v) => v * 12)}
+            unit="currency"
           />
           <KPIChip
             labelTop="Subscriber"
             labelBottom="LTV"
             value={metrics.subscriber_ltv}
             dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
+            unit="currency"
           />
           <KPIChip
             labelTop="Total"
