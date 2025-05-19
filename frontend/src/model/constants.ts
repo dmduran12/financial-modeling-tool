@@ -9,3 +9,6 @@ export const DEFAULT_PROJECTION_MONTHS = 24;
 export const DEFAULT_INITIAL_INVESTMENT = 200000;
 export const DEFAULT_OPERATING_EXPENSE_RATE = 35;
 export const DEFAULT_FIXED_COSTS = Math.round(50000 / 12);
+// Default customer mix across pricing tiers, approximating a
+// typical distribution weighted toward lower tiers.
+export const DEFAULT_TIER_ADOPTION = [0.45, 0.3, 0.15, 0.1];

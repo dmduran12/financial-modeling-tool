@@ -8,6 +8,7 @@ export interface SubscriptionInput {
   conversion_rate?: number;
   operating_expense_rate?: number;
   fixed_costs?: number;
+  tier_adoption_rates?: number[];
 }
 
 export interface SubscriptionResult {
@@ -37,6 +38,14 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     ? Math.max(0, (input.marketing_budget / Math.max(input.cpl, 1)) * conversion)
     : 0;
 
+  const adoption =
+    input.tier_adoption_rates &&
+    input.tier_adoption_rates.length === input.tier_revenues.length
+      ? input.tier_adoption_rates.slice()
+      : Array(input.tier_revenues.length).fill(1 / (input.tier_revenues.length || 1));
+  const totalRate = adoption.reduce((a, b) => a + b, 0) || 1;
+  const normalizedAdoption = adoption.map((r) => r / totalRate);
+
   const monthLabels = Array.from({ length: months }, (_, i) => `M${i + 1}`);
   let customers = input.initial_customers || 10;
   const customers_by_month: number[] = [];
@@ -47,9 +56,10 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     () => [] as number[]
   );
 
-  const avgRevenuePerCustomer =
-    input.tier_revenues.reduce((sum, rev) => sum + rev, 0) /
-    (input.tier_revenues.length || 1);
+  const avgRevenuePerCustomer = input.tier_revenues.reduce(
+    (sum, rev, idx) => sum + rev * normalizedAdoption[idx],
+    0
+  );
 
   for (let i = 0; i < months; i++) {
     const churned = Math.min(customers, customers * churn);
@@ -59,8 +69,8 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     const recognized = customers * avgRevenuePerCustomer;
     mrr_by_month.push(recognized);
     deferred_by_month.push(recognized); // simplified deferral
-    const perTierCustomers = customers / (input.tier_revenues.length || 1);
     input.tier_revenues.forEach((rev, idx) => {
+      const perTierCustomers = customers * normalizedAdoption[idx];
       tier_revenue_by_month[idx].push(perTierCustomers * rev);
     });
   }

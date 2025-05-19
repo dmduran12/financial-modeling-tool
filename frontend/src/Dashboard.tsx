@@ -10,6 +10,7 @@ import {
   DEFAULT_INITIAL_INVESTMENT,
   DEFAULT_OPERATING_EXPENSE_RATE,
   DEFAULT_FIXED_COSTS,
+  DEFAULT_TIER_ADOPTION,
 } from './model/constants';
 import { runSubscriptionModel } from './model/subscription';
 import { calculateFinancialMetrics } from './model/finance';
@@ -97,6 +98,7 @@ export default function Dashboard() {
       projection_months: form.projection_months,
       operating_expense_rate: form.operating_expense_rate,
       fixed_costs: form.fixed_costs,
+      tier_adoption_rates: DEFAULT_TIER_ADOPTION,
     };
 
     const expenses = {
