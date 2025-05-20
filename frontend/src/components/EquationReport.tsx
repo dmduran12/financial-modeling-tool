@@ -3,7 +3,7 @@ import Card from './Card';
 export default function EquationReport() {
   return (
     <div>
-      <h3 className="text-sm font-medium font-sans mb-2">Model Equations</h3>
+      <h3 className="content-header">Model Equations</h3>
       <Card>
         <ul className="text-sm list-disc pl-6 space-y-1 font-mono">
           <li>New Customers = (Marketing Budget / Cost Per Lead) × Conversion Rate</li>
