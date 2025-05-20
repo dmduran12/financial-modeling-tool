@@ -217,10 +217,12 @@ export default function Dashboard() {
             label: "MRR",
             data: mrrArr,
             borderColor: mrrColor,
-            borderWidth: 4,
+            borderWidth: 6,
             yAxisID: "y1",
             pointRadius: 0,
             pointHoverRadius: 4,
+            tension: 0,
+            order: -1,
           },
           ...tierCustomers.map((arr, idx) => ({
             label: `Tier ${idx + 1}`,
@@ -230,6 +232,8 @@ export default function Dashboard() {
             yAxisID: "y2",
             pointRadius: 0,
             pointHoverRadius: 4,
+            tension: 0,
+            stepped: true,
           })),
         ];
         if (!chartInstances.current.combined) {

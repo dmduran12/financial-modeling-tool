@@ -213,3 +213,8 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
   font-family:monospace;
   font-size:0.75rem;
 }
+
+.equation-row:hover{
+  background:var(--color-neutral-100);
+  transition:background .2s;
+}

@@ -203,7 +203,7 @@ export default function EquationReport({ form, metrics, projections }: Props) {
               <>
                 <tr
                   key={row.label}
-                  className="align-top cursor-pointer"
+                  className="equation-row align-top cursor-pointer"
                   onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 >
                   <td className="pr-2 text-right whitespace-nowrap">
