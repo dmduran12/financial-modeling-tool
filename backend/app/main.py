@@ -3,9 +3,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+
 try:
     from fastapi.templating import Jinja2Templates
     import jinja2
+
     _templates_available = True
 except Exception:  # Jinja2 may not be installed
     Jinja2Templates = None
@@ -14,6 +16,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from typing import List
 from .marketing import calculate_tier_metrics, export_audit
+from .projection import run_projection
 
 app = FastAPI(title="Catona Dashboard")
 
@@ -40,7 +43,9 @@ async def health():
 dist_dir = Path("frontend/dist")
 if dist_dir.exists():
     app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
-    templates = Jinja2Templates(directory=str(dist_dir)) if _templates_available else None
+    templates = (
+        Jinja2Templates(directory=str(dist_dir)) if _templates_available else None
+    )
 else:
     templates = Jinja2Templates(directory="frontend") if _templates_available else None
 
@@ -49,16 +54,19 @@ class KPI(BaseModel):
     name: str
     value: float
 
+
 class KPIRequest(BaseModel):
     mrr: float
     arpu: float
     churn_rate: float
     active_users: int
 
+
 class MarketingRequest(BaseModel):
     marketing_spend: float
     cost_per_lead: float
     conversion_rate: float
+
 
 class FinancialRequest(BaseModel):
     wacc: float
@@ -66,10 +74,12 @@ class FinancialRequest(BaseModel):
     stripe_fee: float
     carbon_cost: float
 
+
 class CalculationRequest(BaseModel):
     kpi: KPIRequest
     marketing: MarketingRequest
     financial: FinancialRequest
+
 
 class CalculationResponse(BaseModel):
     annual_revenue: float
@@ -84,6 +94,27 @@ class TierMetricResponse(BaseModel):
     new_customers: List[float]
     total_leads: float
     total_new_customers: float
+
+
+class ProjectionRequest(BaseModel):
+    marketing_budget: float
+    base_cpl: float
+    base_cvr: float
+    months: int = 24
+
+
+class ProjectionResponse(BaseModel):
+    impressions: List[float]
+    clicks: List[float]
+    leads: List[float]
+    new_customers: List[float]
+    active_customers: List[float]
+    total_mrr: List[float]
+    gross_profit: List[float]
+    cac: List[float]
+    free_cash_flow: List[float]
+    kpis: dict
+    flags: List[str]
 
 
 @app.get("/api/kpis", response_model=List[KPI])
@@ -110,6 +141,7 @@ async def get_kpis():
     ]
     return data
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     dist_index = Path("frontend/dist/index.html")
@@ -119,12 +151,15 @@ async def index(request: Request):
         return templates.TemplateResponse("index.html", {"request": request})
     return FileResponse(Path("frontend/index.html"))
 
+
 @app.post("/api/calculate", response_model=CalculationResponse)
 async def calculate(data: CalculationRequest):
     annual_revenue = data.kpi.mrr * 12
     ltv = data.kpi.arpu / max(data.kpi.churn_rate, 1e-6)
     # Simple marketing conversion assumptions
-    conversions = (data.marketing.marketing_spend / max(data.marketing.cost_per_lead, 1e-6)) * data.marketing.conversion_rate
+    conversions = (
+        data.marketing.marketing_spend / max(data.marketing.cost_per_lead, 1e-6)
+    ) * data.marketing.conversion_rate
     cac = data.marketing.marketing_spend / max(conversions, 1e-6)
     return CalculationResponse(annual_revenue=annual_revenue, ltv=ltv, cac=cac)
 
@@ -137,3 +172,13 @@ async def marketing_tiers(baseCpl: float, baseCvr: float, totalBudget: float):
 @app.get("/api/audit/export")
 async def audit_export(baseCpl: float, baseCvr: float, totalBudget: float):
     return export_audit(baseCpl, baseCvr, totalBudget)
+
+
+@app.post("/api/projection", response_model=ProjectionResponse)
+async def projection(data: ProjectionRequest):
+    return run_projection(
+        marketing_budget=data.marketing_budget,
+        months=data.months,
+        base_cpl=data.base_cpl,
+        base_cvr=data.base_cvr,
+    )
