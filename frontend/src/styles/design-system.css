@@ -206,8 +206,8 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
     font-size:1rem;
   }
 }
-
-/* funnel metrics table */
-.funnel-table th,.funnel-table td{padding:var(--space-xs) var(--space-sm);text-align:right;white-space:nowrap;}
-.funnel-table th:first-child,.funnel-table td:first-child{text-align:left;font-weight:500;}
-
+.funnel-table{border-collapse:collapse;width:100%;font-family:'Roboto Mono',monospace;}
+.funnel-table th,.funnel-table td{padding:4px 8px;text-align:right;}
+.funnel-table th{color:var(--neutral-400);font-weight:500;}
+.funnel-table td{text-align:right;}
+.funnel-table td:first-child{text-align:left;}

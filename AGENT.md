@@ -24,6 +24,13 @@ Welcome, automated contributor! This project welcomes assistance from AI agents 
 - Include the results of running the test commands. If you could not run them, explain why (for example, missing dependencies in the environment).
 - Note any TODOs or follow ups separately in a "Notes" section.
 
+## Dashboard Layout
+
+- KPI cards are arranged in a two-column grid (2x3) with squid-ink backgrounds,
+  pearl labels, and go-green metric text. Sparklines are removed.
+- A Funnel Metrics table below the charts lists Impr, Clicks, Leads, NewCust,
+  BlendedCPL, and BlendedCVR for the first three months.
+
 Thank you for your contributions, and happy coding!
 
 ## Dashboard Layout

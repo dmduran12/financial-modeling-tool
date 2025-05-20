@@ -15,54 +15,49 @@ export default function FunnelTable({
   newCustomers,
   marketingBudget,
 }: Props) {
-  const months = ["M1", "M2", "M3"];
-
-  const renderCells = (arr: number[], fmt: (v: number) => string) =>
-    months.map((_, i) => <td key={i}>{fmt(arr[i] || 0)}</td>);
-
+  const months = [0, 1, 2];
+  const rows = [
+    { label: "Impr", values: impressions },
+    { label: "Clicks", values: clicks },
+    { label: "Leads", values: leads },
+    { label: "NewCust", values: newCustomers },
+    {
+      label: "BlendedCPL",
+      values: months.map((i) => (leads[i] ? marketingBudget / leads[i] : 0)),
+    },
+    {
+      label: "BlendedCVR",
+      values: months.map((i) =>
+        leads[i] ? (newCustomers[i] / leads[i]) * 100 : 0,
+      ),
+    },
+  ];
   return (
     <div>
       <h3 className="content-header">Funnel Metrics</h3>
-      <Card className="overflow-x-auto">
-        <table className="funnel-table text-xs w-full font-mono">
+      <Card>
+        <table className="funnel-table w-full text-right text-xs">
           <thead>
             <tr>
-              <th></th>
-              {months.map((m) => (
-                <th key={m}>{m}</th>
+              <th className="text-left">Metric</th>
+              {months.map((i) => (
+                <th key={i}>{`M${i + 1}`}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Impr</td>
-              {renderCells(impressions, (v) => Math.round(v).toLocaleString())}
-            </tr>
-            <tr>
-              <td>Clicks</td>
-              {renderCells(clicks, (v) => Math.round(v).toLocaleString())}
-            </tr>
-            <tr>
-              <td>Leads</td>
-              {renderCells(leads, (v) => Math.round(v).toLocaleString())}
-            </tr>
-            <tr>
-              <td>NewCust</td>
-              {renderCells(newCustomers, (v) => Math.round(v).toLocaleString())}
-            </tr>
-            <tr>
-              <td>BlendedCPL</td>
-              {renderCells(leads, (v) =>
-                v ? `$${(marketingBudget / v).toFixed(0)}` : "—",
-              )}
-            </tr>
-            <tr>
-              <td>BlendedCVR</td>
-              {renderCells(
-                leads.map((l, i) => (l ? (newCustomers[i] / l) * 100 : 0)),
-                (v) => `${v.toFixed(1)}%`,
-              )}
-            </tr>
+            {rows.map((row) => (
+              <tr key={row.label}>
+                <td className="text-left">{row.label}</td>
+                {months.map((i) => (
+                  <td key={i}>
+                    {row.values[i]?.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </Card>

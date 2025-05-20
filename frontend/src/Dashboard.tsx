@@ -23,6 +23,7 @@ import SidePanel from "./components/SidePanel";
 import InlineNumberInput from "./components/InlineNumberInput";
 import ChartCard from "./components/ChartCard";
 import EquationReport from "./components/EquationReport";
+import FunnelTable from "./components/FunnelTable";
 import { generateLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
@@ -408,7 +409,7 @@ export default function Dashboard() {
                   value={metrics.total_mrr}
                   dataArray={projections.mrr}
                   unit="currency"
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Annual"
@@ -416,7 +417,7 @@ export default function Dashboard() {
                   value={metrics.annual_revenue}
                   dataArray={projections.mrr.map((v) => v * 12)}
                   unit="currency"
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Subscriber"
@@ -426,14 +427,14 @@ export default function Dashboard() {
                     (v) => v / (form.churn_rate_smb / 100),
                   )}
                   unit="currency"
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Total"
                   labelBottom="Subscribers"
                   value={metrics.total_subscribers}
                   dataArray={projections.subscribers}
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -444,7 +445,7 @@ export default function Dashboard() {
                   )}
                   unit="currency"
                   warning={warning}
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -455,7 +456,7 @@ export default function Dashboard() {
                   )}
                   unit="percent"
                   warning={warning}
-                  className="col-span-6"
+                  className="col-span-6 lg:col-span-3"
                 />
               </div>
             </>
