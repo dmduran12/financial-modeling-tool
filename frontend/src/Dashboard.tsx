@@ -466,6 +466,13 @@ export default function Dashboard() {
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
           </ChartCard>
+          <FunnelTable
+            impressions={projections.impressions}
+            clicks={projections.clicks}
+            leads={projections.leads}
+            newCustomers={projections.newCustomers}
+            marketingBudget={form.marketing_budget}
+          />
           <EquationReport />
         </div>
       </div>

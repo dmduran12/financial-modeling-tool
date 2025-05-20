@@ -13,6 +13,11 @@ Welcome, automated contributor! This project welcomes assistance from AI agents 
 - Keep commit messages concise: a short summary in the imperative mood.
 - When modifying JavaScript or TypeScript, run `npx prettier --write` on the changed files.
 
+## Frontend Layout
+- Use the `content-header` class for section headers to match the dashboard style.
+- Maintain vertical rhythm using `space-y-*` utilities instead of ad-hoc margins.
+- The main page order is: sidebar inputs, KPI section, charts, funnel metrics, then the equation summary.
+
 ## Pull Requests
 
 - Provide a high level summary of what changed.
