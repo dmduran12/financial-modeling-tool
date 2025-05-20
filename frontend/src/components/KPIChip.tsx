@@ -1,17 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
-import Sparkline from './Sparkline';
-import { formatNumberShort, formatCurrency } from '../utils/format';
+import { useEffect, useRef, useState } from "react";
+import Sparkline from "./Sparkline";
+import { formatNumberShort, formatCurrency } from "../utils/format";
 
 interface Props {
   labelTop: string;
   labelBottom?: string;
   value: number | string;
   dataArray: number[];
-  unit?: 'currency' | 'percent';
+  unit?: "currency" | "percent";
   className?: string;
+  warning?: boolean;
 }
 
-export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit, className = '' }: Props) {
+export default function KPIChip({
+  labelTop,
+  labelBottom,
+  value,
+  dataArray,
+  unit,
+  className = "",
+  warning = false,
+}: Props) {
   const [refreshing, setRefreshing] = useState(true);
   const prevData = useRef<number[]>([]);
 
@@ -27,24 +36,22 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit,
   };
 
   const displayValue =
-    typeof value === 'number'
-      ? unit === 'currency'
-        ? '$' + formatCurrency(value)
-        : unit === 'percent'
-        ? value.toFixed(2) + '%'
-        : formatNumberShort(value)
+    typeof value === "number"
+      ? unit === "currency"
+        ? "$" + formatCurrency(value)
+        : unit === "percent"
+          ? value.toFixed(2) + "%"
+          : formatNumberShort(value)
       : value;
 
   const sparkData = [...dataArray];
 
   const trendUp = sparkData[sparkData.length - 1] >= sparkData[0];
-  const sparkColor = trendUp
-    ? 'var(--success-500)'
-    : 'var(--error-500)';
+  const sparkColor = trendUp ? "var(--success-500)" : "var(--error-500)";
 
   return (
     <div
-      className={`kpi-card ${refreshing ? 'refreshing' : ''} ${className}`}
+      className={`kpi-card ${refreshing ? "refreshing" : ""} ${warning ? "warning" : ""} ${className}`}
     >
       <div className="top-row">
         <div className="label-block">
@@ -52,7 +59,9 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit,
           {labelBottom && <div className="leading-none">{labelBottom}</div>}
         </div>
         <div className="metric">
-          <span className="metric-value" data-unit={unit}>{displayValue}</span>
+          <span className="metric-value" data-unit={unit}>
+            {displayValue}
+          </span>
         </div>
       </div>
       <Sparkline
