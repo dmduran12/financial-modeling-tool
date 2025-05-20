@@ -146,7 +146,7 @@ export default function Dashboard() {
     const tierArr = results.projections.tier_revenue_by_month;
     const tierPrices = results.projections.tier_revenues_end;
     const tierCustomers = tierArr.map((arr, idx) =>
-      arr.map((val) => Math.round(val / (tierPrices[idx] || 1)))
+      arr.map((val) => val / (tierPrices[idx] || 1))
     );
     setProjections({ mrr: mrrArr, subscribers: subArr });
 
@@ -194,7 +194,7 @@ export default function Dashboard() {
                   position: 'right',
                   grid: { drawOnChartArea: false },
                   ticks: {
-                    callback: (v: any) => Math.round(Number(v)).toLocaleString(),
+                    callback: (v: any) => Number(v).toLocaleString(),
                   },
                 },
               },
