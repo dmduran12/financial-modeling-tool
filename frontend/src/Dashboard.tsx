@@ -305,14 +305,16 @@ export default function Dashboard() {
         </SidePanel>
         <div className="flex-1 space-y-4">
           {metrics && (
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <KPIChip
-                labelTop="Total"
-                labelBottom="MRR"
-                value={metrics.total_mrr}
-                dataArray={projections.mrr}
-                unit="currency"
-              />
+            <>
+              <h3 className="text-sm font-semibold mb-2 font-sans">Key Metrics</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <KPIChip
+                  labelTop="Total"
+                  labelBottom="MRR"
+                  value={metrics.total_mrr}
+                  dataArray={projections.mrr}
+                  unit="currency"
+                />
               <KPIChip
                 labelTop="Annual"
                 labelBottom="Revenue"
@@ -334,6 +336,7 @@ export default function Dashboard() {
                 dataArray={projections.subscribers}
               />
             </div>
+            </>
           )}
           <ChartCard title="MRR & Subscribers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
