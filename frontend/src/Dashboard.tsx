@@ -276,7 +276,7 @@ export default function Dashboard() {
       <div className="lg:flex gap-4">
         <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
           <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
+            <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
               <InlineNumberInput
                 key={n}
@@ -288,14 +288,14 @@ export default function Dashboard() {
             ))}
           </div>
           <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-semibold mb-2 font-sans">Marketing</h3>
+            <h3 className="sidebar-title mb-2">Marketing</h3>
             <InlineNumberInput label="Budget" unit="currency" value={form.marketing_budget} onChange={(v) => handleValueChange('marketing_budget', v)} />
             <InlineNumberInput label="CPL" unit="currency" value={form.cpl} onChange={(v) => handleValueChange('cpl', v)} />
             <InlineNumberInput label="CVR" unit="percent" value={form.conversion_rate} onChange={(v) => handleValueChange('conversion_rate', v)} />
             <p className="text-xs text-gray-500">Upper tiers scale automatically from Tier 1 inputs.</p>
           </div>
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold mb-2 font-sans">Financial</h3>
+            <h3 className="sidebar-title mb-2">Financial</h3>
             <InlineNumberInput label="Churn %" unit="percent" value={form.churn_rate_smb} onChange={(v) => handleValueChange('churn_rate_smb', v)} />
             <InlineNumberInput label="WACC %" unit="percent" value={form.wacc} onChange={(v) => handleValueChange('wacc', v)} />
             <InlineNumberInput label="Months" value={form.projection_months} onChange={(v) => handleValueChange('projection_months', v)} />
