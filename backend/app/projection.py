@@ -26,7 +26,7 @@ def run_projection(
     months: int = PROJECTION_MONTHS,
     base_cpl: float = BASE_CPL,
     base_cvr: float = BASE_CVR,
-    ctr: float = 1.0,
+    ctr: float = 18.0,
 ) -> Dict[str, List[float]]:
     flags = guardrail_flags(base_cpl, base_cvr)
     tier_cpl = [base_cpl * f for f in TIER_CPL_FACTORS]
@@ -49,7 +49,7 @@ def run_projection(
         imp = (marketing_budget / CPI) * 1000
         clk = imp * (ctr / 100.0)
         budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
-        leads = [b / c if c else 0 for b, c in zip(budgets, tier_cpl)]
+        leads = [(b / c) * (ctr / 100.0) if c else 0 for b, c in zip(budgets, tier_cpl)]
         new_cust = [l * (cv / 100.0) for l, cv in zip(leads, tier_cvr)]
         total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN
