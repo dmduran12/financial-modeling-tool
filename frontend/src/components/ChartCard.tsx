@@ -11,7 +11,7 @@ export default function ChartCard({ title, children, legend }: Props) {
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-sm font-medium font-sans">{title}</h3>
+        <h3 className="content-header">{title}</h3>
         {legend && (
           <div
             className="text-xs font-mono text-[var(--squid-ink)]"

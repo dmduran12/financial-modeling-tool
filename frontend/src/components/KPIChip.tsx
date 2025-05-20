@@ -8,9 +8,10 @@ interface Props {
   value: number | string;
   dataArray: number[];
   unit?: 'currency' | 'percent';
+  className?: string;
 }
 
-export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit }: Props) {
+export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit, className = '' }: Props) {
   const [refreshing, setRefreshing] = useState(true);
   const prevData = useRef<number[]>([]);
 
@@ -43,7 +44,7 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
 
   return (
     <div
-      className={`kpi-card ${refreshing ? 'refreshing' : ''}`}
+      className={`kpi-card ${refreshing ? 'refreshing' : ''} ${className}`}
     >
       <div className="top-row">
         <div className="label-block">

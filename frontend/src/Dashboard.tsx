@@ -318,13 +318,14 @@ export default function Dashboard() {
         </SidePanel>
         <div className="flex-1 space-y-4">
           {metrics && (
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-12 gap-4 mb-4">
               <KPIChip
                 labelTop="Total"
                 labelBottom="MRR"
                 value={metrics.total_mrr}
                 dataArray={projections.mrr}
                 unit="currency"
+                className="col-span-6 lg:col-span-3"
               />
               <KPIChip
                 labelTop="Annual"
@@ -332,6 +333,7 @@ export default function Dashboard() {
                 value={metrics.annual_revenue}
                 dataArray={projections.mrr.map((v) => v * 12)}
                 unit="currency"
+                className="col-span-6 lg:col-span-3"
               />
               <KPIChip
                 labelTop="Subscriber"
@@ -339,12 +341,14 @@ export default function Dashboard() {
                 value={metrics.subscriber_ltv}
                 dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
                 unit="currency"
+                className="col-span-6 lg:col-span-3"
               />
               <KPIChip
                 labelTop="Total"
                 labelBottom="Subscribers"
                 value={metrics.total_subscribers}
                 dataArray={projections.subscribers}
+                className="col-span-6 lg:col-span-3"
               />
             </div>
           )}
