@@ -23,6 +23,7 @@ import SidePanel from "./components/SidePanel";
 import InlineNumberInput from "./components/InlineNumberInput";
 import ChartCard from "./components/ChartCard";
 import EquationReport from "./components/EquationReport";
+import FunnelTable from "./components/FunnelTable";
 import { generateLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
@@ -302,7 +303,7 @@ export default function Dashboard() {
           Input assumptions outside EY benchmark – review Marketing CPL / CVR
         </div>
       )}
-      <div className="lg:flex gap-4">
+      <div className="lg:flex gap-6">
         <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
           <div className="space-y-3 mb-6">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
@@ -378,11 +379,27 @@ export default function Dashboard() {
               value={form.wacc}
               onChange={(v) => handleValueChange("wacc", v)}
             />
-            <InlineNumberInput
-              label="Months"
-              value={form.projection_months}
-              onChange={(v) => handleValueChange("projection_months", v)}
-            />
+            <div className="flex flex-col gap-1 text-sm">
+              <label className="font-mono text-[var(--color-neutral-500)]">
+                Months
+              </label>
+              <select
+                className="border border-[var(--cat-driftwood)] rounded-full px-4 py-1"
+                value={form.projection_months}
+                onChange={(e) =>
+                  handleValueChange(
+                    "projection_months",
+                    parseInt(e.target.value, 10),
+                  )
+                }
+              >
+                {[12, 24, 36].map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
             <InlineNumberInput
               label="Opex %"
               unit="percent"
@@ -399,63 +416,66 @@ export default function Dashboard() {
         </SidePanel>
         <div className="flex-1 space-y-4">
           {metrics && (
-            <div className="grid grid-cols-12 gap-4 mb-4">
-              <KPIChip
-                labelTop="Total"
-                labelBottom="MRR"
-                value={metrics.total_mrr}
-                dataArray={projections.mrr}
-                unit="currency"
-                className="col-span-6 lg:col-span-3"
-              />
-              <KPIChip
-                labelTop="Annual"
-                labelBottom="Revenue"
-                value={metrics.annual_revenue}
-                dataArray={projections.mrr.map((v) => v * 12)}
-                unit="currency"
-                className="col-span-6 lg:col-span-3"
-              />
-              <KPIChip
-                labelTop="Subscriber"
-                labelBottom="LTV"
-                value={metrics.subscriber_ltv}
-                dataArray={projections.mrr.map(
-                  (v) => v / (form.churn_rate_smb / 100),
-                )}
-                unit="currency"
-                className="col-span-6 lg:col-span-3"
-              />
-              <KPIChip
-                labelTop="Total"
-                labelBottom="Subscribers"
-                value={metrics.total_subscribers}
-                dataArray={projections.subscribers}
-                className="col-span-6 lg:col-span-3"
-              />
-              <KPIChip
-                labelTop="Blended"
-                labelBottom="CPL"
-                value={metrics.blended_cpl}
-                dataArray={projections.leads.map((l, i) =>
-                  l ? form.marketing_budget / l : 0,
-                )}
-                unit="currency"
-                warning={warning}
-                className="col-span-6 lg:col-span-3"
-              />
-              <KPIChip
-                labelTop="Blended"
-                labelBottom="CVR"
-                value={metrics.blended_cvr}
-                dataArray={projections.leads.map((l, i) =>
-                  l ? (projections.newCustomers[i] / l) * 100 : 0,
-                )}
-                unit="percent"
-                warning={warning}
-                className="col-span-6 lg:col-span-3"
-              />
-            </div>
+            <>
+              <h3 className="content-header">Key Metrics</h3>
+              <div className="grid grid-cols-12 gap-4 mb-4" id="kpiRow">
+                <KPIChip
+                  labelTop="Total"
+                  labelBottom="MRR"
+                  value={metrics.total_mrr}
+                  dataArray={projections.mrr}
+                  unit="currency"
+                  className="col-span-6 lg:col-span-3"
+                />
+                <KPIChip
+                  labelTop="Annual"
+                  labelBottom="Revenue"
+                  value={metrics.annual_revenue}
+                  dataArray={projections.mrr.map((v) => v * 12)}
+                  unit="currency"
+                  className="col-span-6 lg:col-span-3"
+                />
+                <KPIChip
+                  labelTop="Subscriber"
+                  labelBottom="LTV"
+                  value={metrics.subscriber_ltv}
+                  dataArray={projections.mrr.map(
+                    (v) => v / (form.churn_rate_smb / 100),
+                  )}
+                  unit="currency"
+                  className="col-span-6 lg:col-span-3"
+                />
+                <KPIChip
+                  labelTop="Total"
+                  labelBottom="Subscribers"
+                  value={metrics.total_subscribers}
+                  dataArray={projections.subscribers}
+                  className="col-span-6 lg:col-span-3"
+                />
+                <KPIChip
+                  labelTop="Blended"
+                  labelBottom="CPL"
+                  value={metrics.blended_cpl}
+                  dataArray={projections.leads.map((l, i) =>
+                    l ? form.marketing_budget / l : 0,
+                  )}
+                  unit="currency"
+                  warning={warning}
+                  className="col-span-6 lg:col-span-3"
+                />
+                <KPIChip
+                  labelTop="Blended"
+                  labelBottom="CVR"
+                  value={metrics.blended_cvr}
+                  dataArray={projections.leads.map((l, i) =>
+                    l ? (projections.newCustomers[i] / l) * 100 : 0,
+                  )}
+                  unit="percent"
+                  warning={warning}
+                  className="col-span-6 lg:col-span-3"
+                />
+              </div>
+            </>
           )}
           <ChartCard title="MRR & Subscribers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
@@ -463,6 +483,13 @@ export default function Dashboard() {
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
           </ChartCard>
+          <FunnelTable
+            impressions={projections.impressions}
+            clicks={projections.clicks}
+            leads={projections.leads}
+            newCustomers={projections.newCustomers}
+            marketingBudget={form.marketing_budget}
+          />
           <EquationReport />
         </div>
       </div>
