@@ -44,7 +44,7 @@ export interface SubscriptionResult {
     new_subscribers_monthly: number;
     blended_cpl: number;
     blended_cvr: number;
-    carbon_delivered: number;
+    carbon_ordered: number;
     carbon_spend_pct: number;
     blended_usd_per_ton: number;
     margin_warning: boolean;
@@ -186,7 +186,7 @@ export function runSubscriptionModel(
         leads_by_month[0] > 0
           ? (new_customers_by_month[0] / leads_by_month[0]) * 100
           : 0,
-      carbon_delivered: carbon_tons_by_month[carbon_tons_by_month.length - 1],
+      carbon_ordered: carbon_tons_by_month[carbon_tons_by_month.length - 1],
       carbon_spend_pct:
         mrr_by_month[mrr_by_month.length - 1] > 0
           ? (carbon_cost_by_month[carbon_cost_by_month.length - 1] /
