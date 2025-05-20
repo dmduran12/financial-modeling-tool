@@ -65,7 +65,7 @@ export function runSubscriptionModel(input: SubscriptionInput): SubscriptionResu
     const churned = Math.min(customers, customers * churn);
     const next = Math.max(0, customers + monthlyAcquisition - churned);
     customers = next;
-    customers_by_month.push(Math.round(customers));
+    customers_by_month.push(customers);
     const recognized = customers * avgRevenuePerCustomer;
     mrr_by_month.push(recognized);
     deferred_by_month.push(recognized); // simplified deferral

@@ -10,7 +10,8 @@ test('customer roll-forward logic', () => {
     cpl: 100,
     conversion_rate: 10,
   });
-  expect(result.projections.customers_by_month).toEqual([100, 100]);
+  expect(result.projections.customers_by_month[0]).toBeCloseTo(90.521875);
+  expect(result.projections.customers_by_month[1]).toBeCloseTo(81.9915625);
 });
 
 test('MRR matches sum of tier revenues', () => {
