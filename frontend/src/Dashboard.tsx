@@ -468,7 +468,11 @@ export default function Dashboard() {
             newCustomers={projections.newCustomers}
             marketingBudget={form.marketing_budget}
           />
-          <EquationReport />
+          <EquationReport
+            form={form}
+            metrics={metrics}
+            projections={projections}
+          />
         </div>
       </div>
     </div>
