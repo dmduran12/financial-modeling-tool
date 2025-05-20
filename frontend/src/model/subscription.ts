@@ -1,5 +1,9 @@
 import { calculateTierMetrics } from "./marketing";
-import { COST_PER_MILLE } from "./constants";
+import {
+  COST_PER_MILLE,
+  DEFAULT_TONS_PER_CUSTOMER,
+  DEFAULT_COST_OF_CARBON,
+} from "./constants";
 export interface SubscriptionInput {
   projection_months: number;
   churn_rate_smb: number;
@@ -12,6 +16,8 @@ export interface SubscriptionInput {
   operating_expense_rate?: number;
   fixed_costs?: number;
   tier_adoption_rates?: number[];
+  cost_of_carbon?: number;
+  carbon_per_customer?: number[];
 }
 
 export interface SubscriptionResult {
@@ -27,6 +33,8 @@ export interface SubscriptionResult {
     tier_revenue_by_month: number[][];
     deferred_revenue_by_month: number[];
     free_cash_flow: number[];
+    carbon_tons_by_month: number[];
+    carbon_cost_by_month: number[];
   };
   metrics: {
     total_mrr: number;
@@ -36,7 +44,12 @@ export interface SubscriptionResult {
     new_subscribers_monthly: number;
     blended_cpl: number;
     blended_cvr: number;
+    carbon_delivered: number;
+    carbon_spend_pct: number;
+    blended_usd_per_ton: number;
+    margin_warning: boolean;
   };
+  flags: string[];
 }
 
 export function runSubscriptionModel(
@@ -64,6 +77,22 @@ export function runSubscriptionModel(
     { length: input.tier_revenues.length },
     () => [] as number[],
   );
+
+  const tonsPerCustomer =
+    input.carbon_per_customer &&
+    input.carbon_per_customer.length === input.tier_revenues.length
+      ? input.carbon_per_customer.slice()
+      : DEFAULT_TONS_PER_CUSTOMER.slice();
+  const costPerTon = input.cost_of_carbon ?? DEFAULT_COST_OF_CARBON;
+  const carbon_tons_by_month: number[] = [];
+  const carbon_cost_by_month: number[] = [];
+  let marginWarning = false;
+  const priceFlags: string[] = [];
+  tonsPerCustomer.forEach((t, idx) => {
+    if (t * costPerTon > input.tier_revenues[idx]) {
+      priceFlags.push(`tier${idx + 1}_price_override`);
+    }
+  });
 
   const avgRevenuePerCustomer = input.tier_revenues.reduce(
     (sum, rev, idx) => sum + rev * normalizedAdoption[idx],
@@ -105,14 +134,22 @@ export function runSubscriptionModel(
     leads_by_month.push(leads);
     new_customers_by_month.push(newCust);
 
-    const gp = recognized * (1 - (input.operating_expense_rate ?? 0) / 100);
-    const cash = gp - (input.fixed_costs ?? 0) - (input.marketing_budget ?? 0);
-    free_cash_flow.push(cash);
-
+    let carbonTons = 0;
     input.tier_revenues.forEach((rev, idx) => {
       const perTierCustomers = customers * normalizedAdoption[idx];
       tier_revenue_by_month[idx].push(perTierCustomers * rev);
+      carbonTons += perTierCustomers * tonsPerCustomer[idx];
     });
+    const carbonCost = carbonTons * costPerTon;
+    carbon_tons_by_month.push(carbonTons);
+    carbon_cost_by_month.push(carbonCost);
+    if (carbonCost > recognized * 0.6) {
+      marginWarning = true;
+    }
+    const netRevenue = recognized - carbonCost;
+    const gp = netRevenue * (1 - (input.operating_expense_rate ?? 0) / 100);
+    const cash = gp - (input.fixed_costs ?? 0) - (input.marketing_budget ?? 0);
+    free_cash_flow.push(cash);
   }
 
   return {
@@ -128,6 +165,8 @@ export function runSubscriptionModel(
       tier_revenues_end: input.tier_revenues,
       tier_revenue_by_month,
       free_cash_flow,
+      carbon_tons_by_month,
+      carbon_cost_by_month,
     },
     metrics: {
       total_mrr: mrr_by_month[mrr_by_month.length - 1],
@@ -147,6 +186,20 @@ export function runSubscriptionModel(
         leads_by_month[0] > 0
           ? (new_customers_by_month[0] / leads_by_month[0]) * 100
           : 0,
+      carbon_delivered: carbon_tons_by_month[carbon_tons_by_month.length - 1],
+      carbon_spend_pct:
+        mrr_by_month[mrr_by_month.length - 1] > 0
+          ? (carbon_cost_by_month[carbon_cost_by_month.length - 1] /
+              mrr_by_month[mrr_by_month.length - 1]) *
+            100
+          : 0,
+      blended_usd_per_ton:
+        carbon_tons_by_month[carbon_tons_by_month.length - 1] > 0
+          ? carbon_cost_by_month[carbon_cost_by_month.length - 1] /
+            carbon_tons_by_month[carbon_tons_by_month.length - 1]
+          : 0,
+      margin_warning: marginWarning,
     },
+    flags: [...priceFlags, ...(marginWarning ? ["margin_warning"] : [])],
   };
 }
