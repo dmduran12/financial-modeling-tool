@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Card from "./Card";
+import { calculateTierMetrics } from "../model/marketing";
 
 interface Metrics {
   total_mrr: number;
@@ -49,6 +50,19 @@ export default function EquationReport({ form, metrics, projections }: Props) {
   const blendedCpl = metrics?.blended_cpl || 0;
   const blendedCvr = metrics?.blended_cvr || 0;
   const npv = metrics?.npv || 0;
+  const carbonTons = projections.carbonTons
+    ? projections.carbonTons[0] || 0
+    : 0;
+  const carbonCost = projections.carbonCost
+    ? projections.carbonCost[0] || 0
+    : 0;
+  const carbonSpendPct = mrr ? (carbonCost / mrr) * 100 : 0;
+  const usdPerTon = carbonTons ? carbonCost / carbonTons : 0;
+  const tierMetrics = calculateTierMetrics(
+    form.cpl,
+    form.conversion_rate,
+    form.marketing_budget,
+  );
 
   const rows = [
     {
@@ -129,6 +143,54 @@ export default function EquationReport({ form, metrics, projections }: Props) {
       text: "∑ Cash Flow / (1 + WACC / 12)^n − Initial Investment",
       code: "const npv = sum(cashFlow / (1 + wacc/12)**n) - initialInvestment;",
     },
+    {
+      label: "Carbon Tons",
+      value: carbonTons,
+      text: "Customers × Tons per Customer",
+      code: "const carbonTons = customers * tonsPerCustomer;",
+    },
+    {
+      label: "Carbon Cost",
+      value: carbonCost,
+      text: "Carbon Tons × Cost of Carbon",
+      code: "const carbonCost = carbonTons * costPerTon;",
+    },
+    {
+      label: "Carbon Spend %",
+      value: carbonSpendPct,
+      text: "(Carbon Cost / MRR) × 100",
+      code: "const carbonSpendPct = (carbonCost / mrr) * 100;",
+    },
+    {
+      label: "USD per Ton",
+      value: usdPerTon,
+      text: "Carbon Cost / Carbon Tons",
+      code: "const usdPerTon = carbonCost / carbonTons;",
+    },
+    ...tierMetrics.cpl.map((v, idx) => ({
+      label: `Tier ${idx + 1} CPL`,
+      value: v,
+      text: `Base CPL × ${[1, 1.6, 2.5, 4][idx]}`,
+      code: `const tier${idx + 1}Cpl = baseCpl * ${[1, 1.6, 2.5, 4][idx]};`,
+    })),
+    ...tierMetrics.cvr.map((v, idx) => ({
+      label: `Tier ${idx + 1} CVR`,
+      value: v,
+      text: `Base CVR × ${[1, 0.65, 0.35, 0.15][idx]}`,
+      code: `const tier${idx + 1}Cvr = Math.max(baseCvr * ${[1, 0.65, 0.35, 0.15][idx]}, 0.1);`,
+    })),
+    ...tierMetrics.leads.map((v, idx) => ({
+      label: `Tier ${idx + 1} Leads`,
+      value: v,
+      text: `Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Tier ${idx + 1} CPL`,
+      code: `const tier${idx + 1}Leads = (totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]}) / tier${idx + 1}Cpl;`,
+    })),
+    ...tierMetrics.newCustomers.map((v, idx) => ({
+      label: `Tier ${idx + 1} New Cust`,
+      value: v,
+      text: `Tier ${idx + 1} Leads × (Tier ${idx + 1} CVR / 100)`,
+      code: `const tier${idx + 1}New = tier${idx + 1}Leads * (tier${idx + 1}Cvr / 100);`,
+    })),
   ];
 
   return (
@@ -150,8 +212,10 @@ export default function EquationReport({ form, metrics, projections }: Props) {
                     })}
                   </td>
                   <td>
-                    <span className="font-semibold">{row.label}</span> {"="}{" "}
-                    {row.text}
+                    <span className="font-semibold text-[var(--cobalt-500)]">
+                      {row.label}
+                    </span>{" "}
+                    {"="} {row.text}
                   </td>
                 </tr>
                 {openIndex === idx && (
