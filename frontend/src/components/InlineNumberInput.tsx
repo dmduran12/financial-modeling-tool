@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, ReactNode } from 'react';
 import { formatCurrency, formatNumberShort } from '../utils/format';
 
 interface Props {
-  label: string;
+  label: ReactNode;
   value: number;
   unit?: 'currency' | 'percent';
   onChange: (value: number) => void;
@@ -14,7 +14,8 @@ export default function InlineNumberInput({ label, value, unit, onChange, name, 
   const [editing, setEditing] = useState(false);
   const [temp, setTemp] = useState<number>(value);
   const inputRef = useRef<HTMLInputElement>(null);
-  const safeName = (name || label).replace(/\s+/g, '_').toLowerCase();
+  const baseLabel = typeof label === 'string' ? label : 'input';
+  const safeName = (name || baseLabel).replace(/\s+/g, '_').toLowerCase();
   const inputId = id || safeName;
 
   const display = unit === 'currency' ? formatCurrency(value) :

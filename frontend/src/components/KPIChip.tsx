@@ -59,7 +59,7 @@ export default function KPIChip({ labelTop, labelBottom, value, dataArray, unit 
         onRendered={handleRendered}
         className="sparkline"
         color={sparkColor}
-        strokeWidth={3}
+        strokeWidth={5}
       />
     </div>
   );

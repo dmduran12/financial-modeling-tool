@@ -24,6 +24,8 @@ import { generateLegend } from './utils/chartLegend';
 import { formatCurrency } from './utils/format';
 import { getCssVar } from './utils/cssVar';
 
+const TIER_COLORS = ['#4A47DC', '#8D8BE9', '#BF7DC4', '#E3C7E6'];
+
 interface FormState {
   tier1_revenue: number;
   tier2_revenue: number;
@@ -280,10 +282,20 @@ export default function Dashboard() {
             {[1, 2, 3, 4].map((n) => (
               <InlineNumberInput
                 key={n}
-                label={`Tier ${n}`}
+                label={(
+                  <>
+                    <span
+                      className="swatch"
+                      style={{ backgroundColor: TIER_COLORS[n - 1] }}
+                    ></span>
+                    {`Tier ${n}`}
+                  </>
+                )}
                 unit="currency"
                 value={form[`tier${n}_revenue` as keyof FormState] as number}
-                onChange={(v) => handleValueChange(`tier${n}_revenue` as keyof FormState, v)}
+                onChange={(v) =>
+                  handleValueChange(`tier${n}_revenue` as keyof FormState, v)
+                }
               />
             ))}
           </div>
