@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Sparkline from "./Sparkline";
 import { formatNumberShort, formatCurrency } from "../utils/format";
+import { arraysEqual } from "../utils/arraysEqual";
 
 interface Props {
   labelTop: string;

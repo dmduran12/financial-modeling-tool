@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react';
-import { Chart } from 'chart.js/auto';
-import { getCssVar } from '../utils/cssVar';
+import { useRef, useEffect } from "react";
+import { Chart } from "chart.js/auto";
+import { getCssVar } from "../utils/cssVar";
+import { arraysEqual } from "../utils/arraysEqual";
 
 interface Props {
   data: number[];
@@ -12,7 +13,7 @@ interface Props {
 
 export default function Sparkline({
   data,
-  className = '',
+  className = "",
   onRendered,
   color,
   strokeWidth = 2,
@@ -25,27 +26,29 @@ export default function Sparkline({
     if (!ref.current) return;
     const labels = data.map((_, i) => i.toString());
     const resolvedColor =
-      color || getCssVar('--accent-primary-500', ref.current) || getCssVar('--cobalt-500', ref.current);
+      color ||
+      getCssVar("--accent-primary-500", ref.current) ||
+      getCssVar("--cobalt-500", ref.current);
 
-    const ctx = ref.current.getContext('2d');
+    const ctx = ref.current.getContext("2d");
     if (!ctx) return;
 
     const animation = {
       duration: 200,
-      easing: 'easeInOutQuad',
+      easing: "easeInOutQuad",
       onComplete: () => onRendered && onRendered(),
     } as any;
 
     if (!chartRef.current) {
       chartRef.current = new Chart(ref.current, {
-        type: 'line',
+        type: "line",
         data: {
           labels,
           datasets: [
             {
               data,
               borderColor: resolvedColor,
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
               borderWidth: strokeWidth,
               tension: 0.4,
               pointRadius: 0,
@@ -69,7 +72,7 @@ export default function Sparkline({
       const c = chartRef.current;
       c.data.labels = labels;
       (c.data.datasets[0].data as number[]) = data;
-      (c.data.datasets[0].backgroundColor as any) = 'transparent';
+      (c.data.datasets[0].backgroundColor as any) = "transparent";
       (c.data.datasets[0].borderColor as any) = resolvedColor;
       (c.data.datasets[0].borderWidth as any) = strokeWidth;
       c.options!.animation = animation;
@@ -80,17 +83,5 @@ export default function Sparkline({
     }
   }, [data, color, strokeWidth]);
 
-  function arraysEqual(a: number[], b: number[]) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
-  }
-
-  return (
-    <canvas
-      ref={ref}
-      className={`w-full ${className}`}
-      height={32}
-    />
-  );
+  return <canvas ref={ref} className={`w-full ${className}`} height={32} />;
 }
