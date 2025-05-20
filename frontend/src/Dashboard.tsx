@@ -62,7 +62,7 @@ interface Metrics {
   paybackMonths: number | null;
   blended_cvr: number;
   blended_cpl: number;
-  carbon_delivered: number;
+  carbon_ordered: number;
   carbon_spend_pct: number;
   blended_usd_per_ton: number;
   margin_warning: boolean;
@@ -178,12 +178,12 @@ export default function Dashboard() {
       total_mrr: results.metrics.total_mrr,
       annual_revenue: results.metrics.annual_revenue,
       subscriber_ltv: results.metrics.subscriber_ltv,
-      total_subscribers: results.metrics.total_subscribers,
+      total_subscribers: Math.round(results.metrics.total_subscribers),
       npv: financial.npv,
       paybackMonths: financial.paybackMonths,
       blended_cvr: blendedCvr,
       blended_cpl: blendedCpl,
-      carbon_delivered: results.metrics.carbon_delivered,
+      carbon_ordered: results.metrics.carbon_ordered,
       carbon_spend_pct: results.metrics.carbon_spend_pct,
       blended_usd_per_ton: results.metrics.blended_usd_per_ton,
       margin_warning: results.metrics.margin_warning,
@@ -191,7 +191,7 @@ export default function Dashboard() {
 
     const labels = results.projections.monthLabels;
     const mrrArr = results.projections.mrr_by_month;
-    const subArr = results.projections.customers_by_month;
+    const subArr = results.projections.customers_by_month.map(Math.round);
     const tierArr = results.projections.tier_revenue_by_month;
     const tierPrices = results.projections.tier_revenues_end;
     const tierCustomers = tierArr.map((arr, idx) =>
@@ -203,7 +203,7 @@ export default function Dashboard() {
       impressions: results.projections.impressions_by_month,
       clicks: results.projections.clicks_by_month,
       leads: results.projections.leads_by_month,
-      newCustomers: results.projections.new_customers_by_month,
+      newCustomers: results.projections.new_customers_by_month.map(Math.round),
       carbonTons: results.projections.carbon_tons_by_month,
       carbonCost: results.projections.carbon_cost_by_month,
     });
@@ -219,17 +219,6 @@ export default function Dashboard() {
             borderColor: mrrColor,
             borderWidth: 4,
             yAxisID: "y1",
-            pointRadius: 0,
-            pointHoverRadius: 4,
-          },
-          {
-            label: "Carbon Delivered",
-            data: results.projections.carbon_tons_by_month,
-            borderColor: "#95E976",
-            backgroundColor: "rgba(149,233,118,0.3)",
-            borderWidth: 2,
-            yAxisID: "y2",
-            fill: true,
             pointRadius: 0,
             pointHoverRadius: 4,
           },
@@ -255,12 +244,14 @@ export default function Dashboard() {
                 x: { grid: { display: false } },
                 y1: {
                   position: "left",
+                  min: 1,
                   ticks: {
                     callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
                 },
                 y2: {
                   position: "right",
+                  min: 1,
                   grid: { drawOnChartArea: false },
                   ticks: {
                     callback: (v: any) => Number(v).toLocaleString(),
@@ -301,6 +292,7 @@ export default function Dashboard() {
                 x: { stacked: true, grid: { display: false } },
                 y: {
                   stacked: true,
+                  min: 1,
                   ticks: {
                     callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
@@ -348,7 +340,7 @@ export default function Dashboard() {
         </div>
       )}
       <div className="lg:flex gap-4">
-        <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
+        <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-100px)] overflow-y-auto">
           <div className="space-y-3 mb-6">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
@@ -520,7 +512,7 @@ export default function Dashboard() {
                 <KPIChip
                   labelTop="Carbon"
                   labelBottom="t/mo"
-                  value={metrics.carbon_delivered}
+                  value={metrics.carbon_ordered}
                   dataArray={projections.carbonTons}
                 />
                 <KPIChip
@@ -531,15 +523,6 @@ export default function Dashboard() {
                     projections.mrr[i] ? (c / projections.mrr[i]) * 100 : 0,
                   )}
                   unit="percent"
-                />
-                <KPIChip
-                  labelTop="Blended $/t"
-                  value={metrics.blended_usd_per_ton}
-                  dataArray={projections.carbonTons.map((t, i) =>
-                    t ? projections.carbonCost[i] / t : 0,
-                  )}
-                  unit="currency"
-                  warning={metrics.margin_warning}
                 />
               </div>
             </>
