@@ -11,10 +11,10 @@ from .marketing import (
 BASE_CPL = 150.0
 BASE_CVR = 2.75
 TIER_PRICES = [500.0, 1200.0, 3000.0, 7500.0]
-MONTHLY_CHURN = 0.03
-OPERATING_EXPENSE_RATE = 0.35
-FIXED_COSTS = 4167.0
-MONTHLY_WACC = 0.00643
+MONTHLY_CHURN = 0.10
+OPERATING_EXPENSE_RATE = 0.15
+FIXED_COSTS = 1500.0
+MONTHLY_WACC = 0.08 / 12
 PROJECTION_MONTHS = 24
 INITIAL_INVESTMENT = 200000.0
 CPI = 8.0  # cost per 1000 impressions
@@ -26,6 +26,7 @@ def run_projection(
     months: int = PROJECTION_MONTHS,
     base_cpl: float = BASE_CPL,
     base_cvr: float = BASE_CVR,
+    ctr: float = 1.0,
 ) -> Dict[str, List[float]]:
     flags = guardrail_flags(base_cpl, base_cvr)
     tier_cpl = [base_cpl * f for f in TIER_CPL_FACTORS]
@@ -46,7 +47,7 @@ def run_projection(
 
     for _ in range(months):
         imp = (marketing_budget / CPI) * 1000
-        clk = imp  # CTR not specified; assume 1
+        clk = imp * (ctr / 100.0)
         budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
         leads = [b / c if c else 0 for b, c in zip(budgets, tier_cpl)]
         new_cust = [l * (cv / 100.0) for l, cv in zip(leads, tier_cvr)]

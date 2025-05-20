@@ -100,6 +100,7 @@ class ProjectionRequest(BaseModel):
     marketing_budget: float
     base_cpl: float
     base_cvr: float
+    ctr: float = 1.0
     months: int = 24
 
 
@@ -181,4 +182,5 @@ async def projection(data: ProjectionRequest):
         months=data.months,
         base_cpl=data.base_cpl,
         base_cvr=data.base_cvr,
+        ctr=data.ctr,
     )

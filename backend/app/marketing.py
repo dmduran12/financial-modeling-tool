@@ -12,13 +12,28 @@ BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
 ]
 
 
+def derive_cpl_by_tier(base_cpl: float) -> List[float]:
+    """Return CPL values for each tier based on base CPL."""
+    return [base_cpl * f for f in TIER_CPL_FACTORS]
+
+
+def derive_cvr_by_tier(base_cvr: float) -> List[float]:
+    """Return CVR percentages for each tier based on base CVR."""
+    return [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
+
+
+def split_budget(total: float) -> List[float]:
+    """Split total budget according to the default ratio."""
+    return [total * s for s in TIER_BUDGET_SPLIT]
+
+
 def calculate_tier_metrics(
     base_cpl: float, base_cvr: float, total_budget: float
 ) -> Dict[str, object]:
     """Calculate CPL, CVR, leads and new customers for each tier."""
-    cpl = [base_cpl * f for f in TIER_CPL_FACTORS]
-    cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
-    budgets = [total_budget * s for s in TIER_BUDGET_SPLIT]
+    cpl = derive_cpl_by_tier(base_cpl)
+    cvr = derive_cvr_by_tier(base_cvr)
+    budgets = split_budget(total_budget)
     leads = [b / c if c else 0 for b, c in zip(budgets, cpl)]
     new_customers: List[float] = []
     for b, c, r in zip(budgets, cpl, cvr):
