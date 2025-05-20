@@ -26,15 +26,14 @@ Welcome, automated contributor! This project welcomes assistance from AI agents 
 
 ## Dashboard Layout
 
-- KPI cards are arranged in a two-column grid (2x3) with squid-ink backgrounds,
-  pearl labels, and go-green metric text. Sparklines are removed.
-- A Funnel Metrics table below the charts lists Impr, Clicks, Leads, NewCust,
-  BlendedCPL, and BlendedCVR for the first three months.
+- KPI cards appear below the sidebar controls in a two-column grid (2×3).
+- Each card has a `squid-ink` (#131312) background, pearl labels, and Limelight
+  (#95E976) metric text. Sparklines are omitted.
+- Use the `kpiRow` id on the container so CSS can apply the correct flex/grid
+  behavior.
+- Charts follow the KPI section, then the funnel metrics table, and finally the
+  Model Equations list.
+- A Funnel Metrics table lists Impr, Clicks, Leads, NewCust, BlendedCPL, and
+  BlendedCVR for the first three months.
 
 Thank you for your contributions, and happy coding!
-
-## Dashboard Layout
-
-- KPIs appear below the sidebar controls. They are arranged in a 2×3 grid with two cards per row.
-- Each KPI card uses a squid-ink background with pearl labels and go-green metric text. Sparklines are omitted.
-- Charts follow the KPI section, and the Model Equations list sits beneath the charts.

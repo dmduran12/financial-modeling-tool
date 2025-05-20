@@ -402,14 +402,13 @@ export default function Dashboard() {
           {metrics && (
             <>
               <h3 className="content-header">Key Metrics</h3>
-              <div className="grid grid-cols-12 gap-4 mb-4">
+              <div id="kpiRow" className="mb-4">
                 <KPIChip
                   labelTop="Total"
                   labelBottom="MRR"
                   value={metrics.total_mrr}
                   dataArray={projections.mrr}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Annual"
@@ -417,7 +416,6 @@ export default function Dashboard() {
                   value={metrics.annual_revenue}
                   dataArray={projections.mrr.map((v) => v * 12)}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Subscriber"
@@ -427,14 +425,12 @@ export default function Dashboard() {
                     (v) => v / (form.churn_rate_smb / 100),
                   )}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Total"
                   labelBottom="Subscribers"
                   value={metrics.total_subscribers}
                   dataArray={projections.subscribers}
-                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -445,7 +441,6 @@ export default function Dashboard() {
                   )}
                   unit="currency"
                   warning={warning}
-                  className="col-span-6 lg:col-span-3"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -456,7 +451,6 @@ export default function Dashboard() {
                   )}
                   unit="percent"
                   warning={warning}
-                  className="col-span-6 lg:col-span-3"
                 />
               </div>
             </>
