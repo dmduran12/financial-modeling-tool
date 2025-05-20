@@ -12,6 +12,8 @@ import {
   DEFAULT_FIXED_COSTS,
   DEFAULT_TIER_ADOPTION,
   DEFAULT_CTR,
+  DEFAULT_COST_OF_CARBON,
+  DEFAULT_TONS_PER_CUSTOMER,
   COST_PER_MILLE,
 } from "./model/constants";
 import { runSubscriptionModel } from "./model/subscription";
@@ -44,6 +46,11 @@ interface FormState {
   projection_months: number;
   operating_expense_rate: number;
   fixed_costs: number;
+  cost_of_carbon: number;
+  carbon1: number;
+  carbon2: number;
+  carbon3: number;
+  carbon4: number;
 }
 
 interface Metrics {
@@ -55,6 +62,10 @@ interface Metrics {
   paybackMonths: number | null;
   blended_cvr: number;
   blended_cpl: number;
+  carbon_delivered: number;
+  carbon_spend_pct: number;
+  blended_usd_per_ton: number;
+  margin_warning: boolean;
 }
 
 export default function Dashboard() {
@@ -72,6 +83,11 @@ export default function Dashboard() {
     projection_months: DEFAULT_PROJECTION_MONTHS,
     operating_expense_rate: DEFAULT_OPERATING_EXPENSE_RATE,
     fixed_costs: DEFAULT_FIXED_COSTS,
+    cost_of_carbon: DEFAULT_COST_OF_CARBON,
+    carbon1: DEFAULT_TONS_PER_CUSTOMER[0],
+    carbon2: DEFAULT_TONS_PER_CUSTOMER[1],
+    carbon3: DEFAULT_TONS_PER_CUSTOMER[2],
+    carbon4: DEFAULT_TONS_PER_CUSTOMER[3],
   });
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -82,6 +98,8 @@ export default function Dashboard() {
     clicks: number[];
     leads: number[];
     newCustomers: number[];
+    carbonTons: number[];
+    carbonCost: number[];
   }>({
     mrr: [],
     subscribers: [],
@@ -89,6 +107,8 @@ export default function Dashboard() {
     clicks: [],
     leads: [],
     newCustomers: [],
+    carbonTons: [],
+    carbonCost: [],
   });
   const [combinedLegend, setCombinedLegend] = useState<string>("");
   const [tierLegend, setTierLegend] = useState<string>("");
@@ -119,6 +139,13 @@ export default function Dashboard() {
       operating_expense_rate: form.operating_expense_rate,
       fixed_costs: form.fixed_costs,
       tier_adoption_rates: DEFAULT_TIER_ADOPTION,
+      cost_of_carbon: form.cost_of_carbon,
+      carbon_per_customer: [
+        form.carbon1,
+        form.carbon2,
+        form.carbon3,
+        form.carbon4,
+      ],
     };
 
     const expenses = {
@@ -156,6 +183,10 @@ export default function Dashboard() {
       paybackMonths: financial.paybackMonths,
       blended_cvr: blendedCvr,
       blended_cpl: blendedCpl,
+      carbon_delivered: results.metrics.carbon_delivered,
+      carbon_spend_pct: results.metrics.carbon_spend_pct,
+      blended_usd_per_ton: results.metrics.blended_usd_per_ton,
+      margin_warning: results.metrics.margin_warning,
     });
 
     const labels = results.projections.monthLabels;
@@ -173,6 +204,8 @@ export default function Dashboard() {
       clicks: results.projections.clicks_by_month,
       leads: results.projections.leads_by_month,
       newCustomers: results.projections.new_customers_by_month,
+      carbonTons: results.projections.carbon_tons_by_month,
+      carbonCost: results.projections.carbon_cost_by_month,
     });
 
     if (mrrCustRef.current) {
@@ -186,6 +219,17 @@ export default function Dashboard() {
             borderColor: mrrColor,
             borderWidth: 4,
             yAxisID: "y1",
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          },
+          {
+            label: "Carbon Delivered",
+            data: results.projections.carbon_tons_by_month,
+            borderColor: "#95E976",
+            backgroundColor: "rgba(149,233,118,0.3)",
+            borderWidth: 2,
+            yAxisID: "y2",
+            fill: true,
             pointRadius: 0,
             pointHoverRadius: 4,
           },
@@ -396,6 +440,27 @@ export default function Dashboard() {
               value={form.fixed_costs}
               onChange={(v) => handleValueChange("fixed_costs", v)}
             />
+            <InlineNumberInput
+              label="Cost of Carbon"
+              unit="currency"
+              value={form.cost_of_carbon}
+              onChange={(v) => handleValueChange("cost_of_carbon", v)}
+            />
+            <details className="text-xs">
+              <summary className="cursor-pointer">Edit carbon per tier</summary>
+              <div className="mt-2 space-y-2">
+                {[1, 2, 3, 4].map((n) => (
+                  <InlineNumberInput
+                    key={n}
+                    label={`Tier ${n} t`}
+                    value={form[`carbon${n}` as keyof FormState] as number}
+                    onChange={(v) =>
+                      handleValueChange(`carbon${n}` as keyof FormState, v)
+                    }
+                  />
+                ))}
+              </div>
+            </details>
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
@@ -451,6 +516,30 @@ export default function Dashboard() {
                   )}
                   unit="percent"
                   warning={warning}
+                />
+                <KPIChip
+                  labelTop="Carbon"
+                  labelBottom="t/mo"
+                  value={metrics.carbon_delivered}
+                  dataArray={projections.carbonTons}
+                />
+                <KPIChip
+                  labelTop="Carbon Spend"
+                  labelBottom="% Rev"
+                  value={metrics.carbon_spend_pct}
+                  dataArray={projections.carbonCost.map((c, i) =>
+                    projections.mrr[i] ? (c / projections.mrr[i]) * 100 : 0,
+                  )}
+                  unit="percent"
+                />
+                <KPIChip
+                  labelTop="Blended $/t"
+                  value={metrics.blended_usd_per_ton}
+                  dataArray={projections.carbonTons.map((t, i) =>
+                    t ? projections.carbonCost[i] / t : 0,
+                  )}
+                  unit="currency"
+                  warning={metrics.margin_warning}
                 />
               </div>
             </>
