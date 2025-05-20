@@ -20,6 +20,7 @@ import KPIChip from './components/KPIChip';
 import SidePanel from './components/SidePanel';
 import InlineNumberInput from './components/InlineNumberInput';
 import ChartCard from './components/ChartCard';
+import EquationReport from './components/EquationReport';
 import { generateLegend } from './utils/chartLegend';
 import { formatCurrency } from './utils/format';
 import { getCssVar } from './utils/cssVar';
@@ -353,6 +354,7 @@ export default function Dashboard() {
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
           </ChartCard>
+          <EquationReport />
         </div>
       </div>
     </div>
