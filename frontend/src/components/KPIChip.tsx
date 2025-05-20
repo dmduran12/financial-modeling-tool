@@ -1,7 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import Sparkline from "./Sparkline";
 import { formatNumberShort, formatCurrency } from "../utils/format";
-import { arraysEqual } from "../utils/arraysEqual";
 
 interface Props {
   labelTop: string;
@@ -22,20 +19,6 @@ export default function KPIChip({
   className = "",
   warning = false,
 }: Props) {
-  const [refreshing, setRefreshing] = useState(true);
-  const prevData = useRef<number[]>([]);
-
-  useEffect(() => {
-    if (!arraysEqual(prevData.current, dataArray)) {
-      setRefreshing(true);
-      prevData.current = [...dataArray];
-    }
-  }, [dataArray]);
-
-  const handleRendered = () => {
-    setTimeout(() => setRefreshing(false), 400);
-  };
-
   const displayValue =
     typeof value === "number"
       ? unit === "currency"
@@ -45,15 +28,8 @@ export default function KPIChip({
           : formatNumberShort(value)
       : value;
 
-  const sparkData = [...dataArray];
-
-  const trendUp = sparkData[sparkData.length - 1] >= sparkData[0];
-  const sparkColor = trendUp ? "var(--success-500)" : "var(--error-500)";
-
   return (
-    <div
-      className={`kpi-card ${refreshing ? "refreshing" : ""} ${warning ? "warning" : ""} ${className}`}
-    >
+    <div className={`kpi-card ${warning ? "warning" : ""} ${className}`}>
       <div className="top-row">
         <div className="label-block">
           <div className="leading-none">{labelTop}</div>
