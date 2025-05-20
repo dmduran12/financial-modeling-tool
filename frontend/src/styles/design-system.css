@@ -3,8 +3,11 @@
 /* base */
 body{margin:0;font-family:'Roboto Mono',monospace;background:var(--cat-pearl);color:var(--squid-ink);}
 h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
-.card{background:var(--cat-neutral-50);border:1px solid var(--cat-driftwood);
-      border-radius:12px;box-shadow:0 2px 6px #0001;}
+.card{background:var(--cat-neutral-50);border-radius:12px;
+      box-shadow:0px -2px 2px 0px rgba(0,0,0,0.02) inset,
+                 0px 1.873px 23.41px 0px rgba(0,0,0,0.04);}
+.shadow-card{box-shadow:0px -2px 2px 0px rgba(0,0,0,0.02) inset,
+             0px 1.873px 23.41px 0px rgba(0,0,0,0.04);}
 .btn,button{border-radius:9999px;padding:.5rem 1.25rem;cursor:pointer; border: 1px solid transparent; /* Added for consistency */}
 input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
              padding:.5rem 1rem;background:#fff;}
@@ -18,14 +21,16 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 .refreshing{opacity:0.4;transition:opacity .3s;}
 
 /* metric cards */
-.metric-card{border:1px solid var(--cat-driftwood);border-radius:12px;
+.metric-card{border-radius:12px;
              padding:1rem;display:flex;flex-direction:column;gap:.5rem;
-             overflow:hidden;}
+             overflow:hidden;
+             box-shadow:0px -2px 2px 0px rgba(0,0,0,0.02) inset,
+                       0px 1.873px 23.41px 0px rgba(0,0,0,0.04);}
 .metric-value{font-size:1.75rem;font-weight:500;line-height:110%;letter-spacing:-0.04em;transition:color .3s;font-family:'Inter',sans-serif;position:relative;z-index:2;}
 .metric-label{font-size:0.875rem;color:var(--neutral-400);font-family:'Roboto Mono',monospace;}
 
 /* KPI chips */
-.kpi-card{position:relative;background:var(--neutral-50);border:1px solid var(--neutral-200);border-radius:8px;padding:var(--space-sm) var(--space-md);overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;}
+.kpi-card{position:relative;background:var(--neutral-50);border-radius:8px;padding:var(--space-sm) var(--space-md);overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;box-shadow:0px -2px 2px 0px rgba(0,0,0,0.02) inset,0px 1.873px 23.41px 0px rgba(0,0,0,0.04);height:80px;}
 .kpi-card .label-block div{font-size:0.75rem;font-weight:500;color:var(--color-neutral-500);font-family:'Roboto Mono',monospace;line-height:1;}
 .kpi-card .metric{position:relative;z-index:2;font-family:'Inter',sans-serif;font-weight:700;font-size:2rem;}
 .kpi-card .top-row{display:flex;justify-content:space-between;align-items:center;}
@@ -181,4 +186,16 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 }
 .chip.editing input{
   opacity:1;
+}
+
+/* mobile font scaling for sidebar */
+.side-panel .chip .label,
+.side-panel .chip .value {
+  font-size:0.875rem;
+}
+@media(min-width:1024px){
+  .side-panel .chip .label,
+  .side-panel .chip .value{
+    font-size:1rem;
+  }
 }

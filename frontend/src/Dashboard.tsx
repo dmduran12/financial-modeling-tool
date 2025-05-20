@@ -273,46 +273,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      {metrics && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
-          <KPIChip
-            labelTop="Total"
-            labelBottom="MRR"
-            value={metrics.total_mrr}
-            dataArray={projections.mrr}
-            unit="currency"
-          />
-          <KPIChip
-            labelTop="Annual"
-            labelBottom="Revenue"
-            value={metrics.annual_revenue}
-            dataArray={projections.mrr.map((v) => v * 12)}
-            unit="currency"
-          />
-          <KPIChip
-            labelTop="Subscriber"
-            labelBottom="LTV"
-            value={metrics.subscriber_ltv}
-            dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
-            unit="currency"
-          />
-          <KPIChip
-            labelTop="Total"
-            labelBottom="Subscribers"
-            value={metrics.total_subscribers}
-            dataArray={projections.subscribers}
-          />
-          <KPIChip
-            labelTop="Blended"
-            labelBottom="CVR"
-            value={metrics.blended_cvr}
-            dataArray={projections.subscribers}
-            unit="percent"
-          />
-        </div>
-      )}
       <div className="lg:flex gap-4">
-        <SidePanel className="sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
+        <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
           <div className="space-y-3 mb-6">
             <h3 className="text-sm font-semibold mb-2 font-sans">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
@@ -342,6 +304,40 @@ export default function Dashboard() {
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
+          {metrics && (
+            <>
+              <h3 className="text-sm font-semibold mb-2 font-sans">Key Metrics</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <KPIChip
+                  labelTop="Total"
+                  labelBottom="MRR"
+                  value={metrics.total_mrr}
+                  dataArray={projections.mrr}
+                  unit="currency"
+                />
+              <KPIChip
+                labelTop="Annual"
+                labelBottom="Revenue"
+                value={metrics.annual_revenue}
+                dataArray={projections.mrr.map((v) => v * 12)}
+                unit="currency"
+              />
+              <KPIChip
+                labelTop="Subscriber"
+                labelBottom="LTV"
+                value={metrics.subscriber_ltv}
+                dataArray={projections.mrr.map((v) => v / (form.churn_rate_smb / 100))}
+                unit="currency"
+              />
+              <KPIChip
+                labelTop="Total"
+                labelBottom="Subscribers"
+                value={metrics.total_subscribers}
+                dataArray={projections.subscribers}
+              />
+            </div>
+            </>
+          )}
           <ChartCard title="MRR & Subscribers" legend={combinedLegend}>
             <canvas ref={mrrCustRef}></canvas>
           </ChartCard>
