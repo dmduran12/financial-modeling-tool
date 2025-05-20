@@ -7,10 +7,10 @@ export default function EquationReport() {
       <Card>
         <ul className="text-sm list-disc pl-6 space-y-1 font-mono">
           <li>
-            Impressions = (Marketing Budget / Cost per 1K impressions) × 1000
+            Impressions = (Marketing Budget / Cost per 1K Impressions) × 1000
           </li>
           <li>Clicks = Impressions × CTR</li>
-          <li>Leads = Marketing Budget ÷ Cost Per Lead</li>
+          <li>Leads = Marketing Budget / Cost Per Lead</li>
           <li>New Customers = Leads × Conversion Rate</li>
           <li>Churned Customers = Customers × Churn Rate</li>
           <li>
@@ -25,11 +25,11 @@ export default function EquationReport() {
           <li>
             Monthly Cash Flow = Gross Profit − Fixed Costs − Marketing Spend
           </li>
+          <li>Blended CPL = Marketing Budget / Leads</li>
+          <li>Blended CVR = (New Customers / Leads) × 100</li>
           <li>
             NPV = ∑ Cash Flow / (1 + WACC / 12)<sup>n</sup> − Initial Investment
           </li>
-          <li>Blended CPL = Marketing Budget ÷ Leads</li>
-          <li>Blended CVR = New Customers ÷ Leads</li>
         </ul>
       </Card>
     </div>

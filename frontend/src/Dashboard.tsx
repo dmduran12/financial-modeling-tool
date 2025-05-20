@@ -23,7 +23,6 @@ import SidePanel from "./components/SidePanel";
 import InlineNumberInput from "./components/InlineNumberInput";
 import ChartCard from "./components/ChartCard";
 import EquationReport from "./components/EquationReport";
-import FunnelTable from "./components/FunnelTable";
 import { generateLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
@@ -303,7 +302,7 @@ export default function Dashboard() {
           Input assumptions outside EY benchmark – review Marketing CPL / CVR
         </div>
       )}
-      <div className="lg:flex gap-6">
+      <div className="lg:flex gap-4">
         <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-140px)] overflow-y-auto">
           <div className="space-y-3 mb-6">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
@@ -379,27 +378,11 @@ export default function Dashboard() {
               value={form.wacc}
               onChange={(v) => handleValueChange("wacc", v)}
             />
-            <div className="flex flex-col gap-1 text-sm">
-              <label className="font-mono text-[var(--color-neutral-500)]">
-                Months
-              </label>
-              <select
-                className="border border-[var(--cat-driftwood)] rounded-full px-4 py-1"
-                value={form.projection_months}
-                onChange={(e) =>
-                  handleValueChange(
-                    "projection_months",
-                    parseInt(e.target.value, 10),
-                  )
-                }
-              >
-                {[12, 24, 36].map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <InlineNumberInput
+              label="Months"
+              value={form.projection_months}
+              onChange={(v) => handleValueChange("projection_months", v)}
+            />
             <InlineNumberInput
               label="Opex %"
               unit="percent"
@@ -418,14 +401,14 @@ export default function Dashboard() {
           {metrics && (
             <>
               <h3 className="content-header">Key Metrics</h3>
-              <div className="grid grid-cols-12 gap-4 mb-4" id="kpiRow">
+              <div className="grid grid-cols-12 gap-4 mb-4">
                 <KPIChip
                   labelTop="Total"
                   labelBottom="MRR"
                   value={metrics.total_mrr}
                   dataArray={projections.mrr}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
                 <KPIChip
                   labelTop="Annual"
@@ -433,7 +416,7 @@ export default function Dashboard() {
                   value={metrics.annual_revenue}
                   dataArray={projections.mrr.map((v) => v * 12)}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
                 <KPIChip
                   labelTop="Subscriber"
@@ -443,14 +426,14 @@ export default function Dashboard() {
                     (v) => v / (form.churn_rate_smb / 100),
                   )}
                   unit="currency"
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
                 <KPIChip
                   labelTop="Total"
                   labelBottom="Subscribers"
                   value={metrics.total_subscribers}
                   dataArray={projections.subscribers}
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -461,7 +444,7 @@ export default function Dashboard() {
                   )}
                   unit="currency"
                   warning={warning}
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
                 <KPIChip
                   labelTop="Blended"
@@ -472,7 +455,7 @@ export default function Dashboard() {
                   )}
                   unit="percent"
                   warning={warning}
-                  className="col-span-6 lg:col-span-3"
+                  className="col-span-6"
                 />
               </div>
             </>
