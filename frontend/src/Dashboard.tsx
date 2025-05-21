@@ -352,7 +352,7 @@ export default function Dashboard() {
       )}
       <div className="lg:flex gap-4">
         <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-100px)] overflow-y-auto">
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
               <InlineNumberInput
@@ -374,7 +374,7 @@ export default function Dashboard() {
               />
             ))}
           </div>
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3">
             <h3 className="sidebar-title mb-2">Marketing</h3>
             <InlineNumberInput
               label="Budget"
@@ -470,7 +470,7 @@ export default function Dashboard() {
           {metrics && (
             <>
               <h3 className="content-header">Key Metrics</h3>
-              <div id="kpiRow" className="mb-4">
+              <div id="kpiRow">
                 <KPIChip
                   labelTop="Total"
                   labelBottom="MRR"
