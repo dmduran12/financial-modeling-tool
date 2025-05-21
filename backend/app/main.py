@@ -13,22 +13,28 @@ except Exception:  # Jinja2 may not be installed
     Jinja2Templates = None
     _templates_available = False
 from pathlib import Path
+from typing import List, Optional
+
 from pydantic import BaseModel
-from typing import List
 from .marketing import calculate_tier_metrics, export_audit
 from .projection import run_projection
 
 app = FastAPI(title="Catona Dashboard")
 
-origins = os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:3000").split(",")
-methods = os.getenv("CORS_ALLOW_METHODS", "GET,POST").split(",")
-headers = os.getenv("CORS_ALLOW_HEADERS", "Content-Type").split(",")
+
+def parse_env_list(name: str, default: str) -> List[str]:
+    return [item.strip() for item in os.getenv(name, default).split(",")]
+
+
+origins = parse_env_list("CORS_ALLOW_ORIGINS", "http://localhost:3000")
+methods = parse_env_list("CORS_ALLOW_METHODS", "GET,POST")
+headers = parse_env_list("CORS_ALLOW_HEADERS", "Content-Type")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip() for origin in origins],
-    allow_methods=[method.strip() for method in methods],
-    allow_headers=[header.strip() for header in headers],
+    allow_origins=origins,
+    allow_methods=methods,
+    allow_headers=headers,
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -41,6 +47,7 @@ async def health():
 
 
 dist_dir = Path("frontend/dist")
+templates: Optional[Jinja2Templates]
 if dist_dir.exists():
     app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
     templates = (
