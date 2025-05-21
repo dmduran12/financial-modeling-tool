@@ -148,7 +148,9 @@ export function runSubscriptionModel(
     if (carbonCost > recognized * 0.6) {
       marginWarning = true;
     }
-    const gp = recognized * (1 - (input.operating_expense_rate ?? 0) / 100);
+    const gp =
+      (recognized - carbonCost) *
+      (1 - (input.operating_expense_rate ?? 0) / 100);
     const cash = gp - (input.fixed_costs ?? 0) - (input.marketing_budget ?? 0);
     free_cash_flow.push(cash);
   }

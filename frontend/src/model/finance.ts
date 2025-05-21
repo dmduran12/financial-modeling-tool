@@ -17,21 +17,27 @@ export function calculateFinancialMetrics(
 ) {
   const cashFlows = modelResults.projections.free_cash_flow;
 
+  const months = cashFlows.length;
   const waccMonthly = Math.pow(1 + wacc / 100, 1 / 12) - 1;
+  const monthlyInvestmentPortion = initialInvestment / months;
+  const financingCost = initialInvestment * waccMonthly;
+  const adjustedFlows = cashFlows.map(
+    (cf) => cf - monthlyInvestmentPortion - financingCost,
+  );
 
-  const npv = cashFlows.reduce((acc, cf, idx) => {
+  const npv = adjustedFlows.reduce((acc, cf, idx) => {
     return acc + cf / Math.pow(1 + waccMonthly, idx + 1);
-  }, -initialInvestment);
+  }, 0);
 
-  let cumulative = -initialInvestment;
+  let cumulative = 0;
   let paybackMonths: number | null = null;
-  for (let i = 0; i < cashFlows.length; i++) {
-    cumulative += cashFlows[i];
+  for (let i = 0; i < adjustedFlows.length; i++) {
+    cumulative += adjustedFlows[i];
     if (cumulative > 0) {
       paybackMonths = i + 1;
       break;
     }
   }
 
-  return { npv, paybackMonths, cashFlows };
+  return { npv, paybackMonths, cashFlows: adjustedFlows };
 }
