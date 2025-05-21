@@ -3,6 +3,7 @@ import {
   COST_PER_MILLE,
   DEFAULT_TONS_PER_CUSTOMER,
   DEFAULT_COST_OF_CARBON,
+  DEFAULT_CTR,
 } from "./constants";
 export interface SubscriptionInput {
   projection_months: number;
@@ -111,6 +112,7 @@ export function runSubscriptionModel(
             input.cpl,
             input.conversion_rate,
             input.marketing_budget,
+            input.ctr ?? DEFAULT_CTR,
           )
         : ({ totalLeads: 0, totalNewCustomers: 0 } as any);
 
