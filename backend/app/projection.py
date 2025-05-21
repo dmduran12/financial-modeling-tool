@@ -3,7 +3,7 @@ from math import pow
 
 from .marketing import calculate_tier_metrics, guardrail_flags
 
-BASE_CVR = 2.75
+BASE_CVR = 1.0
 TIER_PRICES = [500.0, 1200.0, 3000.0, 7500.0]
 MONTHLY_CHURN = 0.10
 OPERATING_EXPENSE_RATE = 0.15
@@ -43,7 +43,7 @@ def run_projection(
     marketing_budget: float,
     months: int = PROJECTION_MONTHS,
     base_cvr: float = BASE_CVR,
-    ctr: float = 19.0,
+    ctr: float = 0.75,
 ) -> ProjectionResult:
     flags = guardrail_flags(base_cvr)
     tier_metrics = calculate_tier_metrics(base_cvr, marketing_budget, ctr)
