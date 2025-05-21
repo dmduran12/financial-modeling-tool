@@ -6,6 +6,7 @@ import {
   DEFAULT_CTR,
   BLENDED_WEIGHTS,
 } from "./constants";
+import { deriveCarbonPerCustomer } from "./carbon";
 export interface SubscriptionInput {
   projection_months: number;
   churn_rate_smb: number;
@@ -83,7 +84,10 @@ export function runSubscriptionModel(
     input.carbon_per_customer &&
     input.carbon_per_customer.length === input.tier_revenues.length
       ? input.carbon_per_customer.slice()
-      : DEFAULT_TONS_PER_CUSTOMER.slice();
+      : deriveCarbonPerCustomer(
+          input.tier_revenues,
+          input.cost_of_carbon ?? DEFAULT_COST_OF_CARBON,
+        );
   const costPerTon = input.cost_of_carbon ?? DEFAULT_COST_OF_CARBON;
   const carbon_tons_by_month: number[] = [];
   const carbon_cost_by_month: number[] = [];
