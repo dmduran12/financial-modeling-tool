@@ -4,7 +4,6 @@ from typing import List
 # Reuse the data models and handlers from the full application
 from backend.app.main import (
     KPI,
-    CalculationRequest,
     CalculationResponse,
     health,
     get_kpis,
