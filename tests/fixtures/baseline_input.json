@@ -1,7 +1,6 @@
 {
   "marketing_budget": 10000,
   "months": 3,
-  "base_cpl": 150.0,
   "base_cvr": 2.75,
   "ctr": 18.0
 }

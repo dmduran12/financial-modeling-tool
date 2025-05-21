@@ -62,7 +62,7 @@ async def test_audit_export_endpoint():
     async with AsyncClient(app=api_only_app, base_url="http://test") as ac:
         resp = await ac.get(
             "/api/audit/export",
-            params={"baseCpl": 150, "baseCvr": 4, "totalBudget": 10000},
+            params={"baseCvr": 4, "totalBudget": 10000, "ctr": 18},
         )
     assert resp.status_code == 200
     data = resp.json()

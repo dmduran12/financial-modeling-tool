@@ -3,6 +3,7 @@ from typing import List, Dict, Tuple
 TIER_CPL_FACTORS: List[float] = [1.0, 1.6, 2.5, 4.0]
 TIER_CVR_FACTORS: List[float] = [1.0, 0.65, 0.35, 0.15]
 TIER_BUDGET_SPLIT: List[float] = [0.4, 0.3, 0.2, 0.1]
+CPI: float = 8.0  # cost per 1000 impressions
 
 BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
     {"cpl": (100, 200), "cvr": (2, 4)},
@@ -10,11 +11,6 @@ BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
     {"cpl": (350, 600), "cvr": (0.5, 1.0)},
     {"cpl": (600, 1200), "cvr": (0.2, 0.6)},
 ]
-
-
-def derive_cpl_by_tier(base_cpl: float) -> List[float]:
-    """Return CPL values for each tier based on base CPL."""
-    return [base_cpl * f for f in TIER_CPL_FACTORS]
 
 
 def derive_cvr_by_tier(base_cvr: float) -> List[float]:
@@ -28,20 +24,20 @@ def split_budget(total: float) -> List[float]:
 
 
 def calculate_tier_metrics(
-    base_cpl: float, base_cvr: float, total_budget: float
+    base_cvr: float, total_budget: float, ctr: float
 ) -> Dict[str, object]:
     """Calculate CPL, CVR, leads and new customers for each tier."""
-    cpl = derive_cpl_by_tier(base_cpl)
-    cvr = derive_cvr_by_tier(base_cvr)
     budgets = split_budget(total_budget)
-    leads = [b / c if c else 0 for b, c in zip(budgets, cpl)]
-    new_customers: List[float] = []
-    for b, c, r in zip(budgets, cpl, cvr):
-        if b < c:
-            new_customers.append(0.0)
-        else:
-            new_customers.append((b / c) * (r / 100.0))
-    total_leads = sum(leads)
+    impressions_total = (total_budget / CPI) * 1000
+    total_leads = impressions_total * (ctr / 100.0)
+    weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
+    leads = [
+        total_leads * ((b / f) / weight_sum) if weight_sum else 0
+        for b, f in zip(budgets, TIER_CPL_FACTORS)
+    ]
+    cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
+    cvr = derive_cvr_by_tier(base_cvr)
+    new_customers = [l * (cv / 100.0) for l, cv in zip(leads, cvr)]
     total_new_customers = sum(new_customers)
     return {
         "cpl": cpl,
@@ -53,13 +49,11 @@ def calculate_tier_metrics(
     }
 
 
-def guardrail_flags(base_cpl: float, base_cvr: float) -> List[str]:
+def guardrail_flags(base_cvr: float) -> List[str]:
     """Return list of strings describing any data quality issues."""
     flags: List[str] = []
     if base_cvr > 6 or base_cvr < 0.1:
         flags.append("base_cvr_out_of_range")
-    if base_cpl < 50 or base_cpl > 300:
-        flags.append("base_cpl_out_of_range")
     tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
     for idx, cv in enumerate(tier_cvr):
         low, high = BENCHMARK_RANGES[idx]["cvr"]
@@ -69,9 +63,9 @@ def guardrail_flags(base_cpl: float, base_cvr: float) -> List[str]:
 
 
 def export_audit(
-    base_cpl: float, base_cvr: float, total_budget: float
+    base_cvr: float, total_budget: float, ctr: float
 ) -> List[Dict[str, object]]:
-    metrics = calculate_tier_metrics(base_cpl, base_cvr, total_budget)
+    metrics = calculate_tier_metrics(base_cvr, total_budget, ctr)
     result = []
     for i in range(4):
         cpl_range = BENCHMARK_RANGES[i]["cpl"]

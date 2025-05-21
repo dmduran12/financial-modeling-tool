@@ -98,7 +98,6 @@ class TierMetricResponse(BaseModel):
 
 class ProjectionRequest(BaseModel):
     marketing_budget: float
-    base_cpl: float
     base_cvr: float
     ctr: float = 18.0
     months: int = 24
@@ -166,13 +165,13 @@ async def calculate(data: CalculationRequest):
 
 
 @app.get("/api/marketing/tiers", response_model=TierMetricResponse)
-async def marketing_tiers(baseCpl: float, baseCvr: float, totalBudget: float):
-    return calculate_tier_metrics(baseCpl, baseCvr, totalBudget)
+async def marketing_tiers(baseCvr: float, totalBudget: float, ctr: float):
+    return calculate_tier_metrics(baseCvr, totalBudget, ctr)
 
 
 @app.get("/api/audit/export")
-async def audit_export(baseCpl: float, baseCvr: float, totalBudget: float):
-    return export_audit(baseCpl, baseCvr, totalBudget)
+async def audit_export(baseCvr: float, totalBudget: float, ctr: float):
+    return export_audit(baseCvr, totalBudget, ctr)
 
 
 @app.post("/api/projection", response_model=ProjectionResponse)
@@ -180,7 +179,6 @@ async def projection(data: ProjectionRequest):
     return run_projection(
         marketing_budget=data.marketing_budget,
         months=data.months,
-        base_cpl=data.base_cpl,
         base_cvr=data.base_cvr,
         ctr=data.ctr,
     )
