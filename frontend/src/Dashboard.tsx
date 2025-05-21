@@ -164,11 +164,11 @@ export default function Dashboard() {
       form.ctr,
       COST_PER_MILLE,
     );
-    const blendedCvr = tierMetrics.totalLeads
-      ? (tierMetrics.totalNewCustomers / tierMetrics.totalLeads) * 100
+    const blendedCvr = tierMetrics.totalClicks
+      ? (tierMetrics.totalNewCustomers / tierMetrics.totalClicks) * 100
       : 0;
-    const blendedCpl = tierMetrics.totalLeads
-      ? form.marketing_budget / tierMetrics.totalLeads
+    const blendedCpl = tierMetrics.totalNewCustomers
+      ? form.marketing_budget / tierMetrics.totalNewCustomers
       : 0;
 
     const results = runSubscriptionModel(modelInput);

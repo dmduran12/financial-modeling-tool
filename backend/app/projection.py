@@ -1,12 +1,7 @@
 from typing import List, TypedDict
 from math import pow
 
-from .marketing import (
-    TIER_CPL_FACTORS,
-    TIER_CVR_FACTORS,
-    TIER_BUDGET_SPLIT,
-    guardrail_flags,
-)
+from .marketing import calculate_tier_metrics, guardrail_flags
 
 BASE_CVR = 2.75
 TIER_PRICES = [500.0, 1200.0, 3000.0, 7500.0]
@@ -46,22 +41,16 @@ def run_projection(
     marketing_budget: float,
     months: int = PROJECTION_MONTHS,
     base_cvr: float = BASE_CVR,
-    ctr: float = 18.0,
+    ctr: float = 19.0,
 ) -> ProjectionResult:
     flags = guardrail_flags(base_cvr)
-    tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
-    budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
-    weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
+    tier_metrics = calculate_tier_metrics(base_cvr, marketing_budget, ctr)
+    clicks_per_tier = tier_metrics["clicks"]
+    new_per_tier = tier_metrics["new_customers"]
     imp_per_month = (marketing_budget / CPI) * 1000
-    clk_per_month = imp_per_month * (ctr / 100.0)
-    leads_split = [
-        ((b / f) / weight_sum) if weight_sum else 0.0
-        for b, f in zip(budgets, TIER_CPL_FACTORS)
-    ]
-    leads_per_tier = [clk_per_month * w for w in leads_split]
-    new_per_tier = [l * (cv / 100.0) for l, cv in zip(leads_per_tier, tier_cvr)]
-    leads_per_month = sum(leads_per_tier)
-    new_per_month = sum(new_per_tier)
+    clk_per_month = sum(clicks_per_tier)
+    leads_per_month = sum(new_per_tier)
+    new_per_month = leads_per_month
 
     impressions: List[float] = []
     clicks: List[float] = []
@@ -77,18 +66,10 @@ def run_projection(
     avg_price = sum(p * a for p, a in zip(TIER_PRICES, ADOPTION))
 
     for _ in range(months):
-        imp = (marketing_budget / CPI) * 1000
-        clk = imp * (ctr / 100.0)
-        budgets = [marketing_budget * split for split in TIER_BUDGET_SPLIT]
-        weight_sum = sum(
-            budget / factor for budget, factor in zip(budgets, TIER_CPL_FACTORS)
-        )
-        leads = [
-            clk * ((budget / factor) / weight_sum) if weight_sum else 0
-            for budget, factor in zip(budgets, TIER_CPL_FACTORS)
-        ]
-        new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
-        total_new = sum(new_cust)
+        imp = imp_per_month
+        clk = clk_per_month
+        leads = new_per_tier
+        total_new = new_per_month
         churned = active_customers * MONTHLY_CHURN
         active_customers = max(0.0, active_customers + new_per_month - churned)
 
@@ -109,12 +90,10 @@ def run_projection(
         fcf.append(cash)
         cac.append(cac_val)
 
-    blended_cvr = (
-        sum(new_customers_total) / sum(leads_total) * 100 if sum(leads_total) else 0
-    )
+    blended_cvr = sum(new_customers_total) / sum(clicks) * 100 if sum(clicks) else 0
     blended_cpl = (
-        marketing_budget / (sum(leads_total) / months)
-        if months and sum(leads_total)
+        marketing_budget / (sum(new_customers_total) / months)
+        if months and sum(new_customers_total)
         else 0
     )
     ltv = (avg_price * (1 - OPERATING_EXPENSE_RATE)) / MONTHLY_CHURN

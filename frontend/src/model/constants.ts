@@ -11,7 +11,7 @@ export const DEFAULT_OPERATING_EXPENSE_RATE = 12;
 export const DEFAULT_FIXED_COSTS = 1500;
 export const MONTHLY_WACC = (0.08 / 12) * 100; // percent
 export const COST_PER_MILLE = 8; // cost per 1000 impressions
-export const DEFAULT_CTR = 18; // percent
+export const DEFAULT_CTR = 19; // percent
 // Default customer mix across pricing tiers, approximating a
 // typical distribution weighted toward lower tiers.
 export const DEFAULT_TIER_ADOPTION = [0.4, 0.3, 0.2, 0.1];
