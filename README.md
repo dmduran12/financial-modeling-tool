@@ -35,9 +35,9 @@ installed.
    serves the React app. If omitted, the server falls back to `frontend/index.html`.
 6. **Start the FastAPI server from the project root**
    ```bash
-   .venv/bin/uvicorn backend.app.main:app --reload
+   python3 launch.py
    ```
-   *(Adjust the path if your virtual environment lives elsewhere.)* Using the venv's `uvicorn` avoids accidentally launching a globally installed one.
+   *(Adjust the path if your virtual environment lives elsewhere.)* The script wraps `uvicorn` and automatically sets `PYTHONPATH` so you can run it from the project root.
 
    If you launch the server from another directory, set `PYTHONPATH=.` or use
    the `python3 -m` form:
@@ -75,11 +75,9 @@ cd ..
 Starting the server normally uses the bundled files in `frontend/dist`. When this folder is present, the backend automatically serves `index.html` and asset files from that directory:
 
 ```bash
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
-# or if started from another directory
-# PYTHONPATH=. uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
-# python3 -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
+python3 launch.py
 ```
+The script accepts the `PORT` environment variable if you need to override the default of `8001`.
 
 
 ### Environment Variables
