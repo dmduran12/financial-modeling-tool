@@ -1,4 +1,6 @@
 from backend.app.projection import run_projection
+import json
+from pathlib import Path
 
 
 def test_projection_non_negative():
@@ -7,3 +9,7 @@ def test_projection_non_negative():
     assert sum(res["leads"]) >= res["leads"][0]
 
 
+def test_projection_baseline_snapshot():
+    inputs = json.load(open(Path("tests/fixtures/baseline_input.json")))
+    expected = json.load(open(Path("tests/fixtures/baseline_output.json")))
+    assert run_projection(**inputs) == expected
