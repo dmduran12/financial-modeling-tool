@@ -70,8 +70,8 @@ def run_projection(
         budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
         weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
         leads = [
-            clk * ((b / f) / weight_sum) if weight_sum else 0
-            for b, f in zip(budgets, TIER_CPL_FACTORS)
+            clk * ((budget / factor) / weight_sum) if weight_sum else 0
+            for budget, factor in zip(budgets, TIER_CPL_FACTORS)
         ]
         new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
         total_new = sum(new_cust)

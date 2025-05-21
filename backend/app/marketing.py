@@ -41,8 +41,8 @@ def calculate_tier_metrics(
     total_leads = impressions_total * (ctr / 100.0)
     weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
     leads = [
-        total_leads * ((b / f) / weight_sum) if weight_sum else 0
-        for b, f in zip(budgets, TIER_CPL_FACTORS)
+        total_leads * ((budget / factor) / weight_sum) if weight_sum else 0
+        for budget, factor in zip(budgets, TIER_CPL_FACTORS)
     ]
     cpl = [b / lead if lead else 0 for b, lead in zip(budgets, leads)]
     cvr = derive_cvr_by_tier(base_cvr)
