@@ -47,10 +47,23 @@ def run_projection(
     months: int = PROJECTION_MONTHS,
     base_cvr: float = BASE_CVR,
     ctr: float = 18.0,
-) -> ProjectionResult:
+) -> Dict[str, List[float]]:
+    """Return monthly projection metrics for a marketing plan."""
+
     flags = guardrail_flags(base_cvr)
     tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
-    active_customers = 0.0
+    budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
+    weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
+    imp_per_month = (marketing_budget / CPI) * 1000
+    clk_per_month = imp_per_month * (ctr / 100.0)
+    leads_split = [
+        ((b / f) / weight_sum) if weight_sum else 0.0
+        for b, f in zip(budgets, TIER_CPL_FACTORS)
+    ]
+    leads_per_tier = [clk_per_month * w for w in leads_split]
+    new_per_tier = [l * (cv / 100.0) for l, cv in zip(leads_per_tier, tier_cvr)]
+    leads_per_month = sum(leads_per_tier)
+    new_per_month = sum(new_per_tier)
 
     impressions: List[float] = []
     clicks: List[float] = []
@@ -62,32 +75,24 @@ def run_projection(
     cac: List[float] = []
     fcf: List[float] = []
 
+    active_customers = 0.0
     avg_price = sum(p * a for p, a in zip(TIER_PRICES, ADOPTION))
 
     for _ in range(months):
-        imp = (marketing_budget / CPI) * 1000
-        clk = imp * (ctr / 100.0)
-        budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
-        weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
-        leads = [
-            clk * ((budget / factor) / weight_sum) if weight_sum else 0
-            for budget, factor in zip(budgets, TIER_CPL_FACTORS)
-        ]
-        new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
-        total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN
-        active_customers = max(0.0, active_customers + total_new - churned)
+        active_customers = max(0.0, active_customers + new_per_month - churned)
+
         tier_active = [active_customers * a for a in ADOPTION]
         mrr_by_tier = [tier_active[i] * TIER_PRICES[i] for i in range(4)]
         mrr = sum(mrr_by_tier)
         gp = mrr * (1 - OPERATING_EXPENSE_RATE)
         cash = gp - FIXED_COSTS - marketing_budget
-        cac_val = marketing_budget / total_new if total_new else 0.0
+        cac_val = marketing_budget / new_per_month if new_per_month else 0.0
 
-        impressions.append(imp)
-        clicks.append(clk)
-        leads_total.append(sum(leads))
-        new_customers_total.append(total_new)
+        impressions.append(imp_per_month)
+        clicks.append(clk_per_month)
+        leads_total.append(leads_per_month)
+        new_customers_total.append(new_per_month)
         active_customers_list.append(active_customers)
         total_mrr.append(mrr)
         gross_profit.append(gp)
