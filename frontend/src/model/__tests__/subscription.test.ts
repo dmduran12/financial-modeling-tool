@@ -7,8 +7,8 @@ test("customer roll-forward logic", () => {
     tier_revenues: [100],
     initial_customers: 100,
     marketing_budget: 1000,
-    cpl: 100,
     conversion_rate: 10,
+    ctr: 18,
   });
   expect(result.projections.customers_by_month[0]).toBeCloseTo(90.521875);
   expect(result.projections.customers_by_month[1]).toBeCloseTo(81.9915625);
@@ -21,8 +21,8 @@ test("MRR matches sum of tier revenues", () => {
     tier_revenues: [50, 150],
     initial_customers: 20,
     marketing_budget: 1000,
-    cpl: 100,
     conversion_rate: 10,
+    ctr: 18,
   });
   res.projections.mrr_by_month.forEach((mrr, idx) => {
     const sumTiers = res.projections.tier_revenue_by_month.reduce(
@@ -41,6 +41,7 @@ test("zero marketing spend yields zero new customers", () => {
     initial_customers: 0,
     marketing_budget: 0,
     conversion_rate: 0,
+    ctr: 18,
   });
   expect(res.projections.new_customers_by_month[0]).toBe(0);
   expect(res.projections.customers_by_month[0]).toBe(0);

@@ -81,14 +81,14 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     {
       label: "Leads",
       value: leads,
-      text: "Impressions × CTR",
-      code: "const leads = impressions * (ctr / 100);",
+      text: "Clicks × Conversion Rate",
+      code: "const leads = clicks * (conversionRate / 100);",
     },
     {
       label: "New Customers",
       value: newCustomers,
-      text: "Leads × Conversion Rate",
-      code: "const newCustomers = leads * (conversionRate / 100);",
+      text: "Leads",
+      code: "const newCustomers = leads;",
     },
     {
       label: "Churned Customers",
@@ -183,14 +183,14 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     ...tierMetrics.leads.map((v, idx) => ({
       label: `Tier ${idx + 1} Leads`,
       value: v,
-      text: `Total Leads × (Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Factor) / Σ`,
-      code: `const tier${idx + 1}Leads = totalLeads * ((totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]} / factor${idx + 1}) / sumWeights);`,
+      text: `Tier ${idx + 1} Clicks × (Tier ${idx + 1} CVR / 100)`,
+      code: `const tier${idx + 1}Leads = tier${idx + 1}Clicks * (tier${idx + 1}Cvr / 100);`,
     })),
     ...tierMetrics.newCustomers.map((v, idx) => ({
       label: `Tier ${idx + 1} New Cust`,
       value: v,
-      text: `Tier ${idx + 1} Leads × (Tier ${idx + 1} CVR / 100)`,
-      code: `const tier${idx + 1}New = tier${idx + 1}Leads * (tier${idx + 1}Cvr / 100);`,
+      text: `Tier ${idx + 1} Leads`,
+      code: `const tier${idx + 1}New = tier${idx + 1}Leads;`,
     })),
   ];
 

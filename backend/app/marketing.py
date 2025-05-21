@@ -2,6 +2,7 @@ from typing import List, Dict, Tuple, TypedDict
 
 TIER_CPL_FACTORS: List[float] = [1.0, 1.6, 2.5, 4.0]
 TIER_CVR_FACTORS: List[float] = [1.0, 0.65, 0.35, 0.15]
+TIER_CTR_FACTORS: List[float] = [1.0, 0.65, 0.35, 0.15]
 TIER_BUDGET_SPLIT: List[float] = [0.4, 0.3, 0.2, 0.1]
 CPI: float = 8.0  # cost per 1000 impressions
 
@@ -15,12 +16,15 @@ BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
 
 class TierMetrics(TypedDict):
     """Metric breakdown for each marketing tier."""
+
     cpl: List[float]
     cvr: List[float]
+    clicks: List[float]
     leads: List[float]
     new_customers: List[float]
     total_leads: float
     total_new_customers: float
+    total_clicks: float
 
 
 def derive_cvr_by_tier(base_cvr: float) -> List[float]:
@@ -38,24 +42,25 @@ def calculate_tier_metrics(
 ) -> TierMetrics:
     """Calculate CPL, CVR, leads and new customers for each tier."""
     budgets = split_budget(total_budget)
-    impressions_total = (total_budget / CPI) * 1000
-    total_leads = impressions_total * (ctr / 100.0)
-    weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
-    leads = [
-        total_leads * ((budget / factor) / weight_sum) if weight_sum else 0
-        for budget, factor in zip(budgets, TIER_CPL_FACTORS)
-    ]
-    cpl = [budget / lead if lead else 0 for budget, lead in zip(budgets, leads)]
+    ctrs = [ctr * f for f in TIER_CTR_FACTORS]
     cvr = derive_cvr_by_tier(base_cvr)
-    new_customers = [lead * (cv / 100.0) for lead, cv in zip(leads, cvr)]
-    total_new_customers = sum(new_customers)
+
+    impressions = [(b / CPI) * 1000 for b in budgets]
+    clicks = [imp * (ctrs[i] / 100.0) for i, imp in enumerate(impressions)]
+    leads = [clk * (cvr[i] / 100.0) for i, clk in enumerate(clicks)]
+
+    cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
+    total_leads = sum(leads)
+
     return {
         "cpl": cpl,
         "cvr": cvr,
+        "clicks": clicks,
         "leads": leads,
-        "new_customers": new_customers,
+        "new_customers": leads,
         "total_leads": total_leads,
-        "total_new_customers": total_new_customers,
+        "total_new_customers": total_leads,
+        "total_clicks": sum(clicks),
     }
 
 

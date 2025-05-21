@@ -113,14 +113,14 @@ export function runSubscriptionModel(
             input.ctr ?? DEFAULT_CTR,
             COST_PER_MILLE,
           )
-        : ({ totalLeads: 0, totalNewCustomers: 0 } as any);
+        : ({ totalLeads: 0, totalNewCustomers: 0, totalClicks: 0 } as any);
 
-    const leads = (tierMetrics.totalLeads as number) || 0;
-    const newCust = (tierMetrics.totalNewCustomers as number) || 0;
+    const leads = (tierMetrics.totalNewCustomers as number) || 0;
+    const newCust = leads;
     const imp = input.marketing_budget
       ? (input.marketing_budget / COST_PER_MILLE) * 1000
       : 0;
-    const clk = imp * ((input.ctr ?? 1) / 100);
+    const clk = (tierMetrics.totalClicks as number) || 0;
 
     const churned = Math.min(customers, customers * churn);
     const next = Math.max(0, customers + newCust - churned);
@@ -181,12 +181,12 @@ export function runSubscriptionModel(
       new_subscribers_monthly:
         customers_by_month[1] - (input.initial_customers ?? 10),
       blended_cpl:
-        leads_by_month[0] > 0
-          ? (input.marketing_budget ?? 0) / leads_by_month[0]
+        new_customers_by_month[0] > 0
+          ? (input.marketing_budget ?? 0) / new_customers_by_month[0]
           : 0,
       blended_cvr:
-        leads_by_month[0] > 0
-          ? (new_customers_by_month[0] / leads_by_month[0]) * 100
+        clicks_by_month[0] > 0
+          ? (new_customers_by_month[0] / clicks_by_month[0]) * 100
           : 0,
       carbon_ordered: carbon_tons_by_month[carbon_tons_by_month.length - 1],
       carbon_spend_pct:
