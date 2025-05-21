@@ -15,6 +15,8 @@ export const DEFAULT_CTR = 19; // percent
 // Default customer mix across pricing tiers, approximating a
 // typical distribution weighted toward lower tiers.
 export const DEFAULT_TIER_ADOPTION = [0.4, 0.3, 0.2, 0.1];
+// Weights for blended averages favoring lower tiers
+export const BLENDED_WEIGHTS = [0.6, 0.25, 0.1, 0.05];
 
 export const TIER_CPL_FACTORS = [1, 1.6, 2.5, 4];
 export const TIER_CVR_FACTORS = [1, 0.65, 0.35, 0.15];

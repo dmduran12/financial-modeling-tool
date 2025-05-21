@@ -129,14 +129,14 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     {
       label: "Blended CPL",
       value: blendedCpl,
-      text: "Marketing Budget / Leads",
-      code: "const blendedCpl = marketingBudget / leads;",
+      text: "Marketing Budget / Weighted New Customers",
+      code: "const blendedCpl = marketingBudget / Σ(newCust[i] * weight[i]);",
     },
     {
       label: "Blended CVR",
       value: blendedCvr,
-      text: "(New Customers / Leads) × 100",
-      code: "const blendedCvr = (newCustomers / leads) * 100;",
+      text: "(Weighted New Customers / Weighted Clicks) × 100",
+      code: "const blendedCvr = (\u03a3(newCust[i] * weight[i]) / \u03a3(clicks[i] * weight[i])) * 100;",
     },
     {
       label: "NPV",
