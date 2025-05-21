@@ -39,7 +39,6 @@ interface FormState {
   tier3_revenue: number;
   tier4_revenue: number;
   marketing_budget: number;
-  cpl: number;
   conversion_rate: number;
   ctr: number;
   churn_rate_smb: number;
@@ -77,7 +76,6 @@ export default function Dashboard() {
     tier3_revenue: DEFAULT_TIER_REVENUES[2],
     tier4_revenue: DEFAULT_TIER_REVENUES[3],
     marketing_budget: DEFAULT_MARKETING_BUDGET,
-    cpl: DEFAULT_COST_PER_LEAD,
     conversion_rate: DEFAULT_CONVERSION_RATE,
     ctr: DEFAULT_CTR,
     churn_rate_smb: DEFAULT_MONTHLY_CHURN_RATE,
@@ -126,9 +124,8 @@ export default function Dashboard() {
   const [warning, setWarning] = useState(false);
 
   useEffect(() => {
-    const badCpl = form.cpl < 50 || form.cpl > 300;
     const badCvr = form.conversion_rate < 0.1 || form.conversion_rate > 6;
-    setWarning(badCpl || badCvr);
+    setWarning(badCvr);
     const modelInput = {
       tier_revenues: [
         form.tier1_revenue,
@@ -137,7 +134,6 @@ export default function Dashboard() {
         form.tier4_revenue,
       ],
       marketing_budget: form.marketing_budget,
-      cpl: form.cpl,
       conversion_rate: form.conversion_rate,
       ctr: form.ctr,
       churn_rate_smb: form.churn_rate_smb,
@@ -163,10 +159,10 @@ export default function Dashboard() {
     };
 
     const tierMetrics = calculateTierMetrics(
-      form.cpl,
       form.conversion_rate,
       form.marketing_budget,
       form.ctr,
+      COST_PER_MILLE,
     );
     const blendedCvr = tierMetrics.totalLeads
       ? (tierMetrics.totalNewCustomers / tierMetrics.totalLeads) * 100
@@ -385,12 +381,6 @@ export default function Dashboard() {
               unit="currency"
               value={form.marketing_budget}
               onChange={(v) => handleValueChange("marketing_budget", v)}
-            />
-            <InlineNumberInput
-              label="CPL"
-              unit="currency"
-              value={form.cpl}
-              onChange={(v) => handleValueChange("cpl", v)}
             />
             <InlineNumberInput
               label="CVR"

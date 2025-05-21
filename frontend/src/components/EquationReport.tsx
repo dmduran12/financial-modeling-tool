@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Card from "./Card";
 import { calculateTierMetrics } from "../model/marketing";
+import { COST_PER_MILLE } from "../model/constants";
 
 interface Metrics {
   total_mrr: number;
@@ -16,7 +17,6 @@ interface Metrics {
 interface Props {
   form: {
     marketing_budget: number;
-    cpl: number;
     conversion_rate: number;
     ctr: number;
     churn_rate_smb: number;
@@ -59,10 +59,10 @@ export default function EquationReport({ form, metrics, projections }: Props) {
   const carbonSpendPct = mrr ? (carbonCost / mrr) * 100 : 0;
   const usdPerTon = carbonTons ? carbonCost / carbonTons : 0;
   const tierMetrics = calculateTierMetrics(
-    form.cpl,
     form.conversion_rate,
     form.marketing_budget,
     form.ctr,
+    COST_PER_MILLE,
   );
 
   const rows = [
@@ -81,8 +81,8 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     {
       label: "Leads",
       value: leads,
-      text: "(Marketing Budget / Cost Per Lead) × (CTR / 100)",
-      code: "const leads = (marketingBudget / costPerLead) * (ctr / 100);",
+      text: "Impressions × CTR",
+      code: "const leads = impressions * (ctr / 100);",
     },
     {
       label: "New Customers",
@@ -171,8 +171,8 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     ...tierMetrics.cpl.map((v, idx) => ({
       label: `Tier ${idx + 1} CPL`,
       value: v,
-      text: `Base CPL × ${[1, 1.6, 2.5, 4][idx]}`,
-      code: `const tier${idx + 1}Cpl = baseCpl * ${[1, 1.6, 2.5, 4][idx]};`,
+      text: `Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Tier ${idx + 1} Leads`,
+      code: `const tier${idx + 1}Cpl = (totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]}) / tier${idx + 1}Leads;`,
     })),
     ...tierMetrics.cvr.map((v, idx) => ({
       label: `Tier ${idx + 1} CVR`,
@@ -183,8 +183,8 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     ...tierMetrics.leads.map((v, idx) => ({
       label: `Tier ${idx + 1} Leads`,
       value: v,
-      text: `Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Tier ${idx + 1} CPL × (CTR / 100)`,
-      code: `const tier${idx + 1}Leads = ((totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]}) / tier${idx + 1}Cpl) * (ctr / 100);`,
+      text: `Total Leads × (Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Factor) / Σ`,
+      code: `const tier${idx + 1}Leads = totalLeads * ((totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]} / factor${idx + 1}) / sumWeights);`,
     })),
     ...tierMetrics.newCustomers.map((v, idx) => ({
       label: `Tier ${idx + 1} New Cust`,

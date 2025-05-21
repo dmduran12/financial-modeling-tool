@@ -8,7 +8,6 @@ from .marketing import (
     guardrail_flags,
 )
 
-BASE_CPL = 150.0
 BASE_CVR = 2.75
 TIER_PRICES = [500.0, 1200.0, 3000.0, 7500.0]
 MONTHLY_CHURN = 0.10
@@ -24,12 +23,10 @@ ADOPTION = [0.45, 0.3, 0.15, 0.1]
 def run_projection(
     marketing_budget: float,
     months: int = PROJECTION_MONTHS,
-    base_cpl: float = BASE_CPL,
     base_cvr: float = BASE_CVR,
     ctr: float = 18.0,
 ) -> Dict[str, List[float]]:
-    flags = guardrail_flags(base_cpl, base_cvr)
-    tier_cpl = [base_cpl * f for f in TIER_CPL_FACTORS]
+    flags = guardrail_flags(base_cvr)
     tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
     active_customers = 0.0
 
@@ -49,7 +46,12 @@ def run_projection(
         imp = (marketing_budget / CPI) * 1000
         clk = imp * (ctr / 100.0)
         budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
-        leads = [(b / c) * (ctr / 100.0) if c else 0 for b, c in zip(budgets, tier_cpl)]
+        weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
+        leads = [
+            clk * ((b / f) / weight_sum) if weight_sum else 0
+            for b, f in zip(budgets, TIER_CPL_FACTORS)
+        ]
+        tier_cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
         new_cust = [l * (cv / 100.0) for l, cv in zip(leads, tier_cvr)]
         total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN

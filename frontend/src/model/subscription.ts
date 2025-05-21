@@ -11,7 +11,6 @@ export interface SubscriptionInput {
   tier_revenues: number[];
   initial_customers?: number;
   marketing_budget?: number;
-  cpl?: number;
   conversion_rate?: number;
   ctr?: number;
   operating_expense_rate?: number;
@@ -107,12 +106,12 @@ export function runSubscriptionModel(
 
   for (let i = 0; i < months; i++) {
     const tierMetrics =
-      input.marketing_budget && input.cpl && input.conversion_rate
+      input.marketing_budget && input.conversion_rate
         ? calculateTierMetrics(
-            input.cpl,
             input.conversion_rate,
             input.marketing_budget,
             input.ctr ?? DEFAULT_CTR,
+            COST_PER_MILLE,
           )
         : ({ totalLeads: 0, totalNewCustomers: 0 } as any);
 
