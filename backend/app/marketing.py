@@ -15,7 +15,6 @@ BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
 
 class TierMetrics(TypedDict):
     """Metric breakdown for each marketing tier."""
-
     cpl: List[float]
     cvr: List[float]
     leads: List[float]
@@ -86,6 +85,7 @@ class AuditRow(TypedDict):
 def export_audit(base_cvr: float, total_budget: float, ctr: float) -> List[AuditRow]:
     metrics = calculate_tier_metrics(base_cvr, total_budget, ctr)
     result: List[AuditRow] = []
+
     for i in range(4):
         cpl_range = BENCHMARK_RANGES[i]["cpl"]
         cvr_range = BENCHMARK_RANGES[i]["cvr"]
