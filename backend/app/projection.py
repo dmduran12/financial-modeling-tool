@@ -48,11 +48,10 @@ def run_projection(
         budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
         weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
         leads = [
-            clk * ((b / f) / weight_sum) if weight_sum else 0
-            for b, f in zip(budgets, TIER_CPL_FACTORS)
+            clk * ((budget / factor) / weight_sum) if weight_sum else 0
+            for budget, factor in zip(budgets, TIER_CPL_FACTORS)
         ]
-        tier_cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
-        new_cust = [l * (cv / 100.0) for l, cv in zip(leads, tier_cvr)]
+        new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
         total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN
         active_customers = max(0.0, active_customers + total_new - churned)
@@ -73,7 +72,6 @@ def run_projection(
         fcf.append(cash)
         cac.append(cac_val)
 
-    avg_mrr = sum(total_mrr) / months if months else 0
     blended_cvr = (
         sum(new_customers_total) / sum(leads_total) * 100 if sum(leads_total) else 0
     )
