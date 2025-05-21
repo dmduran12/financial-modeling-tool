@@ -15,6 +15,7 @@ import {
   DEFAULT_COST_OF_CARBON,
   DEFAULT_TONS_PER_CUSTOMER,
   COST_PER_MILLE,
+  BLENDED_WEIGHTS,
 } from "./model/constants";
 import { runSubscriptionModel } from "./model/subscription";
 import { calculateFinancialMetrics } from "./model/finance";
@@ -164,12 +165,18 @@ export default function Dashboard() {
       form.ctr,
       COST_PER_MILLE,
     );
-    const blendedCvr = tierMetrics.totalClicks
-      ? (tierMetrics.totalNewCustomers / tierMetrics.totalClicks) * 100
+    const weightedClicks = tierMetrics.clicks.reduce(
+      (sum, c, idx) => sum + c * BLENDED_WEIGHTS[idx],
+      0,
+    );
+    const weightedNew = tierMetrics.newCustomers.reduce(
+      (sum, n, idx) => sum + n * BLENDED_WEIGHTS[idx],
+      0,
+    );
+    const blendedCvr = weightedClicks
+      ? (weightedNew / weightedClicks) * 100
       : 0;
-    const blendedCpl = tierMetrics.totalNewCustomers
-      ? form.marketing_budget / tierMetrics.totalNewCustomers
-      : 0;
+    const blendedCpl = weightedNew ? form.marketing_budget / weightedNew : 0;
 
     const results = runSubscriptionModel(modelInput);
     const financial = calculateFinancialMetrics(

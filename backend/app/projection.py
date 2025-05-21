@@ -13,6 +13,8 @@ PROJECTION_MONTHS = 24
 INITIAL_INVESTMENT = 200000.0
 CPI = 8.0  # cost per 1000 impressions
 ADOPTION = [0.45, 0.3, 0.15, 0.1]
+# Weigh lower tiers more heavily when computing blended metrics
+BLENDED_WEIGHTS = [0.6, 0.25, 0.1, 0.05]
 
 
 class ProjectionKPIs(TypedDict):
@@ -90,12 +92,10 @@ def run_projection(
         fcf.append(cash)
         cac.append(cac_val)
 
-    blended_cvr = sum(new_customers_total) / sum(clicks) * 100 if sum(clicks) else 0
-    blended_cpl = (
-        marketing_budget / (sum(new_customers_total) / months)
-        if months and sum(new_customers_total)
-        else 0
-    )
+    weighted_clicks = sum(c * w for c, w in zip(clicks_per_tier, BLENDED_WEIGHTS))
+    weighted_new = sum(n * w for n, w in zip(new_per_tier, BLENDED_WEIGHTS))
+    blended_cvr = weighted_new / weighted_clicks * 100 if weighted_clicks else 0
+    blended_cpl = marketing_budget / weighted_new if weighted_new else 0
     ltv = (avg_price * (1 - OPERATING_EXPENSE_RATE)) / MONTHLY_CHURN
     payback = cac[-1] / (avg_price * (1 - OPERATING_EXPENSE_RATE)) if avg_price else 0
     npv = (

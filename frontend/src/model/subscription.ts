@@ -4,6 +4,7 @@ import {
   DEFAULT_TONS_PER_CUSTOMER,
   DEFAULT_COST_OF_CARBON,
   DEFAULT_CTR,
+  BLENDED_WEIGHTS,
 } from "./constants";
 export interface SubscriptionInput {
   projection_months: number;
@@ -180,14 +181,46 @@ export function runSubscriptionModel(
         (churn || 1),
       new_subscribers_monthly:
         customers_by_month[1] - (input.initial_customers ?? 10),
-      blended_cpl:
-        new_customers_by_month[0] > 0
-          ? (input.marketing_budget ?? 0) / new_customers_by_month[0]
-          : 0,
-      blended_cvr:
-        clicks_by_month[0] > 0
-          ? (new_customers_by_month[0] / clicks_by_month[0]) * 100
-          : 0,
+      blended_cpl: (() => {
+        const tm =
+          input.marketing_budget && input.conversion_rate
+            ? calculateTierMetrics(
+                input.conversion_rate,
+                input.marketing_budget,
+                input.ctr ?? DEFAULT_CTR,
+                COST_PER_MILLE,
+              )
+            : ({ clicks: [], newCustomers: [] } as any);
+        const wClicks = tm.clicks.reduce(
+          (s: number, c: number, idx: number) => s + c * BLENDED_WEIGHTS[idx],
+          0,
+        );
+        const wNew = tm.newCustomers.reduce(
+          (s: number, n: number, idx: number) => s + n * BLENDED_WEIGHTS[idx],
+          0,
+        );
+        return wNew > 0 ? (input.marketing_budget ?? 0) / wNew : 0;
+      })(),
+      blended_cvr: (() => {
+        const tm =
+          input.marketing_budget && input.conversion_rate
+            ? calculateTierMetrics(
+                input.conversion_rate,
+                input.marketing_budget,
+                input.ctr ?? DEFAULT_CTR,
+                COST_PER_MILLE,
+              )
+            : ({ clicks: [], newCustomers: [] } as any);
+        const wClicks = tm.clicks.reduce(
+          (s: number, c: number, idx: number) => s + c * BLENDED_WEIGHTS[idx],
+          0,
+        );
+        const wNew = tm.newCustomers.reduce(
+          (s: number, n: number, idx: number) => s + n * BLENDED_WEIGHTS[idx],
+          0,
+        );
+        return wClicks > 0 ? (wNew / wClicks) * 100 : 0;
+      })(),
       carbon_ordered: carbon_tons_by_month[carbon_tons_by_month.length - 1],
       carbon_spend_pct:
         mrr_by_month[mrr_by_month.length - 1] > 0
