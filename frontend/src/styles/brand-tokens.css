@@ -124,7 +124,7 @@
 
 /* Legacy aliases for existing styles */
 :root {
-  --cat-pearl: var(--color-neutral-100);
+  --cat-pearl: var(--color-neutral-200);
   --cat-neutral-50: var(--color-neutral-50);
   --cat-driftwood: var(--color-neutral-200);
   --cat-grad-a: var(--accent-primary-500);
