@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import Card from "./Card";
-import clsx from "clsx";
 
 interface Props {
   title: string;
@@ -31,7 +30,11 @@ export default function ChartCard({
         )}
       </div>
       <Card className="relative overflow-hidden">
-        <div className={clsx("h-64 relative", className)}>{children}</div>
+        <div
+          className={className ? `h-64 relative ${className}` : "h-64 relative"}
+        >
+          {children}
+        </div>
       </Card>
     </div>
   );
