@@ -77,7 +77,6 @@ def run_projection(
         fcf.append(cash)
         cac.append(cac_val)
 
-    avg_mrr = sum(total_mrr) / months if months else 0
     blended_cvr = (
         sum(new_customers_total) / sum(leads_total) * 100 if sum(leads_total) else 0
     )

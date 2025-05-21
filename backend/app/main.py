@@ -6,7 +6,6 @@ from fastapi.staticfiles import StaticFiles
 
 try:
     from fastapi.templating import Jinja2Templates
-    import jinja2
 
     _templates_available = True
 except Exception:  # Jinja2 may not be installed
