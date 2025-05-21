@@ -106,7 +106,7 @@ class TierMetricResponse(BaseModel):
 class ProjectionRequest(BaseModel):
     marketing_budget: float
     base_cvr: float
-    ctr: float = 18.0
+    ctr: float = 0.75
     months: int = 24
 
 

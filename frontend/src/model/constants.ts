@@ -1,7 +1,7 @@
 export const DEFAULT_TIER_REVENUES = [500, 1200, 3000, 7500];
 export const DEFAULT_MARKETING_BUDGET = 15000;
 export const DEFAULT_COST_PER_LEAD = 125;
-export const DEFAULT_CONVERSION_RATE = 3.5; // percent
+export const DEFAULT_CONVERSION_RATE = 1; // percent
 export const DEFAULT_MONTHLY_CHURN_RATE = 8; // percent
 export const DEFAULT_WACC = 8; // percent
 export const DEFAULT_INITIAL_CAC_SMB = 239;
@@ -11,7 +11,7 @@ export const DEFAULT_OPERATING_EXPENSE_RATE = 12;
 export const DEFAULT_FIXED_COSTS = 1500;
 export const MONTHLY_WACC = (0.08 / 12) * 100; // percent
 export const COST_PER_MILLE = 8; // cost per 1000 impressions
-export const DEFAULT_CTR = 19; // percent
+export const DEFAULT_CTR = 0.75; // percent
 // Default customer mix across pricing tiers, approximating a
 // typical distribution weighted toward lower tiers.
 export const DEFAULT_TIER_ADOPTION = [0.4, 0.3, 0.2, 0.1];
