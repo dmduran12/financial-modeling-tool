@@ -1,23 +1,22 @@
 import os
+from typing import List, Optional, cast, Any
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
-from typing import Any, List, Optional, cast
-
-try:
-    from fastapi.templating import Jinja2Templates
-
-    _templates_available = True
-except Exception:  # Jinja2 may not be installed
-    Jinja2Templates = cast(Any, None)  # type: ignore
-    _templates_available = False
-
 from pydantic import BaseModel
 from .marketing import calculate_tier_metrics, export_audit
 from .projection import run_projection
 
+try:
+    from fastapi.templating import Jinja2Templates as FastJinja2Templates
+
+    _templates_available = True
+except Exception:  # Jinja2 may not be installed
+    FastJinja2Templates = cast(Any, None)  # type: ignore[misc]
+    _templates_available = False
+Jinja2Templates = FastJinja2Templates
 app = FastAPI(title="Catona Dashboard")
 
 
@@ -48,7 +47,7 @@ async def health():
 
 
 dist_dir = Path("frontend/dist")
-templates: Optional[Jinja2Templates]
+templates: Optional[Any]
 if dist_dir.exists():
     app.mount("/assets", StaticFiles(directory=dist_dir / "assets"), name="assets")
     templates = (

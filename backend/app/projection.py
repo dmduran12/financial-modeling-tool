@@ -47,9 +47,7 @@ def run_projection(
     months: int = PROJECTION_MONTHS,
     base_cvr: float = BASE_CVR,
     ctr: float = 18.0,
-) -> Dict[str, List[float]]:
-    """Return monthly projection metrics for a marketing plan."""
-
+) -> ProjectionResult:
     flags = guardrail_flags(base_cvr)
     tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
     budgets = [marketing_budget * s for s in TIER_BUDGET_SPLIT]
@@ -79,6 +77,18 @@ def run_projection(
     avg_price = sum(p * a for p, a in zip(TIER_PRICES, ADOPTION))
 
     for _ in range(months):
+        imp = (marketing_budget / CPI) * 1000
+        clk = imp * (ctr / 100.0)
+        budgets = [marketing_budget * split for split in TIER_BUDGET_SPLIT]
+        weight_sum = sum(
+            budget / factor for budget, factor in zip(budgets, TIER_CPL_FACTORS)
+        )
+        leads = [
+            clk * ((budget / factor) / weight_sum) if weight_sum else 0
+            for budget, factor in zip(budgets, TIER_CPL_FACTORS)
+        ]
+        new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
+        total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN
         active_customers = max(0.0, active_customers + new_per_month - churned)
 
