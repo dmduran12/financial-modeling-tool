@@ -102,6 +102,7 @@ export default function Dashboard() {
     newCustomers: number[];
     carbonTons: number[];
     carbonCost: number[];
+    cashFlows: number[];
   }>({
     mrr: [],
     subscribers: [],
@@ -111,12 +112,19 @@ export default function Dashboard() {
     newCustomers: [],
     carbonTons: [],
     carbonCost: [],
+    cashFlows: [],
   });
   const [combinedLegend, setCombinedLegend] = useState<string>("");
   const [tierLegend, setTierLegend] = useState<string>("");
+  const [cashLegend, setCashLegend] = useState<string>("");
   const mrrCustRef = useRef<HTMLCanvasElement>(null);
   const tierRef = useRef<HTMLCanvasElement>(null);
-  const chartInstances = useRef<{ combined?: Chart; tier?: Chart }>({});
+  const cashRef = useRef<HTMLCanvasElement>(null);
+  const chartInstances = useRef<{
+    combined?: Chart;
+    tier?: Chart;
+    cash?: Chart;
+  }>({});
   const [warning, setWarning] = useState(false);
 
   useEffect(() => {
@@ -209,6 +217,7 @@ export default function Dashboard() {
       newCustomers: results.projections.new_customers_by_month.map(Math.round),
       carbonTons: results.projections.carbon_tons_by_month,
       carbonCost: results.projections.carbon_cost_by_month,
+      cashFlows: financial.cashFlows,
     });
 
     if (mrrCustRef.current) {
@@ -318,6 +327,60 @@ export default function Dashboard() {
         }
       }
     }
+
+    if (cashRef.current) {
+      const ctx = cashRef.current.getContext("2d");
+      if (ctx) {
+        const inflowColor = getCssVar("--success-500", cashRef.current!);
+        const outflowColor = getCssVar("--error-500", cashRef.current!);
+        const netColor = getCssVar("--information-500", cashRef.current!);
+        const inflows = financial.cashFlows.map((cf) => (cf > 0 ? cf : 0));
+        const outflows = financial.cashFlows.map((cf) => (cf < 0 ? -cf : 0));
+        const datasets = [
+          { label: "Inflow", data: inflows, backgroundColor: inflowColor },
+          { label: "Outflow", data: outflows, backgroundColor: outflowColor },
+          {
+            label: "Net",
+            data: financial.cashFlows,
+            type: "line" as const,
+            borderColor: netColor,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0,
+          },
+        ];
+        if (!chartInstances.current.cash) {
+          chartInstances.current.cash = new Chart(ctx, {
+            type: "bar",
+            data: { labels, datasets },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false } },
+                y: {
+                  ticks: {
+                    callback: (v: any) => "$" + formatCurrency(Number(v)),
+                  },
+                },
+              },
+            },
+          });
+        } else {
+          const ch = chartInstances.current.cash;
+          ch.data.labels = labels;
+          ch.data.datasets = datasets as any;
+          ch.update();
+        }
+        const legend =
+          `<span class="mr-2"><span style="color:${inflowColor}">↑</span> inflow</span>` +
+          `<span class="mr-2"><span style="color:${outflowColor}">↓</span> outflow</span>` +
+          `<span><span style="color:${netColor}">◆</span> net</span>`;
+        setCashLegend(legend);
+      }
+    }
     return () => {
       if (chartInstances.current.combined) {
         chartInstances.current.combined.destroy();
@@ -326,6 +389,10 @@ export default function Dashboard() {
       if (chartInstances.current.tier) {
         chartInstances.current.tier.destroy();
         delete chartInstances.current.tier;
+      }
+      if (chartInstances.current.cash) {
+        chartInstances.current.cash.destroy();
+        delete chartInstances.current.cash;
       }
     };
   }, [form]);
@@ -530,6 +597,9 @@ export default function Dashboard() {
           </ChartCard>
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
+          </ChartCard>
+          <ChartCard title="Cash Flows" legend={cashLegend}>
+            <canvas ref={cashRef}></canvas>
           </ChartCard>
           <FunnelTable
             impressions={projections.impressions}
