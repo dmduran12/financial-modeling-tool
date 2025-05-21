@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, TypedDict
 
 TIER_CPL_FACTORS: List[float] = [1.0, 1.6, 2.5, 4.0]
 TIER_CVR_FACTORS: List[float] = [1.0, 0.65, 0.35, 0.15]
@@ -13,6 +13,17 @@ BENCHMARK_RANGES: List[Dict[str, Tuple[float, float]]] = [
 ]
 
 
+class TierMetrics(TypedDict):
+    """Metric breakdown for each marketing tier."""
+
+    cpl: List[float]
+    cvr: List[float]
+    leads: List[float]
+    new_customers: List[float]
+    total_leads: float
+    total_new_customers: float
+
+
 def derive_cvr_by_tier(base_cvr: float) -> List[float]:
     """Return CVR percentages for each tier based on base CVR."""
     return [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
@@ -25,19 +36,19 @@ def split_budget(total: float) -> List[float]:
 
 def calculate_tier_metrics(
     base_cvr: float, total_budget: float, ctr: float
-) -> Dict[str, object]:
+) -> TierMetrics:
     """Calculate CPL, CVR, leads and new customers for each tier."""
     budgets = split_budget(total_budget)
     impressions_total = (total_budget / CPI) * 1000
     total_leads = impressions_total * (ctr / 100.0)
     weight_sum = sum(b / f for b, f in zip(budgets, TIER_CPL_FACTORS))
     leads = [
-        total_leads * ((b / f) / weight_sum) if weight_sum else 0
-        for b, f in zip(budgets, TIER_CPL_FACTORS)
+        total_leads * ((budget / factor) / weight_sum) if weight_sum else 0
+        for budget, factor in zip(budgets, TIER_CPL_FACTORS)
     ]
-    cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
+    cpl = [budget / lead if lead else 0 for budget, lead in zip(budgets, leads)]
     cvr = derive_cvr_by_tier(base_cvr)
-    new_customers = [l * (cv / 100.0) for l, cv in zip(leads, cvr)]
+    new_customers = [lead * (cv / 100.0) for lead, cv in zip(leads, cvr)]
     total_new_customers = sum(new_customers)
     return {
         "cpl": cpl,
@@ -62,11 +73,19 @@ def guardrail_flags(base_cvr: float) -> List[str]:
     return flags
 
 
-def export_audit(
-    base_cvr: float, total_budget: float, ctr: float
-) -> List[Dict[str, object]]:
+class AuditRow(TypedDict):
+    tier: int
+    cpl: float
+    cpl_range: Tuple[float, float]
+    cpl_flag: bool
+    cvr: float
+    cvr_range: Tuple[float, float]
+    cvr_flag: bool
+
+
+def export_audit(base_cvr: float, total_budget: float, ctr: float) -> List[AuditRow]:
     metrics = calculate_tier_metrics(base_cvr, total_budget, ctr)
-    result = []
+    result: List[AuditRow] = []
     for i in range(4):
         cpl_range = BENCHMARK_RANGES[i]["cpl"]
         cvr_range = BENCHMARK_RANGES[i]["cvr"]
