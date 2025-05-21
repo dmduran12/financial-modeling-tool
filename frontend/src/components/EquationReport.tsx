@@ -62,6 +62,7 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     form.cpl,
     form.conversion_rate,
     form.marketing_budget,
+    form.ctr,
   );
 
   const rows = [
@@ -80,8 +81,8 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     {
       label: "Leads",
       value: leads,
-      text: "Marketing Budget / Cost Per Lead",
-      code: "const leads = marketingBudget / costPerLead;",
+      text: "(Marketing Budget / Cost Per Lead) × (CTR / 100)",
+      code: "const leads = (marketingBudget / costPerLead) * (ctr / 100);",
     },
     {
       label: "New Customers",
@@ -182,8 +183,8 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     ...tierMetrics.leads.map((v, idx) => ({
       label: `Tier ${idx + 1} Leads`,
       value: v,
-      text: `Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Tier ${idx + 1} CPL`,
-      code: `const tier${idx + 1}Leads = (totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]}) / tier${idx + 1}Cpl;`,
+      text: `Budget × ${[0.4, 0.3, 0.2, 0.1][idx]} / Tier ${idx + 1} CPL × (CTR / 100)`,
+      code: `const tier${idx + 1}Leads = ((totalBudget * ${[0.4, 0.3, 0.2, 0.1][idx]}) / tier${idx + 1}Cpl) * (ctr / 100);`,
     })),
     ...tierMetrics.newCustomers.map((v, idx) => ({
       label: `Tier ${idx + 1} New Cust`,

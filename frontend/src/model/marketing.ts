@@ -11,13 +11,22 @@ export interface TierMetrics {
   totalNewCustomers: number;
 }
 
-export function calculateTierMetrics(baseCpl: number, baseCvr: number, totalBudget: number): TierMetrics {
-  const cpl = TIER_CPL_FACTORS.map(f => baseCpl * f);
-  const cvr = TIER_CVR_FACTORS.map(f => Math.max(baseCvr * f, 0.1));
-  const budgets = TIER_BUDGET_SPLIT.map(s => totalBudget * s);
-  const leads = budgets.map((b, idx) => cpl[idx] ? b / cpl[idx] : 0);
-  const newCustomers = budgets.map((b, idx) => (b < cpl[idx]) ? 0 : leads[idx] * (cvr[idx]/100));
-  const totalLeads = leads.reduce((a,b) => a + b, 0);
-  const totalNewCustomers = newCustomers.reduce((a,b) => a + b, 0);
+export function calculateTierMetrics(
+  baseCpl: number,
+  baseCvr: number,
+  totalBudget: number,
+  ctr: number,
+): TierMetrics {
+  const cpl = TIER_CPL_FACTORS.map((f) => baseCpl * f);
+  const cvr = TIER_CVR_FACTORS.map((f) => Math.max(baseCvr * f, 0.1));
+  const budgets = TIER_BUDGET_SPLIT.map((s) => totalBudget * s);
+  const leads = budgets.map((b, idx) =>
+    cpl[idx] ? (b / cpl[idx]) * (ctr / 100) : 0,
+  );
+  const newCustomers = budgets.map((b, idx) =>
+    b < cpl[idx] ? 0 : leads[idx] * (cvr[idx] / 100),
+  );
+  const totalLeads = leads.reduce((a, b) => a + b, 0);
+  const totalNewCustomers = newCustomers.reduce((a, b) => a + b, 0);
   return { cpl, cvr, leads, newCustomers, totalLeads, totalNewCustomers };
 }

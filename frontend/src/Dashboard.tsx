@@ -158,6 +158,7 @@ export default function Dashboard() {
       form.cpl,
       form.conversion_rate,
       form.marketing_budget,
+      form.ctr,
     );
     const blendedCvr = tierMetrics.totalLeads
       ? (tierMetrics.totalNewCustomers / tierMetrics.totalLeads) * 100

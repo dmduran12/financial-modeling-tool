@@ -100,7 +100,7 @@ class ProjectionRequest(BaseModel):
     marketing_budget: float
     base_cpl: float
     base_cvr: float
-    ctr: float = 1.0
+    ctr: float = 18.0
     months: int = 24
 
 
