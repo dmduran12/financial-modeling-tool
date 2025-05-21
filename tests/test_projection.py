@@ -13,3 +13,9 @@ def test_projection_baseline_snapshot():
     inputs = json.load(open(Path("tests/fixtures/baseline_input.json")))
     expected = json.load(open(Path("tests/fixtures/baseline_output.json")))
     assert run_projection(**inputs) == expected
+
+
+def test_projection_zero_budget():
+    res = run_projection(0, months=1)
+    assert res["new_customers"] == [0]
+    assert res["active_customers"] == [0]
