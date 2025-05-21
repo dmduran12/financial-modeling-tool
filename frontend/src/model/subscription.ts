@@ -69,7 +69,7 @@ export function runSubscriptionModel(
   const normalizedAdoption = adoption.map((r) => r / totalRate);
 
   const monthLabels = Array.from({ length: months }, (_, i) => `M${i + 1}`);
-  let customers = input.initial_customers || 10;
+  let customers = input.initial_customers ?? 10;
   const customers_by_month: number[] = [];
   const mrr_by_month: number[] = [];
   const deferred_by_month: number[] = [];
@@ -179,7 +179,7 @@ export function runSubscriptionModel(
           (1 - (input.operating_expense_rate ?? 0) / 100)) /
         (churn || 1),
       new_subscribers_monthly:
-        customers_by_month[1] - (input.initial_customers || 10),
+        customers_by_month[1] - (input.initial_customers ?? 10),
       blended_cpl:
         leads_by_month[0] > 0
           ? (input.marketing_budget ?? 0) / leads_by_month[0]

@@ -112,7 +112,11 @@ def run_projection(
     blended_cvr = (
         sum(new_customers_total) / sum(leads_total) * 100 if sum(leads_total) else 0
     )
-    blended_cpl = marketing_budget / (sum(leads_total) / months) if months else 0
+    blended_cpl = (
+        marketing_budget / (sum(leads_total) / months)
+        if months and sum(leads_total)
+        else 0
+    )
     ltv = (avg_price * (1 - OPERATING_EXPENSE_RATE)) / MONTHLY_CHURN
     payback = cac[-1] / (avg_price * (1 - OPERATING_EXPENSE_RATE)) if avg_price else 0
     npv = (
