@@ -7,6 +7,10 @@ Welcome, automated contributor! This project welcomes assistance from AI agents 
 - Run `pytest` from the repository root to execute backend tests.
 - For frontend tests, run `npm test` from the `frontend/` directory. These commands may fail if dependencies are not installed. If that happens, mention the issue in your PR description.
 
+## Running the App
+
+- Execute `tools/start_server.sh` to launch the API. Set `DEV=1` to enable automatic reloads during development.
+
 ## Style
 
 - Format Python code with `black` using the default configuration.
