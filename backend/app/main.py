@@ -23,7 +23,9 @@ app = FastAPI(title="Catona Dashboard")
 
 
 def parse_env_list(name: str, default: str) -> List[str]:
-    return [item.strip() for item in os.getenv(name, default).split(",")]
+    """Return a cleaned list from a comma separated environment variable."""
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(",") if item.strip()]
 
 
 origins = parse_env_list("CORS_ALLOW_ORIGINS", "http://localhost:3000")
