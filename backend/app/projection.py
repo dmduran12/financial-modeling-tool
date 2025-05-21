@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List, TypedDict
 from math import pow
 
 from .marketing import (
@@ -20,12 +20,34 @@ CPI = 8.0  # cost per 1000 impressions
 ADOPTION = [0.45, 0.3, 0.15, 0.1]
 
 
+class ProjectionKPIs(TypedDict):
+    npv: float
+    paybackMonths: float
+    subscriberLtv: float
+    blendedCvr: float
+    blendedCpl: float
+
+
+class ProjectionResult(TypedDict):
+    impressions: List[float]
+    clicks: List[float]
+    leads: List[float]
+    new_customers: List[float]
+    active_customers: List[float]
+    total_mrr: List[float]
+    gross_profit: List[float]
+    cac: List[float]
+    free_cash_flow: List[float]
+    kpis: ProjectionKPIs
+    flags: List[str]
+
+
 def run_projection(
     marketing_budget: float,
     months: int = PROJECTION_MONTHS,
     base_cvr: float = BASE_CVR,
     ctr: float = 18.0,
-) -> Dict[str, List[float]]:
+) -> ProjectionResult:
     flags = guardrail_flags(base_cvr)
     tier_cvr = [max(base_cvr * f, 0.1) for f in TIER_CVR_FACTORS]
     active_customers = 0.0
@@ -51,8 +73,7 @@ def run_projection(
             clk * ((b / f) / weight_sum) if weight_sum else 0
             for b, f in zip(budgets, TIER_CPL_FACTORS)
         ]
-        tier_cpl = [b / l if l else 0 for b, l in zip(budgets, leads)]
-        new_cust = [l * (cv / 100.0) for l, cv in zip(leads, tier_cvr)]
+        new_cust = [lead * (cv / 100.0) for lead, cv in zip(leads, tier_cvr)]
         total_new = sum(new_cust)
         churned = active_customers * MONTHLY_CHURN
         active_customers = max(0.0, active_customers + total_new - churned)
@@ -73,7 +94,6 @@ def run_projection(
         fcf.append(cash)
         cac.append(cac_val)
 
-    avg_mrr = sum(total_mrr) / months if months else 0
     blended_cvr = (
         sum(new_customers_total) / sum(leads_total) * 100 if sum(leads_total) else 0
     )
