@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List, TypedDict
 from math import pow
 
 from .marketing import (
@@ -18,6 +18,28 @@ PROJECTION_MONTHS = 24
 INITIAL_INVESTMENT = 200000.0
 CPI = 8.0  # cost per 1000 impressions
 ADOPTION = [0.45, 0.3, 0.15, 0.1]
+
+
+class ProjectionKPIs(TypedDict):
+    npv: float
+    paybackMonths: float
+    subscriberLtv: float
+    blendedCvr: float
+    blendedCpl: float
+
+
+class ProjectionResult(TypedDict):
+    impressions: List[float]
+    clicks: List[float]
+    leads: List[float]
+    new_customers: List[float]
+    active_customers: List[float]
+    total_mrr: List[float]
+    gross_profit: List[float]
+    cac: List[float]
+    free_cash_flow: List[float]
+    kpis: ProjectionKPIs
+    flags: List[str]
 
 
 def run_projection(

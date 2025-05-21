@@ -3,16 +3,16 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+from typing import Any, List, Optional, cast
 
 try:
     from fastapi.templating import Jinja2Templates
 
     _templates_available = True
 except Exception:  # Jinja2 may not be installed
-    Jinja2Templates = None
+    Jinja2Templates = cast(Any, None)  # type: ignore
     _templates_available = False
-from pathlib import Path
-from typing import List, Optional
 
 from pydantic import BaseModel
 from .marketing import calculate_tier_metrics, export_audit
