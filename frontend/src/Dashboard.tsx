@@ -46,6 +46,7 @@ interface FormState {
   projection_months: number;
   operating_expense_rate: number;
   fixed_costs: number;
+  initial_investment: number;
   cost_of_carbon: number;
   carbon1: number;
   carbon2: number;
@@ -83,6 +84,7 @@ export default function Dashboard() {
     projection_months: DEFAULT_PROJECTION_MONTHS,
     operating_expense_rate: DEFAULT_OPERATING_EXPENSE_RATE,
     fixed_costs: DEFAULT_FIXED_COSTS,
+    initial_investment: DEFAULT_INITIAL_INVESTMENT,
     cost_of_carbon: DEFAULT_COST_OF_CARBON,
     carbon1: DEFAULT_TONS_PER_CUSTOMER[0],
     carbon2: DEFAULT_TONS_PER_CUSTOMER[1],
@@ -170,7 +172,7 @@ export default function Dashboard() {
     const results = runSubscriptionModel(modelInput);
     const financial = calculateFinancialMetrics(
       results,
-      DEFAULT_INITIAL_INVESTMENT,
+      form.initial_investment,
       expenses,
       form.wacc,
     );
@@ -421,6 +423,12 @@ export default function Dashboard() {
               onChange={(v) => handleValueChange("wacc", v)}
             />
             <InlineNumberInput
+              label="Initial Investment"
+              unit="currency"
+              value={form.initial_investment}
+              onChange={(v) => handleValueChange("initial_investment", v)}
+            />
+            <InlineNumberInput
               label="Months"
               value={form.projection_months}
               onChange={(v) => handleValueChange("projection_months", v)}
@@ -513,21 +521,6 @@ export default function Dashboard() {
                   )}
                   unit="percent"
                   warning={warning}
-                />
-                <KPIChip
-                  labelTop="Carbon"
-                  labelBottom="t/mo"
-                  value={metrics.carbon_ordered}
-                  dataArray={projections.carbonTons}
-                />
-                <KPIChip
-                  labelTop="Carbon Spend"
-                  labelBottom="% Rev"
-                  value={metrics.carbon_spend_pct}
-                  dataArray={projections.carbonCost.map((c, i) =>
-                    projections.mrr[i] ? (c / projections.mrr[i]) * 100 : 0,
-                  )}
-                  unit="percent"
                 />
               </div>
             </>
