@@ -539,7 +539,10 @@ export default function Dashboard() {
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
           </ChartCard>
-          <ChartCard title="Cash Flows">
+          <ChartCard
+            title="Cash Flows"
+            className="h-80 flex items-center justify-center"
+          >
             <SankeyChart
               mrr={projections.mrr[0] || 0}
               operatingExpenses={
@@ -548,6 +551,7 @@ export default function Dashboard() {
               marketing={form.marketing_budget}
               fixed={form.fixed_costs}
               cash={projections.cashFlows[0] || 0}
+              investment={form.initial_investment}
             />
           </ChartCard>
           <FunnelTable

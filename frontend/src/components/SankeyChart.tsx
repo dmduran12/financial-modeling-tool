@@ -6,6 +6,7 @@ interface Props {
   marketing: number;
   fixed: number;
   cash: number;
+  investment: number;
 }
 
 export default function SankeyChart({
@@ -14,16 +15,18 @@ export default function SankeyChart({
   marketing,
   fixed,
   cash,
+  investment,
 }: Props) {
-  const inflowColor = "var(--success-500)";
-  const outflowColor = "var(--error-500)";
-  const netColor = "var(--information-500)";
+  const inflowColor = "var(--accent-primary-500)";
+  const outflowColor = "var(--accent-secondary-500)";
+  const netColor = "var(--accent-primary-300)";
   const width = 600;
-  const height = 160;
+  const height = 200;
   const grossProfit = mrr - operatingExpenses;
   const scale = (v: number, total: number) =>
     Math.max(2, (v / (total || 1)) * 40);
   const nodes = {
+    investment: { x: 20, y: height * 0.1 },
     revenue: { x: 20, y: height / 2 },
     opex: { x: 220, y: height * 0.25 },
     gp: { x: 220, y: height * 0.75 },
@@ -39,6 +42,7 @@ export default function SankeyChart({
   const gpToMarketing = scale(marketing, grossProfit);
   const gpToFixed = scale(fixed, grossProfit);
   const gpToCash = scale(cash, grossProfit);
+  const investToCash = scale(investment, investment);
 
   return (
     <svg
@@ -85,7 +89,28 @@ export default function SankeyChart({
         fill="none"
         strokeOpacity="0.6"
       />
+      <path
+        d={path(nodes.investment, nodes.cash)}
+        stroke={outflowColor}
+        strokeWidth={investToCash}
+        fill="none"
+        strokeOpacity="0.6"
+      />
 
+      <text
+        className="node-label"
+        x={nodes.investment.x - 10}
+        y={nodes.investment.y - 8}
+        textAnchor="end"
+      >
+        Investment
+      </text>
+      <text
+        className="node-label"
+        x={nodes.investment.x - 10}
+        y={nodes.investment.y + 8}
+        textAnchor="end"
+      >{`$${formatCurrency(investment)}`}</text>
       <text
         className="node-label"
         x={nodes.revenue.x - 10}
