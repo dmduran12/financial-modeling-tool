@@ -5,8 +5,18 @@
 @tailwind utilities;
 
 :root {
-  --Pearl: #F5F3F0;
+  --Pearl: #cac9c5;
 }
-body { background-color: var(--Pearl); font-family: 'Roboto Mono', monospace; color: var(--squid-ink); }
-h1,h2,h3,h4,h5,h6 { font-family: 'Inter', sans-serif; }
-
+body {
+  background-color: var(--Pearl);
+  font-family: "Roboto Mono", monospace;
+  color: var(--squid-ink);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", sans-serif;
+}
