@@ -42,7 +42,17 @@ export default function SankeyChart({
   const gpToMarketing = scale(marketing, grossProfit);
   const gpToFixed = scale(fixed, grossProfit);
   const gpToCash = scale(cash, grossProfit);
-  const investToCash = scale(investment, investment);
+
+  const investAlloc = {
+    marketing: investment * 0.4,
+    opex: investment * 0.3,
+    fixed: investment * 0.2,
+    cash: investment * 0.1,
+  };
+  const investToMarketing = scale(investAlloc.marketing, investment);
+  const investToOpex = scale(investAlloc.opex, investment);
+  const investToFixed = scale(investAlloc.fixed, investment);
+  const investToCash = scale(investAlloc.cash, investment);
 
   return (
     <svg
@@ -86,6 +96,27 @@ export default function SankeyChart({
         d={path(nodes.gp, nodes.cash)}
         stroke={netColor}
         strokeWidth={gpToCash}
+        fill="none"
+        strokeOpacity="0.6"
+      />
+      <path
+        d={path(nodes.investment, nodes.opex)}
+        stroke={outflowColor}
+        strokeWidth={investToOpex}
+        fill="none"
+        strokeOpacity="0.6"
+      />
+      <path
+        d={path(nodes.investment, nodes.marketing)}
+        stroke={outflowColor}
+        strokeWidth={investToMarketing}
+        fill="none"
+        strokeOpacity="0.6"
+      />
+      <path
+        d={path(nodes.investment, nodes.fixed)}
+        stroke={outflowColor}
+        strokeWidth={investToFixed}
         fill="none"
         strokeOpacity="0.6"
       />
