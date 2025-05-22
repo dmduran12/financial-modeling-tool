@@ -385,6 +385,8 @@ export default function Dashboard() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const lastIdx = Math.max(0, form.projection_months - 1);
+
   return (
     <div className="space-y-6">
       {warning && (
@@ -576,13 +578,14 @@ export default function Dashboard() {
             className="h-80 flex items-center justify-center"
           >
             <SankeyChart
-              mrr={projections.mrr[0] || 0}
+              mrr={projections.mrr[lastIdx] || 0}
               operatingExpenses={
-                (projections.mrr[0] || 0) * (form.operating_expense_rate / 100)
+                (projections.mrr[lastIdx] || 0) *
+                (form.operating_expense_rate / 100)
               }
               marketing={form.marketing_budget}
               fixed={form.fixed_costs}
-              cash={projections.cashFlows[0] || 0}
+              cash={projections.cashFlows[lastIdx] || 0}
               investment={form.initial_investment}
             />
           </ChartCard>
