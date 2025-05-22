@@ -94,6 +94,7 @@ export default function Dashboard() {
   });
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [projections, setProjections] = useState<{
     mrr: number[];
     subscribers: number[];
@@ -395,7 +396,17 @@ export default function Dashboard() {
         </div>
       )}
       <div className="lg:flex gap-4">
-        <SidePanel className="side-panel sticky top-4 lg:w-[260px] w-full max-h-[calc(100vh-100px)] overflow-y-auto">
+        <div className="md:hidden">
+          <button
+            className="btn w-full mb-2"
+            onClick={() => setMobileOpen((o) => !o)}
+          >
+            {mobileOpen ? "Hide Inputs" : "Show Inputs"}
+          </button>
+        </div>
+        <SidePanel
+          className={`side-panel lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:w-[260px] md:w-72 w-full overflow-y-auto ${mobileOpen ? "" : "hidden md:block"}`}
+        >
           <div className="space-y-3">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
             {[1, 2, 3, 4].map((n) => (
