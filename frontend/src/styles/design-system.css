@@ -205,11 +205,12 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
 .funnel-table th:first-child{text-align:left;}
 
 .code-window{
-  background:#1e1e1e;
-  color:#e3e3e3;
+  background:#f5f5f5;
+  color:#2d2d2d;
   padding:0.5rem;
   border-radius:4px;
-  font-family:monospace;
+  border:1px solid #e0e0e0;
+  font-family:"Roboto Mono",monospace;
   font-size:0.75rem;
 }
 

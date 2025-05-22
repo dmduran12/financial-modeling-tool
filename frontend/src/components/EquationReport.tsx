@@ -58,6 +58,12 @@ export default function EquationReport({ form, metrics, projections }: Props) {
     : 0;
   const carbonSpendPct = mrr ? (carbonCost / mrr) * 100 : 0;
   const usdPerTon = carbonTons ? carbonCost / carbonTons : 0;
+  const marginPerTier = [1, 2, 3, 4].map((n) => {
+    const rev = form[`tier${n}_revenue` as keyof typeof form] as number;
+    const tons = form[`carbon${n}` as keyof typeof form] as number;
+    const cost = tons * form.cost_of_carbon;
+    return rev ? ((rev - cost) / rev) * 100 : 0;
+  });
   const tierMetrics = calculateTierMetrics(
     form.conversion_rate,
     form.marketing_budget,
@@ -191,6 +197,18 @@ export default function EquationReport({ form, metrics, projections }: Props) {
       value: v,
       text: `Tier ${idx + 1} Leads`,
       code: `const tier${idx + 1}New = tier${idx + 1}Leads;`,
+    })),
+    ...marginPerTier.map((v, idx) => ({
+      label: `Tier ${idx + 1} Margin`,
+      value: v,
+      text: `((Tier ${idx + 1} Price - (Tier ${idx + 1} t × Cost per Ton)) / Tier ${
+        idx + 1
+      } Price) × 100`,
+      code: `const marginTier${idx + 1} = ((tier${
+        idx + 1
+      }Price - (tier${idx + 1}Tons * costPerTon)) / tier${
+        idx + 1
+      }Price) * 100;`,
     })),
   ];
 
