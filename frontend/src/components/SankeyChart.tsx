@@ -20,19 +20,19 @@ export default function SankeyChart({
   const inflowColor = "var(--accent-primary-500)";
   const outflowColor = "var(--accent-secondary-500)";
   const netColor = "var(--accent-primary-300)";
-  const width = 600;
-  const height = 200;
+  const width = 720;
+  const height = 240;
   const grossProfit = mrr - operatingExpenses;
   const scale = (v: number, total: number) =>
     Math.max(2, (v / (total || 1)) * 40);
   const nodes = {
-    investment: { x: 20, y: height * 0.1 },
-    revenue: { x: 20, y: height / 2 },
-    opex: { x: 220, y: height * 0.25 },
-    gp: { x: 220, y: height * 0.75 },
-    marketing: { x: 420, y: height * 0.2 },
-    fixed: { x: 420, y: height * 0.5 },
-    cash: { x: 420, y: height * 0.8 },
+    investment: { x: 40, y: height * 0.15 },
+    revenue: { x: 40, y: height * 0.55 },
+    opex: { x: 360, y: height * 0.25 },
+    gp: { x: 360, y: height * 0.75 },
+    marketing: { x: 680, y: height * 0.35 },
+    fixed: { x: 680, y: height * 0.6 },
+    cash: { x: 680, y: height * 0.85 },
   } as const;
   const path = (a: { x: number; y: number }, b: { x: number; y: number }) =>
     `M ${a.x} ${a.y} C ${(a.x + b.x) / 2} ${a.y}, ${(a.x + b.x) / 2} ${b.y}, ${b.x} ${b.y}`;
