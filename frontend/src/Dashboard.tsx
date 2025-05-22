@@ -31,6 +31,7 @@ import SankeyChart from "./components/SankeyChart";
 import { generateLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
+import { deriveCarbonPerCustomer } from "./model/carbon";
 
 const TIER_COLORS = ["#4A47DC", "#8D8BE9", "#BF7DC4", "#E3C7E6"];
 
@@ -123,6 +124,40 @@ export default function Dashboard() {
     tier?: Chart;
   }>({});
   const [warning, setWarning] = useState(false);
+
+  useEffect(() => {
+    const prices = [
+      form.tier1_revenue,
+      form.tier2_revenue,
+      form.tier3_revenue,
+      form.tier4_revenue,
+    ];
+    const tons = deriveCarbonPerCustomer(prices, form.cost_of_carbon);
+    if (
+      tons[0] !== form.carbon1 ||
+      tons[1] !== form.carbon2 ||
+      tons[2] !== form.carbon3 ||
+      tons[3] !== form.carbon4
+    ) {
+      setForm((prev) => ({
+        ...prev,
+        carbon1: tons[0],
+        carbon2: tons[1],
+        carbon3: tons[2],
+        carbon4: tons[3],
+      }));
+    }
+  }, [
+    form.tier1_revenue,
+    form.tier2_revenue,
+    form.tier3_revenue,
+    form.tier4_revenue,
+    form.cost_of_carbon,
+    form.carbon1,
+    form.carbon2,
+    form.carbon3,
+    form.carbon4,
+  ]);
 
   useEffect(() => {
     const badCvr = form.conversion_rate < 0.1 || form.conversion_rate > 6;

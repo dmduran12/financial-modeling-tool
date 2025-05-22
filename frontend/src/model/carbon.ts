@@ -14,7 +14,7 @@ export function deriveCarbonPerCustomer(
     const ratio = n === 1 ? 0 : idx / (n - 1);
     const lnFactor = startLn + (endLn - startLn) * ratio;
     const factor = Math.exp(lnFactor);
-    const tons = (price / costPerTon) * factor;
+    const tons = price / (costPerTon * factor);
     return Math.round(tons);
   });
 }
