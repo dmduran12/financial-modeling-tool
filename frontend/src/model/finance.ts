@@ -15,29 +15,33 @@ export function calculateFinancialMetrics(
   expenses: Expenses,
   wacc: number,
 ) {
-  const cashFlows = modelResults.projections.free_cash_flow;
+  const grossProfits = modelResults.projections.mrr_by_month.map((mrr) => {
+    return mrr * (1 - expenses.operatingExpenseRate / 100);
+  });
 
-  const months = cashFlows.length;
+  const monthlyMarketing = expenses.marketingSpend || 0;
+  let remainingInvestment = initialInvestment;
+  const cashFlows = grossProfits.map((gp) => {
+    const covered = Math.min(remainingInvestment, monthlyMarketing);
+    remainingInvestment -= covered;
+    return gp - expenses.fixedCosts - (monthlyMarketing - covered);
+  });
+
   const waccMonthly = Math.pow(1 + wacc / 100, 1 / 12) - 1;
-  const monthlyInvestmentPortion = initialInvestment / months;
-  const financingCost = initialInvestment * waccMonthly;
-  const adjustedFlows = cashFlows.map(
-    (cf) => cf - monthlyInvestmentPortion - financingCost,
-  );
 
-  const npv = adjustedFlows.reduce((acc, cf, idx) => {
+  const npv = cashFlows.reduce((acc, cf, idx) => {
     return acc + cf / Math.pow(1 + waccMonthly, idx + 1);
-  }, 0);
+  }, -initialInvestment);
 
-  let cumulative = 0;
+  let cumulative = -initialInvestment;
   let paybackMonths: number | null = null;
-  for (let i = 0; i < adjustedFlows.length; i++) {
-    cumulative += adjustedFlows[i];
+  for (let i = 0; i < cashFlows.length; i++) {
+    cumulative += cashFlows[i];
     if (cumulative > 0) {
       paybackMonths = i + 1;
       break;
     }
   }
 
-  return { npv, paybackMonths, cashFlows: adjustedFlows };
+  return { npv, paybackMonths, cashFlows };
 }
