@@ -32,29 +32,10 @@ import { generateLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
 import { deriveCarbonPerCustomer } from "./model/carbon";
+import { useScenario } from "./ScenarioContext";
+import type { FormState } from "./types";
 
 const TIER_COLORS = ["#4A47DC", "#8D8BE9", "#BF7DC4", "#E3C7E6"];
-
-interface FormState {
-  tier1_revenue: number;
-  tier2_revenue: number;
-  tier3_revenue: number;
-  tier4_revenue: number;
-  marketing_budget: number;
-  conversion_rate: number;
-  ctr: number;
-  churn_rate_smb: number;
-  wacc: number;
-  projection_months: number;
-  operating_expense_rate: number;
-  fixed_costs: number;
-  initial_investment: number;
-  cost_of_carbon: number;
-  carbon1: number;
-  carbon2: number;
-  carbon3: number;
-  carbon4: number;
-}
 
 interface Metrics {
   total_mrr: number;
@@ -72,50 +53,9 @@ interface Metrics {
 }
 
 export default function Dashboard() {
-  const [form, setForm] = useState<FormState>({
-    tier1_revenue: DEFAULT_TIER_REVENUES[0],
-    tier2_revenue: DEFAULT_TIER_REVENUES[1],
-    tier3_revenue: DEFAULT_TIER_REVENUES[2],
-    tier4_revenue: DEFAULT_TIER_REVENUES[3],
-    marketing_budget: DEFAULT_MARKETING_BUDGET,
-    conversion_rate: DEFAULT_CONVERSION_RATE,
-    ctr: DEFAULT_CTR,
-    churn_rate_smb: DEFAULT_MONTHLY_CHURN_RATE,
-    wacc: DEFAULT_WACC,
-    projection_months: DEFAULT_PROJECTION_MONTHS,
-    operating_expense_rate: DEFAULT_OPERATING_EXPENSE_RATE,
-    fixed_costs: DEFAULT_FIXED_COSTS,
-    initial_investment: DEFAULT_INITIAL_INVESTMENT,
-    cost_of_carbon: DEFAULT_COST_OF_CARBON,
-    carbon1: DEFAULT_TONS_PER_CUSTOMER[0],
-    carbon2: DEFAULT_TONS_PER_CUSTOMER[1],
-    carbon3: DEFAULT_TONS_PER_CUSTOMER[2],
-    carbon4: DEFAULT_TONS_PER_CUSTOMER[3],
-  });
-
+  const { form, setForm } = useScenario();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const saveScenario = () => {
-    localStorage.setItem("scenario", JSON.stringify(form));
-    alert("Scenario saved");
-  };
-  const loadScenario = () => {
-    const data = localStorage.getItem("scenario");
-    if (data) {
-      setForm(JSON.parse(data));
-    }
-  };
-  const exportScenario = () => {
-    const blob = new Blob([JSON.stringify(form, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "scenario.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
   const [projections, setProjections] = useState<{
     mrr: number[];
     subscribers: number[];
@@ -608,29 +548,6 @@ export default function Dashboard() {
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
-          <div className="flex justify-end gap-2">
-            <button
-              className="btn"
-              onClick={saveScenario}
-              aria-label="Save scenario"
-            >
-              Save
-            </button>
-            <button
-              className="btn"
-              onClick={loadScenario}
-              aria-label="Load scenario"
-            >
-              Load
-            </button>
-            <button
-              className="btn"
-              onClick={exportScenario}
-              aria-label="Export scenario"
-            >
-              Export
-            </button>
-          </div>
           {metrics && (
             <>
               <h3 className="content-header">Key Metrics</h3>

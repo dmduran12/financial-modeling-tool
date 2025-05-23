@@ -1,4 +1,5 @@
-import ApiStatus from '../ApiStatus';
+import ApiStatus from "../ApiStatus";
+import ScenarioControls from "./ScenarioControls";
 
 export default function Header() {
   return (
@@ -7,7 +8,10 @@ export default function Header() {
         <h1 className="main-header">SMB Program Modeling</h1>
         <p className="sub-header">Carbon Removal Subscription Service</p>
       </div>
-      <ApiStatus />
+      <div className="flex items-center gap-2">
+        <ApiStatus />
+        <ScenarioControls />
+      </div>
     </header>
   );
 }

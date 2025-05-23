@@ -7,7 +7,8 @@ h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
 .card{background:var(--cat-neutral-50);border-radius:12px;box-shadow:none;}
 .btn,button{border-radius:9999px;padding:.5rem 1.25rem;cursor:pointer; border: 1px solid transparent; /* Added for consistency */}
 input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
-             padding:.5rem 1rem;background:#fff;}
+             padding:.5rem 1rem;background:#fff;color:var(--color-squid-ink);}
+input::placeholder{color:var(--color-neutral-200);}
 
 /* simple color swatch */
 .swatch{display:inline-block;width:16px;height:16px;border-radius:4px;margin-right:8px;}
@@ -233,3 +234,6 @@ input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
   background:var(--color-neutral-100);
   transition:background .2s;
 }
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,0.5);z-index:50;}
+.modal{background:#fff;border-radius:8px;padding:1rem;box-shadow:0 2px 10px rgba(0,0,0,0.3);}
