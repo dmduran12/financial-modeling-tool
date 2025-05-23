@@ -118,11 +118,14 @@ export default function Dashboard() {
   });
   const [combinedLegend, setCombinedLegend] = useState<string>("");
   const [tierLegend, setTierLegend] = useState<string>("");
+  const [outflowLegend, setOutflowLegend] = useState<string>("");
   const mrrCustRef = useRef<HTMLCanvasElement>(null);
   const tierRef = useRef<HTMLCanvasElement>(null);
+  const outflowRef = useRef<HTMLCanvasElement>(null);
   const chartInstances = useRef<{
     combined?: Chart;
     tier?: Chart;
+    outflow?: Chart;
   }>({});
   const [warning, setWarning] = useState(false);
 
@@ -245,6 +248,16 @@ export default function Dashboard() {
     const tierCustomers = tierArr.map((arr, idx) =>
       arr.map((val) => val / (tierPrices[idx] || 1)),
     );
+    const totalMarketing = form.marketing_budget * form.projection_months;
+    const totalFixed = form.fixed_costs * form.projection_months;
+    const totalOpex = mrrArr.reduce(
+      (s, m) => s + m * (form.operating_expense_rate / 100),
+      0,
+    );
+    const totalCarbon = results.projections.carbon_cost_by_month.reduce(
+      (a, b) => a + b,
+      0,
+    );
     setProjections({
       mrr: mrrArr,
       subscribers: subArr,
@@ -365,6 +378,52 @@ export default function Dashboard() {
       }
     }
 
+    if (outflowRef.current) {
+      const ctx = outflowRef.current.getContext("2d");
+      if (ctx) {
+        const labelsOut = ["Marketing", "Opex", "Fixed", "Carbon"];
+        const dataOut = [totalMarketing, totalOpex, totalFixed, totalCarbon];
+        const colors = [
+          getCssVar("--accent-secondary-500", outflowRef.current),
+          getCssVar("--accent-primary-500", outflowRef.current),
+          getCssVar("--cobalt-500", outflowRef.current),
+          getCssVar("--success-500", outflowRef.current),
+        ];
+        if (!chartInstances.current.outflow) {
+          chartInstances.current.outflow = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: labelsOut,
+              datasets: [
+                { label: "Outflow", data: dataOut, backgroundColor: colors },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false } },
+                y: {
+                  ticks: {
+                    callback: (v: any) => "$" + formatCurrency(Number(v)),
+                  },
+                },
+              },
+            },
+          });
+        } else {
+          const ch = chartInstances.current.outflow;
+          ch.data.labels = labelsOut;
+          ch.data.datasets[0].data = dataOut as any;
+          ch.update();
+        }
+        if (chartInstances.current.outflow) {
+          setOutflowLegend(generateLegend(chartInstances.current.outflow));
+        }
+      }
+    }
+
     return () => {
       if (chartInstances.current.combined) {
         chartInstances.current.combined.destroy();
@@ -373,6 +432,10 @@ export default function Dashboard() {
       if (chartInstances.current.tier) {
         chartInstances.current.tier.destroy();
         delete chartInstances.current.tier;
+      }
+      if (chartInstances.current.outflow) {
+        chartInstances.current.outflow.destroy();
+        delete chartInstances.current.outflow;
       }
     };
   }, [form]);
@@ -607,6 +670,9 @@ export default function Dashboard() {
             newCustomers={projections.newCustomers}
             marketingBudget={form.marketing_budget}
           />
+          <ChartCard title="Outflows" legend={outflowLegend}>
+            <canvas ref={outflowRef}></canvas>
+          </ChartCard>
           <EquationReport
             form={form}
             metrics={metrics}
