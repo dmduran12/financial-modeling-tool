@@ -28,7 +28,7 @@ import ChartCard from "./components/ChartCard";
 import EquationReport from "./components/EquationReport";
 import FunnelTable from "./components/FunnelTable";
 import SankeyChart from "./components/SankeyChart";
-import { generateLegend } from "./utils/chartLegend";
+import { generateLegend, generateBarLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
 import { deriveCarbonPerCustomer } from "./model/carbon";
@@ -347,10 +347,10 @@ export default function Dashboard() {
         const labelsOut = ["Marketing", "Opex", "Fixed", "Carbon"];
         const dataOut = [totalMarketing, totalOpex, totalFixed, totalCarbon];
         const colors = [
-          getCssVar("--accent-secondary-500", outflowRef.current),
-          getCssVar("--accent-primary-500", outflowRef.current),
+          getCssVar("--cobalt-300", outflowRef.current),
+          getCssVar("--cobalt-400", outflowRef.current),
           getCssVar("--cobalt-500", outflowRef.current),
-          getCssVar("--success-500", outflowRef.current),
+          getCssVar("--cobalt-600", outflowRef.current),
         ];
         if (!chartInstances.current.outflow) {
           chartInstances.current.outflow = new Chart(ctx, {
@@ -382,7 +382,7 @@ export default function Dashboard() {
           ch.update();
         }
         if (chartInstances.current.outflow) {
-          setOutflowLegend(generateLegend(chartInstances.current.outflow));
+          setOutflowLegend(generateBarLegend(labelsOut, colors));
         }
       }
     }

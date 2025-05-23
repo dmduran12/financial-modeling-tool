@@ -185,5 +185,14 @@
   --neutral-300: var(--color-neutral-300);
   --neutral-400: var(--color-neutral-400);
   --neutral-500: var(--color-neutral-500);
+  --cobalt-50: var(--accent-primary-50);
+  --cobalt-100: var(--accent-primary-100);
+  --cobalt-200: var(--accent-primary-200);
+  --cobalt-300: var(--accent-primary-300);
+  --cobalt-400: var(--accent-primary-400);
   --cobalt-500: var(--accent-primary-500);
+  --cobalt-600: var(--accent-primary-600);
+  --cobalt-700: var(--accent-primary-700);
+  --cobalt-800: var(--accent-primary-800);
+  --cobalt-900: var(--accent-primary-900);
 }
