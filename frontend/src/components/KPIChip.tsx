@@ -36,7 +36,11 @@ export default function KPIChip({
           {labelBottom && <div className="leading-none">{labelBottom}</div>}
         </div>
         <div className="metric">
-          <span className="metric-value" data-unit={unit}>
+          <span
+            className="metric-value"
+            data-unit={unit}
+            aria-label={`${labelTop} ${labelBottom || ""}`.trim()}
+          >
             {displayValue}
           </span>
         </div>

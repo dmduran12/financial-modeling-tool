@@ -95,6 +95,27 @@ export default function Dashboard() {
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const saveScenario = () => {
+    localStorage.setItem("scenario", JSON.stringify(form));
+    alert("Scenario saved");
+  };
+  const loadScenario = () => {
+    const data = localStorage.getItem("scenario");
+    if (data) {
+      setForm(JSON.parse(data));
+    }
+  };
+  const exportScenario = () => {
+    const blob = new Blob([JSON.stringify(form, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scenario.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   const [projections, setProjections] = useState<{
     mrr: number[];
     subscribers: number[];
@@ -292,6 +313,7 @@ export default function Dashboard() {
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              animation: { duration: 500 },
               plugins: { legend: { display: false } },
               scales: {
                 x: { grid: { display: false } },
@@ -340,6 +362,7 @@ export default function Dashboard() {
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              animation: { duration: 500 },
               plugins: { legend: { display: false } },
               scales: {
                 x: { stacked: true, grid: { display: false } },
@@ -522,10 +545,33 @@ export default function Dashboard() {
           </div>
         </SidePanel>
         <div className="flex-1 space-y-4">
+          <div className="flex justify-end gap-2">
+            <button
+              className="btn"
+              onClick={saveScenario}
+              aria-label="Save scenario"
+            >
+              Save
+            </button>
+            <button
+              className="btn"
+              onClick={loadScenario}
+              aria-label="Load scenario"
+            >
+              Load
+            </button>
+            <button
+              className="btn"
+              onClick={exportScenario}
+              aria-label="Export scenario"
+            >
+              Export
+            </button>
+          </div>
           {metrics && (
             <>
               <h3 className="content-header">Key Metrics</h3>
-              <div id="kpiRow">
+              <div id="kpiRow" className="sticky-metrics">
                 <KPIChip
                   labelTop="Total"
                   labelBottom="MRR"

@@ -8,6 +8,8 @@ interface Props {
   onChange: (value: number) => void;
   name?: string;
   id?: string;
+  disabled?: boolean;
+  tooltip?: string;
 }
 
 export default function InlineNumberInput({
@@ -17,9 +19,12 @@ export default function InlineNumberInput({
   onChange,
   name,
   id,
+  disabled = false,
+  tooltip,
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [temp, setTemp] = useState<number>(value);
+  const [invalid, setInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const baseLabel = typeof label === "string" ? label : "input";
   const safeName = (name || baseLabel).replace(/\s+/g, "_").toLowerCase();
@@ -39,9 +44,12 @@ export default function InlineNumberInput({
 
   const handleBlur = () => {
     setEditing(false);
-    if (!isNaN(temp)) {
+    if (!isNaN(temp) && !invalid) {
       onChange(temp);
+    } else {
+      setTemp(value);
     }
+    setInvalid(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,7 +59,13 @@ export default function InlineNumberInput({
   };
 
   return (
-    <div className={`chip ${editing ? "editing" : ""}`}>
+    <div
+      className={`chip ${editing ? "editing" : ""} ${invalid ? "invalid" : ""} ${
+        disabled ? "readonly" : ""
+      }`}
+      onClick={() => inputRef.current?.focus()}
+      title={disabled ? tooltip : undefined}
+    >
       <span className="label">{label}</span>
       <span className="value" data-unit={unit}>
         {display}
@@ -65,8 +79,14 @@ export default function InlineNumberInput({
         step={unit === "percent" ? 0.5 : 1}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        onChange={(e) => setTemp(parseFloat(e.target.value))}
+        readOnly={disabled}
+        onChange={(e) => {
+          const val = parseFloat(e.target.value);
+          setTemp(val);
+          setInvalid(isNaN(val));
+        }}
         onKeyDown={handleKeyDown}
+        aria-label={baseLabel}
       />
     </div>
   );
