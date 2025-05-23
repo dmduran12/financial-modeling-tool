@@ -116,6 +116,9 @@ npm test
 - Brand tokens are defined in `static/css/brand-tokens.css` and include the full Catona color palette and design variables.
 - This is not a production‑ready build but serves as a foundation for further development.
 
+## Prioritization Roadmap
+See [docs/prioritization_roadmap.md](docs/prioritization_roadmap.md) for the feature backlog.
+
 ## Debug Report
 
 Run `python3 tools/debug_report.py` to print helpful environment information. The script reports the Python version, installed packages, Node and npm versions, and values of key environment variables such as `CORS_ALLOW_ORIGINS`. The output is plain text so it can be easily copied into bug reports.
