@@ -35,7 +35,14 @@ import { deriveCarbonPerCustomer } from "./model/carbon";
 import { useScenario } from "./ScenarioContext";
 import type { FormState } from "./types";
 
-const TIER_COLORS = ["#4A47DC", "#8D8BE9", "#BF7DC4", "#E3C7E6"];
+const TIER_COLOR_VARS = [
+  "--cobalt-500",
+  "--cobalt-400",
+  "--accent-secondary-500",
+  "--accent-secondary-300",
+];
+
+const SWATCH_COLORS = TIER_COLOR_VARS.map((v) => `var(${v})`);
 
 interface Metrics {
   total_mrr: number;
@@ -250,7 +257,7 @@ export default function Dashboard() {
           ...tierCustomers.map((arr, idx) => ({
             label: `Tier ${idx + 1}`,
             data: arr,
-            borderColor: ["#4A47DC", "#8D8BE9", "#BF7DC4", "#E3C7E6"][idx],
+            borderColor: getCssVar(TIER_COLOR_VARS[idx], mrrCustRef.current!),
             borderWidth: 2,
             yAxisID: "y2",
             pointRadius: 0,
@@ -306,7 +313,7 @@ export default function Dashboard() {
         const datasets = tierArr.map((arr: number[], idx: number) => ({
           label: `Tier ${idx + 1}`,
           data: arr,
-          backgroundColor: ["#4A47DC", "#8D8BE9", "#BF7DC4", "#E3C7E6"][idx],
+          backgroundColor: getCssVar(TIER_COLOR_VARS[idx], tierRef.current!),
         }));
         if (!chartInstances.current.tier) {
           chartInstances.current.tier = new Chart(ctx, {
@@ -366,7 +373,12 @@ export default function Dashboard() {
               maintainAspectRatio: false,
               plugins: { legend: { display: false } },
               scales: {
-                x: { grid: { display: false } },
+                x: {
+                  grid: { display: false },
+                  ticks: {
+                    callback: (_: any, idx: number) => labelsOut[idx],
+                  },
+                },
                 y: {
                   ticks: {
                     callback: (v: any) => "$" + formatCurrency(Number(v)),
@@ -379,6 +391,14 @@ export default function Dashboard() {
           const ch = chartInstances.current.outflow;
           ch.data.labels = labelsOut;
           ch.data.datasets[0].data = dataOut as any;
+          if (
+            ch.options.scales &&
+            ch.options.scales.x &&
+            ch.options.scales.x.ticks
+          ) {
+            ch.options.scales.x.ticks.callback = (_: any, idx: number) =>
+              labelsOut[idx];
+          }
           ch.update();
         }
         if (chartInstances.current.outflow) {
@@ -417,7 +437,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {warning && (
-        <div className="text-xs text-yellow-700 bg-yellow-100 py-1 px-2 rounded">
+        <div className="text-xs text-[var(--warning-700)] bg-[var(--warning-100)] py-1 px-2 rounded">
           Input assumptions outside EY benchmark – review Marketing CPL / CVR
         </div>
       )}
@@ -431,7 +451,7 @@ export default function Dashboard() {
           </button>
         </div>
         <SidePanel
-          className={`side-panel lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:w-[260px] md:w-72 w-full overflow-y-auto ${mobileOpen ? "" : "hidden md:block"}`}
+          className={`side-panel lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:w-[260px] md:w-72 w-full overflow-y-auto ${mobileOpen ? "" : "hidden md:block"}`}
         >
           <div className="space-y-3">
             <h3 className="sidebar-title mb-2">Pricing Tiers</h3>
@@ -442,7 +462,7 @@ export default function Dashboard() {
                   <>
                     <span
                       className="swatch"
-                      style={{ backgroundColor: TIER_COLORS[n - 1] }}
+                      style={{ backgroundColor: SWATCH_COLORS[n - 1] }}
                     ></span>
                     {`Tier ${n}`}
                   </>
@@ -475,11 +495,11 @@ export default function Dashboard() {
               value={form.ctr}
               onChange={(v) => handleValueChange("ctr", v)}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[var(--neutral-500)]">
               Upper tiers scale automatically: CPL factors 1 / 1.6 / 2.5 / 4.0,
               CVR factors 1 / 0.65 / 0.35 / 0.15
             </p>
-            <details className="text-xs text-gray-500">
+            <details className="text-xs text-[var(--neutral-500)]">
               <summary className="cursor-pointer">Advanced</summary>
               <div className="mt-1 space-y-1">
                 <div>{`Cost per 1K impressions: $${COST_PER_MILLE}`}</div>
