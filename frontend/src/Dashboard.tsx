@@ -36,6 +36,16 @@ import { deriveCarbonPerCustomer } from "./model/carbon";
 import { useScenario } from "./ScenarioContext";
 import type { FormState } from "./types";
 
+function hexWithOpacity(hex: string, opacity: number): string {
+  if (hex.startsWith("#") && hex.length === 7) {
+    const o = Math.round(opacity * 255)
+      .toString(16)
+      .padStart(2, "0");
+    return `${hex}${o}`;
+  }
+  return hex;
+}
+
 const TIER_COLOR_VARS = [
   "--cobalt-500",
   "--cobalt-400",
@@ -252,24 +262,30 @@ export default function Dashboard() {
             label: "MRR",
             data: mrrArr,
             borderColor: mrrColor,
-            borderWidth: 6,
+            backgroundColor: hexWithOpacity(mrrColor, 0.08),
+            borderWidth: 2,
             yAxisID: "y1",
             pointRadius: 0,
             pointHoverRadius: 4,
-            tension: 0,
+            tension: 0.16,
+            fill: true,
             order: -1,
           },
-          ...tierCustomers.map((arr, idx) => ({
-            label: `Tier ${idx + 1}`,
-            data: arr,
-            borderColor: getCssVar(TIER_COLOR_VARS[idx], mrrCustRef.current!),
-            borderWidth: 2,
-            yAxisID: "y2",
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0,
-            stepped: true,
-          })),
+          ...tierCustomers.map((arr, idx) => {
+            const color = getCssVar(TIER_COLOR_VARS[idx], mrrCustRef.current!);
+            return {
+              label: `Tier ${idx + 1}`,
+              data: arr,
+              borderColor: color,
+              backgroundColor: hexWithOpacity(color, 0.08),
+              borderWidth: 2,
+              yAxisID: "y2",
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              tension: 0.16,
+              fill: true,
+            };
+          }),
         ];
         if (!chartInstances.current.combined) {
           chartInstances.current.combined = new Chart(ctx, {
@@ -281,10 +297,11 @@ export default function Dashboard() {
               animation: { duration: 500 },
               plugins: { legend: { display: false } },
               scales: {
-                x: { grid: { display: false } },
+                x: { grid: { display: false, drawBorder: false } },
                 y1: {
                   position: "left",
                   min: 1,
+                  grid: { drawBorder: false },
                   ticks: {
                     callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
@@ -292,7 +309,7 @@ export default function Dashboard() {
                 y2: {
                   position: "right",
                   min: 1,
-                  grid: { drawOnChartArea: false },
+                  grid: { drawOnChartArea: false, drawBorder: false },
                   ticks: {
                     callback: (v: any) => Number(v).toLocaleString(),
                   },
