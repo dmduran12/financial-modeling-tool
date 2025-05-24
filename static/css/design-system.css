@@ -1,7 +1,7 @@
 @import "brand-tokens.css";
 
 /* base */
-body{margin:0;font-family:system-ui;background:var(--cat-pearl);}
+body{margin:0;font-family:system-ui;background:var(--color-pearl);}
 .card{background:var(--cat-neutral-50);border-radius:12px;
       box-shadow:0px -2px 2px 0px rgba(0,0,0,0.02) inset,
                  0px 1.873px 23.41px 0px rgba(0,0,0,0.04);}

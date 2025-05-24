@@ -38,11 +38,11 @@ export default function ScenarioControls() {
 
   return (
     <div className="flex items-center gap-2">
-      <button className="btn" onClick={() => setShowModal(true)}>
+      <button className="btn text-sm" onClick={() => setShowModal(true)}>
         Save
       </button>
       <select
-        className="btn"
+        className="btn text-sm"
         onChange={(e) => handleLoad(e.target.value)}
         defaultValue=""
       >
@@ -55,7 +55,7 @@ export default function ScenarioControls() {
           </option>
         ))}
       </select>
-      <button className="btn" onClick={() => window.print()}>
+      <button className="btn text-sm" onClick={() => window.print()}>
         Export
       </button>
       {showModal && (
@@ -68,10 +68,13 @@ export default function ScenarioControls() {
               onChange={(e) => setName(e.target.value)}
             />
             <div className="flex justify-end gap-2">
-              <button className="btn" onClick={() => setShowModal(false)}>
+              <button
+                className="btn text-sm"
+                onClick={() => setShowModal(false)}
+              >
                 Cancel
               </button>
-              <button className="btn" onClick={handleSave}>
+              <button className="btn text-sm" onClick={handleSave}>
                 Save
               </button>
             </div>

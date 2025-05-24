@@ -1,7 +1,7 @@
 @import "brand-tokens.css";
 
 /* base */
-body{margin:0;font-family:'Roboto Mono',monospace;background:var(--cat-pearl);color:var(--squid-ink);}
+body{margin:0;font-family:'Roboto Mono',monospace;background:var(--color-pearl);color:var(--squid-ink);}
 h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
 .shadow-surface{box-shadow:none;}
 .card{background:var(--cat-neutral-50);border-radius:8px;box-shadow:none;}
