@@ -4,8 +4,8 @@
 body{margin:0;font-family:'Roboto Mono',monospace;background:var(--cat-pearl);color:var(--squid-ink);}
 h1,h2,h3,h4,h5,h6{font-family:'Inter',sans-serif;}
 .shadow-surface{box-shadow:none;}
-.card{background:var(--cat-neutral-50);border-radius:12px;box-shadow:none;}
-.btn,button{border-radius:9999px;padding:.5rem 1.25rem;cursor:pointer; border: 1px solid transparent; /* Added for consistency */}
+.card{background:var(--cat-neutral-50);border-radius:8px;box-shadow:none;}
+.btn,button{border-radius:9999px;padding:.5rem 1rem;cursor:pointer;border:1px solid transparent; /* Added for consistency */}
 input,select{border:1px solid var(--cat-driftwood);border-radius:9999px;
              padding:.5rem 1rem;background:#fff;color:var(--color-squid-ink);}
 input::placeholder{color:var(--color-neutral-200);}
@@ -19,7 +19,7 @@ input::placeholder{color:var(--color-neutral-200);}
 .refreshing{opacity:0.4;transition:opacity .3s;}
 
 /* metric cards */
-.metric-card{border-radius:12px;
+.metric-card{border-radius:8px;
              padding:1rem;display:flex;flex-direction:column;gap:.5rem;
              overflow:hidden;
              box-shadow:none;}
@@ -144,7 +144,7 @@ input::placeholder{color:var(--color-neutral-200);}
   height:40px;
   width:100%;
   border-radius:8px;
-  padding:0 0.75rem;
+  padding:0 var(--space-sm);
   border:1px solid transparent;
   background:var(--neutral-50);
   box-shadow:none;

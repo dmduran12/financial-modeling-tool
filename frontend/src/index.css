@@ -3,20 +3,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --Pearl: #cac9c5;
-}
-body {
-  background-color: var(--Pearl);
-  font-family: "Roboto Mono", monospace;
-  color: var(--squid-ink);
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Inter", sans-serif;
-}
