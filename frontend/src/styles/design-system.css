@@ -50,7 +50,10 @@ input::placeholder{color:var(--color-neutral-200);}
     display:flex; /* Horizontal layout on small screens */
     gap:var(--space-md); /* Spacing between KPI cards */
     overflow-x:auto; /* Enable horizontal scrolling */
-    padding-bottom:var(--space-sm); /* Space for scrollbar if it appears */
+    padding:var(--space-md); /* Consistent padding */
+    background:var(--neutral-50);
+    border-radius:var(--radius-md);
+    box-shadow:0 2px 4px rgba(0,0,0,0.04);
     /* Prevent flex items from shrinking too much */
     & > .kpi-card {
         flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
@@ -60,9 +63,7 @@ input::placeholder{color:var(--color-neutral-200);}
 #kpiRow.sticky-metrics{
     position:sticky;
     top:0;
-    background:var(--neutral-50);
     z-index:var(--z-sticky);
-    padding-top:var(--space-sm);
 }
 @media(min-width:1024px){ /* lg breakpoint */
     #kpiRow{
