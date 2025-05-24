@@ -18,6 +18,7 @@ import {
   BLENDED_WEIGHTS,
 } from "./model/constants";
 import { runSubscriptionModel } from "./model/subscription";
+import { blendSeasonality } from "./utils/seasonality";
 import { calculateFinancialMetrics } from "./model/finance";
 import { calculateTierMetrics } from "./model/marketing";
 import { Chart } from "chart.js/auto";
@@ -185,7 +186,11 @@ export default function Dashboard() {
       : 0;
     const blendedCpl = weightedNew ? form.marketing_budget / weightedNew : 0;
 
-    const results = runSubscriptionModel(modelInput);
+    const blend = blendSeasonality(
+      form.seasonality,
+      form.seasonality_influence,
+    );
+    const results = runSubscriptionModel(modelInput, blend);
     const financial = calculateFinancialMetrics(
       results,
       form.initial_investment,
@@ -495,6 +500,24 @@ export default function Dashboard() {
               value={form.ctr}
               onChange={(v) => handleValueChange("ctr", v)}
             />
+            <div className="space-y-1">
+              <label className="text-sm">
+                Seasonality Influence {form.seasonality_influence}%
+              </label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={form.seasonality_influence}
+                onChange={(e) =>
+                  handleValueChange(
+                    "seasonality_influence",
+                    parseFloat(e.target.value),
+                  )
+                }
+                className="w-full"
+              />
+            </div>
             <p className="text-xs text-[var(--neutral-500)]">
               Upper tiers scale automatically: CPL factors 1 / 1.6 / 2.5 / 4.0,
               CVR factors 1 / 0.65 / 0.35 / 0.15

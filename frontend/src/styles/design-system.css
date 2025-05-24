@@ -27,7 +27,7 @@ input::placeholder{color:var(--color-neutral-200);}
 .metric-label{font-size:0.875rem;color:var(--neutral-400);font-family:'Roboto Mono',monospace;}
 
 /* KPI chips */
-.kpi-card{position:relative;background:var(--neutral-50);border-radius:8px;padding:var(--space-sm) var(--space-md) var(--space-xs);overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;box-shadow:none;min-height:40px;}
+.kpi-card{position:relative;background:var(--neutral-50);border-radius:8px;padding:var(--space-sm) var(--space-md);overflow:hidden;display:flex;flex-direction:column;gap:0.5rem;box-shadow:none;min-height:40px;}
 .kpi-card .label-block div{font-size:0.75rem;font-weight:500;color:var(--squid-ink);font-family:'Roboto Mono',monospace;line-height:1;}
 .kpi-card .metric{position:relative;z-index:2;font-family:'Inter',sans-serif;font-weight:700;}
 .kpi-card .metric-value{font-size:1.5rem;color:var(--accent-primary-500);}

@@ -56,9 +56,14 @@ export interface SubscriptionResult {
 
 export function runSubscriptionModel(
   input: SubscriptionInput,
+  seasonalityBlend?: number[],
 ): SubscriptionResult {
   const months = input.projection_months || 12;
   const churn = input.churn_rate_smb / 100;
+  const blend =
+    seasonalityBlend && seasonalityBlend.length === 12
+      ? seasonalityBlend
+      : Array(12).fill(1 / 12);
 
   const adoption =
     input.tier_adoption_rates &&
@@ -110,11 +115,13 @@ export function runSubscriptionModel(
   const free_cash_flow: number[] = [];
 
   for (let i = 0; i < months; i++) {
+    const monthFactor = blend[i % 12] * 12;
+    const monthBudget = (input.marketing_budget ?? 0) * monthFactor;
     const tierMetrics =
-      input.marketing_budget && input.conversion_rate
+      monthBudget && input.conversion_rate
         ? calculateTierMetrics(
             input.conversion_rate,
-            input.marketing_budget,
+            monthBudget,
             input.ctr ?? DEFAULT_CTR,
             COST_PER_MILLE,
           )
@@ -122,9 +129,7 @@ export function runSubscriptionModel(
 
     const leads = (tierMetrics.totalNewCustomers as number) || 0;
     const newCust = leads;
-    const imp = input.marketing_budget
-      ? (input.marketing_budget / COST_PER_MILLE) * 1000
-      : 0;
+    const imp = monthBudget ? (monthBudget / COST_PER_MILLE) * 1000 : 0;
     const clk = (tierMetrics.totalClicks as number) || 0;
 
     const churned = Math.min(customers, customers * churn);
@@ -155,7 +160,7 @@ export function runSubscriptionModel(
     const gp =
       (recognized - carbonCost) *
       (1 - (input.operating_expense_rate ?? 0) / 100);
-    const cash = gp - (input.fixed_costs ?? 0) - (input.marketing_budget ?? 0);
+    const cash = gp - (input.fixed_costs ?? 0) - monthBudget;
     free_cash_flow.push(cash);
   }
 
