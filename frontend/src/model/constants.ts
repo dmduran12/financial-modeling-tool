@@ -24,3 +24,6 @@ export const TIER_BUDGET_SPLIT = [0.4, 0.3, 0.2, 0.1];
 
 export const DEFAULT_COST_OF_CARBON = 18;
 export const DEFAULT_TONS_PER_CUSTOMER = [10, 25, 70, 200];
+export const DEFAULT_SEASONALITY = [
+  0.08, 0.08, 0.09, 0.1, 0.09, 0.08, 0.07, 0.07, 0.08, 0.1, 0.13, 0.13,
+];

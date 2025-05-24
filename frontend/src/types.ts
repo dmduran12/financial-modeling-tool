@@ -17,4 +17,6 @@ export interface FormState {
   carbon2: number;
   carbon3: number;
   carbon4: number;
+  seasonality: number[];
+  seasonality_influence: number;
 }

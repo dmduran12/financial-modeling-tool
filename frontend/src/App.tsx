@@ -17,6 +17,7 @@ import {
   DEFAULT_CTR,
   DEFAULT_COST_OF_CARBON,
   DEFAULT_TONS_PER_CUSTOMER,
+  DEFAULT_SEASONALITY,
 } from "./model/constants";
 
 export default function App() {
@@ -43,6 +44,8 @@ export default function App() {
     carbon2: DEFAULT_TONS_PER_CUSTOMER[1],
     carbon3: DEFAULT_TONS_PER_CUSTOMER[2],
     carbon4: DEFAULT_TONS_PER_CUSTOMER[3],
+    seasonality: DEFAULT_SEASONALITY,
+    seasonality_influence: 0,
   });
 
   return (
