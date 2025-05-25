@@ -272,6 +272,7 @@ export default function Dashboard() {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
         const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
+        const mrrBg = hexWithOpacity(mrrColor, 0.25);
         const datasets = [
           {
             label: "MRR",
@@ -286,6 +287,7 @@ export default function Dashboard() {
             tension: 0.16,
             fill: true,
             order: -1,
+            z: -1,
           },
           ...tierCustomers.map((arr, idx) => {
             const endVar = TIER_COLOR_VARS[idx];
