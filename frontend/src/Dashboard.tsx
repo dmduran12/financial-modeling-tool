@@ -271,7 +271,10 @@ export default function Dashboard() {
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
-        const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
+        const mrrColor = getCssVar(
+          "--color-driftwood-200",
+          mrrCustRef.current!,
+        );
         const tierData = tierCustomers.map((arr, idx) => {
           const endVar = TIER_COLOR_VARS[idx];
           const startVar = lighterVar(endVar);
@@ -306,7 +309,7 @@ export default function Dashboard() {
           pointHoverRadius: 4,
           tension: 0.16,
           fill: true,
-          order: -1,
+          order: tierCustomers.length + 1,
         };
         const datasets = [...tierData, mrrDataset];
         if (!chartInstances.current.combined) {
