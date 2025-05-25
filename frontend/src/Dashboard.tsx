@@ -46,6 +46,17 @@ function hexWithOpacity(hex: string, opacity: number): string {
   return hex;
 }
 
+function lighterVar(name: string, steps = 2): string {
+  const match = name.match(/^(--.+-)(\d{3})$/);
+  if (match) {
+    const base = match[1];
+    const val = Number(match[2]);
+    const lighter = Math.max(50, val - steps * 100);
+    return `${base}${lighter}`;
+  }
+  return name;
+}
+
 const TIER_COLOR_VARS = [
   "--cobalt-500",
   "--cobalt-400",
@@ -260,7 +271,7 @@ export default function Dashboard() {
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
-        const mrrColor = getCssVar("--success-500", mrrCustRef.current!);
+        const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
         const datasets = [
           {
             label: "MRR",
@@ -276,13 +287,19 @@ export default function Dashboard() {
             order: -1,
           },
           ...tierCustomers.map((arr, idx) => {
-            const color = getCssVar(TIER_COLOR_VARS[idx], mrrCustRef.current!);
+            const endVar = TIER_COLOR_VARS[idx];
+            const startVar = lighterVar(endVar);
+            const startColor = getCssVar(startVar, mrrCustRef.current!);
+            const endColor = getCssVar(endVar, mrrCustRef.current!);
+            const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+            grad.addColorStop(0, startColor);
+            grad.addColorStop(1, endColor);
             return {
               label: `Tier ${idx + 1}`,
               data: arr,
-              borderColor: color,
-              backgroundColor: hexWithOpacity(color, 0.08),
-              borderWidth: 2,
+              borderColor: grad,
+              backgroundColor: hexWithOpacity(endColor, 0.08),
+              borderWidth: 8,
               yAxisID: "y2",
               pointRadius: 0,
               pointHoverRadius: 4,
