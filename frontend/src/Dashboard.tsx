@@ -325,7 +325,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawBorder: false },
                   ticks: {
-                    callback: (v: any) => "$" + formatCurrency(Number(v)),
+                    callback: (v: any) => Number(v).toLocaleString(),
                   },
                 },
                 y2: {
@@ -333,7 +333,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawOnChartArea: false, drawBorder: false },
                   ticks: {
-                    callback: (v: any) => Number(v).toLocaleString(),
+                    callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
                 },
               },
