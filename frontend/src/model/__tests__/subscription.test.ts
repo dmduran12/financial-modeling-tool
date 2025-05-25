@@ -61,7 +61,7 @@ test("seasonality influence never increases MRR", () => {
   };
   const baseline = runSubscriptionModel(input);
   const blend = blendSeasonality(DEFAULT_SEASONALITY, 100);
-  const withSeasonality = runSubscriptionModel(input, blend);
+  const withSeasonality = runSubscriptionModel(input, blend, 100);
   withSeasonality.projections.mrr_by_month.forEach((mrr, idx) => {
     expect(mrr).toBeLessThanOrEqual(baseline.projections.mrr_by_month[idx]);
   });

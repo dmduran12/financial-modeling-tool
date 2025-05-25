@@ -19,8 +19,11 @@ export function calculateTierMetrics(
   totalBudget: number,
   ctr: number,
   costPerMille: number,
+  tierFactors?: number[],
 ): TierMetrics {
-  const budgets = TIER_BUDGET_SPLIT.map((s) => totalBudget * s);
+  const budgets = TIER_BUDGET_SPLIT.map(
+    (s, idx) => totalBudget * s * (tierFactors ? (tierFactors[idx] ?? 1) : 1),
+  );
   const ctrs = TIER_CTR_FACTORS.map((f) => ctr * f);
   const cvr = TIER_CVR_FACTORS.map((f) => Math.max(baseCvr * f, 0.1));
   const impressions = budgets.map((b) => (b / costPerMille) * 1000);

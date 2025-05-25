@@ -200,7 +200,11 @@ export default function Dashboard() {
       form.seasonality,
       form.seasonality_influence,
     );
-    const results = runSubscriptionModel(modelInput, blend);
+    const results = runSubscriptionModel(
+      modelInput,
+      blend,
+      form.seasonality_influence,
+    );
     const financial = calculateFinancialMetrics(
       results,
       form.initial_investment,
