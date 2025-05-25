@@ -55,7 +55,7 @@ function project([lon, lat]: [number, number]) {
   return new Vector3(x, y, z);
 }
 
-export default function WorldGlobe() {
+function GlobeContent() {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
@@ -65,20 +65,26 @@ export default function WorldGlobe() {
   });
 
   return (
+    <group ref={groupRef}>
+      {/* Placeholder sphere */}
+      <mesh renderOrder={0}>
+        <sphereGeometry args={[radius, 64, 64]} />
+        <meshBasicMaterial color={theme.colors.bg} />
+      </mesh>
+      <Graticule />
+      {/* TODO: add coastlines, point cloud and POIs */}
+    </group>
+  );
+}
+
+export default function WorldGlobe() {
+  return (
     <Canvas
       camera={{ position: [0, 0, 3], fov: 35 }}
       gl={{ antialias: true, alpha: false }}
       style={{ background: theme.colors.bg }}
     >
-      <group ref={groupRef}>
-        {/* Placeholder sphere */}
-        <mesh renderOrder={0}>
-          <sphereGeometry args={[radius, 64, 64]} />
-          <meshBasicMaterial color={theme.colors.bg} />
-        </mesh>
-        <Graticule />
-        {/* TODO: add coastlines, point cloud and POIs */}
-      </group>
+      <GlobeContent />
     </Canvas>
   );
 }
