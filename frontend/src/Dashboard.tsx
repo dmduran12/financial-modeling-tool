@@ -29,6 +29,7 @@ import ChartCard from "./components/ChartCard";
 import EquationReport from "./components/EquationReport";
 import FunnelTable from "./components/FunnelTable";
 import SankeyChart from "./components/SankeyChart";
+import WorldGlobe from "./components/WorldGlobe";
 import { generateLegend, generateBarLegend } from "./utils/chartLegend";
 import { formatCurrency } from "./utils/format";
 import { getCssVar } from "./utils/cssVar";
@@ -692,6 +693,9 @@ export default function Dashboard() {
           </ChartCard>
           <ChartCard title="Revenue by Tier" legend={tierLegend}>
             <canvas ref={tierRef}></canvas>
+          </ChartCard>
+          <ChartCard title="World Map">
+            <WorldGlobe />
           </ChartCard>
           <ChartCard
             title="Cash Flows"
