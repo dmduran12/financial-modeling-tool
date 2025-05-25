@@ -272,12 +272,14 @@ export default function Dashboard() {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
         const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
+        const mrrBg = hexWithOpacity(mrrColor, 0.25);
         const datasets = [
           {
             label: "MRR",
             data: mrrArr,
             borderColor: mrrColor,
-            backgroundColor: mrrColor,
+            backgroundColor: mrrBg,
+            legendColor: mrrColor,
             borderWidth: 2,
             yAxisID: "y1",
             pointRadius: 0,
@@ -285,6 +287,7 @@ export default function Dashboard() {
             tension: 0.16,
             fill: true,
             order: -1,
+            z: -1,
           },
           ...tierCustomers.map((arr, idx) => {
             const endVar = TIER_COLOR_VARS[idx];
@@ -298,12 +301,15 @@ export default function Dashboard() {
               label: `Tier ${idx + 1}`,
               data: arr,
               borderColor: grad,
+              legendColor: endColor,
               borderWidth: 4,
               yAxisID: "y2",
               pointRadius: 0,
               pointHoverRadius: 4,
               tension: 0.16,
               fill: false,
+              order: idx + 1,
+              z: 1,
             };
           }),
         ];
