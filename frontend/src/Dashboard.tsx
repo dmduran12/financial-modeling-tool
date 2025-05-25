@@ -275,6 +275,7 @@ export default function Dashboard() {
           "--color-driftwood-200",
           mrrCustRef.current!,
         );
+        const squidInk = getCssVar("--squid-ink", mrrCustRef.current!);
         const tierData = tierCustomers.map((arr, idx) => {
           const endVar = TIER_COLOR_VARS[idx];
           const startVar = lighterVar(endVar);
