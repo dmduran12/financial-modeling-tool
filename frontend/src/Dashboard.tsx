@@ -271,8 +271,10 @@ export default function Dashboard() {
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
-        const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
-        const squidInk = getCssVar("--color-squid-ink", mrrCustRef.current!);
+        const mrrColor = getCssVar(
+          "--color-driftwood-200",
+          mrrCustRef.current!,
+        );
         const tierData = tierCustomers.map((arr, idx) => {
           const endVar = TIER_COLOR_VARS[idx];
           const startVar = lighterVar(endVar);
