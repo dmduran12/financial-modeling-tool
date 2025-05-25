@@ -291,7 +291,8 @@ export default function Dashboard() {
             yAxisID: "y2",
             pointRadius: 0,
             pointHoverRadius: 4,
-            tension: 0.16,
+            tension: 0.4,
+            cubicInterpolationMode: "monotone" as const,
             fill: false,
             order: idx + 1,
           };
@@ -306,8 +307,9 @@ export default function Dashboard() {
           yAxisID: "y1",
           pointRadius: 0,
           pointHoverRadius: 4,
-          tension: 0.16,
-          fill: true,
+          tension: 0.4,
+          cubicInterpolationMode: "monotone" as const,
+          fill: false,
           order: tierCustomers.length + 1,
         };
         const datasets = [...tierData, mrrDataset];
@@ -344,7 +346,12 @@ export default function Dashboard() {
         } else {
           const ch = chartInstances.current.combined;
           ch.data.labels = labels;
-          ch.data.datasets = datasets as any;
+          tierData.forEach((d, idx) => {
+            Object.assign(ch.data.datasets[idx], d, { data: d.data });
+          });
+          Object.assign(ch.data.datasets[tierData.length], mrrDataset, {
+            data: mrrDataset.data,
+          });
           ch.update();
         }
         if (chartInstances.current.combined) {
