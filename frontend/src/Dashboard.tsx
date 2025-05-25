@@ -278,6 +278,7 @@ export default function Dashboard() {
             data: mrrArr,
             borderColor: mrrColor,
             backgroundColor: mrrColor,
+            legendColor: mrrColor,
             borderWidth: 2,
             yAxisID: "y1",
             pointRadius: 0,
@@ -298,12 +299,14 @@ export default function Dashboard() {
               label: `Tier ${idx + 1}`,
               data: arr,
               borderColor: grad,
+              legendColor: endColor,
               borderWidth: 4,
               yAxisID: "y2",
               pointRadius: 0,
               pointHoverRadius: 4,
               tension: 0.16,
               fill: false,
+              order: idx + 1,
             };
           }),
         ];
