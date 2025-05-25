@@ -272,6 +272,7 @@ export default function Dashboard() {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
         const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
+        const squidInk = getCssVar("--color-squid-ink", mrrCustRef.current!);
         const tierData = tierCustomers.map((arr, idx) => {
           const endVar = TIER_COLOR_VARS[idx];
           const startVar = lighterVar(endVar);
@@ -286,7 +287,7 @@ export default function Dashboard() {
             borderColor: grad,
             legendColor: endColor,
             borderWidth: 4,
-            yAxisID: "y2",
+            yAxisID: "y1",
             pointRadius: 0,
             pointHoverRadius: 4,
             tension: 0.16,
@@ -298,15 +299,15 @@ export default function Dashboard() {
           label: "MRR",
           data: mrrArr,
           borderColor: mrrColor,
-          backgroundColor: mrrColor,
-          legendColor: mrrColor,
+          backgroundColor: squidInk,
+          legendColor: squidInk,
           borderWidth: 2,
-          yAxisID: "y1",
+          yAxisID: "y2",
           pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0.16,
           fill: true,
-          order: -1,
+          order: tierCustomers.length + 1,
         };
         const datasets = [...tierData, mrrDataset];
         if (!chartInstances.current.combined) {
