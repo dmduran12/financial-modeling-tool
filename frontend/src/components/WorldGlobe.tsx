@@ -1,16 +1,14 @@
-import { useRef } from "react";
+import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  Vector3,
-  BufferGeometry,
-  LineSegments,
-  Float32BufferAttribute,
-} from "three";
+import { Vector3, BufferGeometry, Float32BufferAttribute } from "three";
 
-const radius = 0.8;
-const bgColor = "var(--thunder-900)";
+const RADIUS = 1;
+const SCALE = 0.8;
+const BG_COLOR = "var(--thunder-900)";
 
-const continents: [number, number][][] = [
+// Simplified land coordinate data. In the reference implementation this
+// would be derived from world-110m.json via topojson-client.
+const CONTINENTS: [number, number][][] = [
   [
     [-130, 25],
     [-60, 50],
@@ -53,26 +51,31 @@ const continents: [number, number][][] = [
   ],
 ];
 
-function project([lon, lat]: [number, number]) {
-  const phi = (lat * Math.PI) / 180;
-  const theta = (lon * Math.PI) / 180;
-  const x = radius * Math.cos(phi) * Math.cos(theta);
-  const y = radius * Math.sin(phi);
-  const z = -radius * Math.cos(phi) * Math.sin(theta);
-  return new Vector3(x, y, z);
+function lonLatToXYZ([lon, lat]: [number, number], r: number = RADIUS) {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  return new Vector3(
+    -(r * Math.sin(phi) * Math.cos(theta)),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta),
+  );
 }
 
-function Continents() {
-  const positions: number[] = [];
-  continents.forEach((coords) => {
-    for (let i = 0; i < coords.length - 1; i++) {
-      const a = project(coords[i]);
-      const b = project(coords[i + 1]);
-      positions.push(a.x, a.y, a.z, b.x, b.y, b.z);
-    }
-  });
+function LandLines() {
+  const segments = useMemo(() => {
+    const segs: number[] = [];
+    CONTINENTS.forEach((coords) => {
+      for (let i = 0; i < coords.length - 1; i++) {
+        const a = lonLatToXYZ(coords[i]);
+        const b = lonLatToXYZ(coords[i + 1]);
+        segs.push(a.x, a.y, a.z, b.x, b.y, b.z);
+      }
+    });
+    return new Float32Array(segs);
+  }, []);
+
   const geom = new BufferGeometry();
-  geom.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geom.setAttribute("position", new Float32BufferAttribute(segments, 3));
   return (
     <lineSegments geometry={geom} renderOrder={1}>
       <lineBasicMaterial color="#ffffff" linewidth={1} />
@@ -97,12 +100,12 @@ function Globe({ info }: { info: React.MutableRefObject<DragInfo> }) {
   });
   info.current.group = groupRef.current;
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={[SCALE, SCALE, SCALE]}>
       <mesh renderOrder={0}>
-        <sphereGeometry args={[radius, 32, 32]} />
-        <meshBasicMaterial color={bgColor} wireframe />
+        <sphereGeometry args={[RADIUS, 64, 64]} />
+        <meshBasicMaterial color={BG_COLOR} wireframe />
       </mesh>
-      <Continents />
+      <LandLines />
     </group>
   );
 }
@@ -137,7 +140,7 @@ export default function WorldGlobe() {
       camera={{ position: [0, 0, 3], fov: 35 }}
       gl={{ antialias: true, alpha: false }}
       style={{
-        background: bgColor,
+        background: BG_COLOR,
         width: "100%",
         height: "100%",
         aspectRatio: "1 / 1",
@@ -147,7 +150,9 @@ export default function WorldGlobe() {
       onPointerUp={endDrag}
       onPointerLeave={endDrag}
     >
-      <Globe info={drag} />
+      <Suspense fallback={null}>
+        <Globe info={drag} />
+      </Suspense>
     </Canvas>
   );
 }
