@@ -14,7 +14,10 @@
     "chart.js": "^4.4.0",
     "three": "^0.158.0",
     "@react-three/fiber": "^8.13.0",
-    "d3-geo": "^3.0.2"
+    "d3-geo": "^3.0.2",
+    "@react-three/drei": "^9.77.1",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.1.0",
