@@ -122,6 +122,9 @@ export function runSubscriptionModel(
 
   for (let i = 0; i < months; i++) {
     const monthFactor = Math.min(blend[i % 12] * 12, 1);
+    const seasonalFactors = tierFactors.map(
+      (f, idx) => f * Math.pow(monthFactor, idx + 1),
+    );
     const monthBudget = (input.marketing_budget ?? 0) * monthFactor;
     const tierMetrics =
       monthBudget && input.conversion_rate
@@ -130,7 +133,7 @@ export function runSubscriptionModel(
             monthBudget,
             input.ctr ?? DEFAULT_CTR,
             COST_PER_MILLE,
-            tierFactors,
+            seasonalFactors,
           )
         : ({ totalLeads: 0, totalNewCustomers: 0, totalClicks: 0 } as any);
 
