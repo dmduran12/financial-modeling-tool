@@ -272,46 +272,43 @@ export default function Dashboard() {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
         const mrrColor = getCssVar("--color-limelight", mrrCustRef.current!);
-        const mrrBg = hexWithOpacity(mrrColor, 0.25);
-        const datasets = [
-          {
-            label: "MRR",
-            data: mrrArr,
-            borderColor: mrrColor,
-            backgroundColor: mrrColor,
-            legendColor: mrrColor,
-            borderWidth: 2,
+        const tierData = tierCustomers.map((arr, idx) => {
+          const endVar = TIER_COLOR_VARS[idx];
+          const startVar = lighterVar(endVar);
+          const startColor = getCssVar(startVar, mrrCustRef.current!);
+          const endColor = getCssVar(endVar, mrrCustRef.current!);
+          const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+          grad.addColorStop(0, startColor);
+          grad.addColorStop(1, endColor);
+          return {
+            label: `Tier ${idx + 1}`,
+            data: arr,
+            borderColor: grad,
+            legendColor: endColor,
+            borderWidth: 4,
             yAxisID: "y2",
             pointRadius: 0,
             pointHoverRadius: 4,
             tension: 0.16,
-            fill: true,
-            order: -1,
-            z: -1,
-          },
-          ...tierCustomers.map((arr, idx) => {
-            const endVar = TIER_COLOR_VARS[idx];
-            const startVar = lighterVar(endVar);
-            const startColor = getCssVar(startVar, mrrCustRef.current!);
-            const endColor = getCssVar(endVar, mrrCustRef.current!);
-            const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
-            grad.addColorStop(0, startColor);
-            grad.addColorStop(1, endColor);
-            return {
-              label: `Tier ${idx + 1}`,
-              data: arr,
-              borderColor: grad,
-              legendColor: endColor,
-              borderWidth: 4,
-              yAxisID: "y1",
-              pointRadius: 0,
-              pointHoverRadius: 4,
-              tension: 0.16,
-              fill: false,
-              order: idx + 1,
-            };
-          }),
-        ];
+            fill: false,
+            order: idx + 1,
+          };
+        });
+        const mrrDataset = {
+          label: "MRR",
+          data: mrrArr,
+          borderColor: mrrColor,
+          backgroundColor: mrrColor,
+          legendColor: mrrColor,
+          borderWidth: 2,
+          yAxisID: "y1",
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.16,
+          fill: true,
+          order: -1,
+        };
+        const datasets = [...tierData, mrrDataset];
         if (!chartInstances.current.combined) {
           chartInstances.current.combined = new Chart(ctx, {
             type: "line",
