@@ -26,14 +26,12 @@ function Graticule() {
   const lines = geoGraticule().step([15, 15])();
   const positions: number[] = [];
 
-  lines.coordinates.forEach((multi) => {
-    multi.forEach((coords) => {
-      for (let i = 0; i < coords.length - 1; i++) {
-        const a = project(coords[i]);
-        const b = project(coords[i + 1]);
-        positions.push(a.x, a.y, a.z, b.x, b.y, b.z);
-      }
-    });
+  lines.coordinates.forEach((coords) => {
+    for (let i = 0; i < coords.length - 1; i++) {
+      const a = project(coords[i]);
+      const b = project(coords[i + 1]);
+      positions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+    }
   });
 
   const geom = new BufferGeometry();
