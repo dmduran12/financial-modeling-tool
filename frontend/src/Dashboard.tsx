@@ -278,10 +278,10 @@ export default function Dashboard() {
             label: "MRR",
             data: mrrArr,
             borderColor: mrrColor,
-            backgroundColor: mrrBg,
+            backgroundColor: mrrColor,
             legendColor: mrrColor,
             borderWidth: 2,
-            yAxisID: "y1",
+            yAxisID: "y2",
             pointRadius: 0,
             pointHoverRadius: 4,
             tension: 0.16,
@@ -303,13 +303,12 @@ export default function Dashboard() {
               borderColor: grad,
               legendColor: endColor,
               borderWidth: 4,
-              yAxisID: "y2",
+              yAxisID: "y1",
               pointRadius: 0,
               pointHoverRadius: 4,
               tension: 0.16,
               fill: false,
               order: idx + 1,
-              z: 1,
             };
           }),
         ];
@@ -329,7 +328,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawBorder: false },
                   ticks: {
-                    callback: (v: any) => "$" + formatCurrency(Number(v)),
+                    callback: (v: any) => Number(v).toLocaleString(),
                   },
                 },
                 y2: {
@@ -337,7 +336,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawOnChartArea: false, drawBorder: false },
                   ticks: {
-                    callback: (v: any) => Number(v).toLocaleString(),
+                    callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
                 },
               },
