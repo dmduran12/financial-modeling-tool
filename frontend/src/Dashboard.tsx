@@ -306,7 +306,7 @@ export default function Dashboard() {
           pointHoverRadius: 4,
           tension: 0.16,
           fill: true,
-          order: -1,
+          order: tierCustomers.length + 1,
         };
         const datasets = [...tierData, mrrDataset];
         if (!chartInstances.current.combined) {
