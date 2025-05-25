@@ -57,6 +57,7 @@ export interface SubscriptionResult {
 export function runSubscriptionModel(
   input: SubscriptionInput,
   seasonalityBlend?: number[],
+  seasonalityInfluence = 0,
 ): SubscriptionResult {
   const months = input.projection_months || 12;
   const churn = input.churn_rate_smb / 100;
@@ -113,9 +114,14 @@ export function runSubscriptionModel(
   const leads_by_month: number[] = [];
   const new_customers_by_month: number[] = [];
   const free_cash_flow: number[] = [];
+  const tierCount = input.tier_revenues.length || 1;
+  const denom = Math.max(1, tierCount - 1);
+  const tierFactors = input.tier_revenues.map((_, idx) =>
+    Math.max(1 - (seasonalityInfluence / 100) * (idx / denom), 0),
+  );
 
   for (let i = 0; i < months; i++) {
-    const monthFactor = blend[i % 12] * 12;
+    const monthFactor = Math.min(blend[i % 12] * 12, 1);
     const monthBudget = (input.marketing_budget ?? 0) * monthFactor;
     const tierMetrics =
       monthBudget && input.conversion_rate
@@ -124,6 +130,7 @@ export function runSubscriptionModel(
             monthBudget,
             input.ctr ?? DEFAULT_CTR,
             COST_PER_MILLE,
+            tierFactors,
           )
         : ({ totalLeads: 0, totalNewCustomers: 0, totalClicks: 0 } as any);
 
@@ -198,6 +205,7 @@ export function runSubscriptionModel(
                 input.marketing_budget,
                 input.ctr ?? DEFAULT_CTR,
                 COST_PER_MILLE,
+                tierFactors,
               )
             : ({ clicks: [], newCustomers: [] } as any);
         const wClicks = tm.clicks.reduce(
@@ -218,6 +226,7 @@ export function runSubscriptionModel(
                 input.marketing_budget,
                 input.ctr ?? DEFAULT_CTR,
                 COST_PER_MILLE,
+                tierFactors,
               )
             : ({ clicks: [], newCustomers: [] } as any);
         const wClicks = tm.clicks.reduce(

@@ -1,4 +1,6 @@
 import { runSubscriptionModel } from "../subscription";
+import { blendSeasonality } from "../../utils/seasonality";
+import { DEFAULT_SEASONALITY } from "../constants";
 
 test("customer roll-forward logic", () => {
   const result = runSubscriptionModel({
@@ -45,4 +47,22 @@ test("zero marketing spend yields zero new customers", () => {
   });
   expect(res.projections.new_customers_by_month[0]).toBe(0);
   expect(res.projections.customers_by_month[0]).toBe(0);
+});
+
+test("seasonality influence never increases MRR", () => {
+  const input = {
+    projection_months: 12,
+    churn_rate_smb: 5,
+    tier_revenues: [100],
+    initial_customers: 100,
+    marketing_budget: 1000,
+    conversion_rate: 10,
+    ctr: 18,
+  };
+  const baseline = runSubscriptionModel(input);
+  const blend = blendSeasonality(DEFAULT_SEASONALITY, 100);
+  const withSeasonality = runSubscriptionModel(input, blend, 100);
+  withSeasonality.projections.mrr_by_month.forEach((mrr, idx) => {
+    expect(mrr).toBeLessThanOrEqual(baseline.projections.mrr_by_month[idx]);
+  });
 });
