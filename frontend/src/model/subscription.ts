@@ -115,7 +115,7 @@ export function runSubscriptionModel(
   const free_cash_flow: number[] = [];
 
   for (let i = 0; i < months; i++) {
-    const monthFactor = blend[i % 12] * 12;
+    const monthFactor = Math.min(blend[i % 12] * 12, 1);
     const monthBudget = (input.marketing_budget ?? 0) * monthFactor;
     const tierMetrics =
       monthBudget && input.conversion_rate
