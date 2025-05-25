@@ -271,10 +271,8 @@ export default function Dashboard() {
     if (mrrCustRef.current) {
       const ctx = mrrCustRef.current.getContext("2d");
       if (ctx) {
-        const mrrColor = getCssVar(
-          "--color-driftwood-200",
-          mrrCustRef.current!,
-        );
+        const squidInk = getCssVar("--squid-ink", mrrCustRef.current!);
+        const pearl = getCssVar("--color-pearl", mrrCustRef.current!);
         const tierData = tierCustomers.map((arr, idx) => {
           const endVar = TIER_COLOR_VARS[idx];
           const startVar = lighterVar(endVar);
@@ -288,8 +286,8 @@ export default function Dashboard() {
             data: arr,
             borderColor: grad,
             legendColor: endColor,
-            borderWidth: 4,
-            yAxisID: "y1",
+            borderWidth: 2,
+            yAxisID: "y2",
             pointRadius: 0,
             pointHoverRadius: 4,
             tension: 0.16,
@@ -300,11 +298,11 @@ export default function Dashboard() {
         const mrrDataset = {
           label: "MRR",
           data: mrrArr,
-          borderColor: mrrColor,
-          backgroundColor: squidInk,
+          borderColor: squidInk,
+          backgroundColor: pearl,
           legendColor: squidInk,
-          borderWidth: 2,
-          yAxisID: "y2",
+          borderWidth: 1,
+          yAxisID: "y1",
           pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0.16,
@@ -328,7 +326,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawBorder: false },
                   ticks: {
-                    callback: (v: any) => Number(v).toLocaleString(),
+                    callback: (v: any) => "$" + formatCurrency(Number(v)),
                   },
                 },
                 y2: {
@@ -336,7 +334,7 @@ export default function Dashboard() {
                   min: 1,
                   grid: { drawOnChartArea: false, drawBorder: false },
                   ticks: {
-                    callback: (v: any) => "$" + formatCurrency(Number(v)),
+                    callback: (v: any) => Number(v).toLocaleString(),
                   },
                 },
               },
